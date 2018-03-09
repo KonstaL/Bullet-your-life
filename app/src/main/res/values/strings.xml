@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Bullets Journal</string>
+    <string name="section_weekly_header">Weekly logs</string>
 </resources>

@@ -17,5 +17,7 @@ public class WeeklyLogsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weekly_logs);
 
 
+
+
     }
 }
