@@ -7,4 +7,5 @@
     <color name="emphasis">#31b6e7</color>
     <color name="font_black">#151515</color>
     <color name="bright_red">#db1212</color>
+    <color name="nav_item_tint">#ffffff</color>
 </resources>
