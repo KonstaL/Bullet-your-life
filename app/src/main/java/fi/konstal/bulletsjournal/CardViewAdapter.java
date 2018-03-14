@@ -13,7 +13,6 @@ import java.util.List;
  */
 
 public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyViewHolder> {
-
         private List<DayCard> cardsList;
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
