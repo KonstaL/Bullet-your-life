@@ -1,4 +1,4 @@
-package fi.konstal.bulletsjournal;
+package fi.konstal.bullet_your_life;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

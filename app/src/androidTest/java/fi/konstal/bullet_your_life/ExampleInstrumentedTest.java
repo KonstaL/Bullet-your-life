@@ -1,4 +1,4 @@
-package fi.konstal.bulletsjournal;
+package fi.konstal.bullet_your_life;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

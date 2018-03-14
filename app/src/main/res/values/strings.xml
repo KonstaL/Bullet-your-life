@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bullets Journal</string>
+    <string name="app_name">Bullet Your Life</string>
     <string name="section_weekly_header">Weekly logs</string>
     <string name="filler_title">This is a title</string>
 </resources>
