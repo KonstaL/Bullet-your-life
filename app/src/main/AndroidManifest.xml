@@ -9,15 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="fi.konstal.bullet_your_life.activities.WeeklyLogsActivity">
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="fi.konstal.bullet_your_life.activities.MonthlyLogsActivity" />
-        <activity android:name="fi.konstal.bullet_your_life.activities.FutureLogsActivity"></activity>
+        <activity android:name=".activities.MonthlyLogsActivity" />
+        <activity android:name=".activities.FutureLogsActivity" />
+        <activity android:name=".activities.WeeklyLogsActivity"/>
     </application>
 
 </manifest>

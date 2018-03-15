@@ -10,4 +10,5 @@
     <color name="nav_item_tint">#ffffff</color>
     <color name="card_background">#fafafa</color>
     <color name="card_header_bg">#f2f2f2</color>
+    <color name="login_image_overlay">#80000000</color>
 </resources>
