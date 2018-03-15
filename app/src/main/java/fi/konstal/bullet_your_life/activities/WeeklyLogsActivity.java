@@ -1,4 +1,4 @@
-package fi.konstal.bullet_your_life;
+package fi.konstal.bullet_your_life.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +9,10 @@ import android.view.Window;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
+import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.R;
 
 public class WeeklyLogsActivity extends AppCompatActivity {
     private List<DayCard> cardList= new ArrayList<>();

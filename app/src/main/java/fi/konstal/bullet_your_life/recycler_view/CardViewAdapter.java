@@ -1,4 +1,4 @@
-package fi.konstal.bullet_your_life;
+package fi.konstal.bullet_your_life.recycler_view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+
+import fi.konstal.bullet_your_life.R;
 
 /**
  * Created by konka on 14.3.2018.

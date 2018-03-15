@@ -1,4 +1,4 @@
-package fi.konstal.bullet_your_life;
+package fi.konstal.bullet_your_life.recycler_view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+
+import fi.konstal.bullet_your_life.R;
 
 /**
  * Created by konka on 14.3.2018.

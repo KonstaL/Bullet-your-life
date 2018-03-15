@@ -1,7 +1,9 @@
-package fi.konstal.bullet_your_life;
+package fi.konstal.bullet_your_life.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import fi.konstal.bullet_your_life.R;
 
 public class FutureLogsActivity extends AppCompatActivity {
 

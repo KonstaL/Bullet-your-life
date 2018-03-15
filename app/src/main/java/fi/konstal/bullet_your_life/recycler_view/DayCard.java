@@ -1,4 +1,4 @@
-package fi.konstal.bullet_your_life;
+package fi.konstal.bullet_your_life.recycler_view;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
