@@ -13,6 +13,7 @@ import java.util.List;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.task.Task;
 
 public class WeeklyLogsActivity extends AppCompatActivity {
     private List<DayCard> cardList= new ArrayList<>();
@@ -32,7 +33,7 @@ public class WeeklyLogsActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        cardAdapter= new CardViewAdapter(cardList);
+        cardAdapter= new CardViewAdapter(this, cardList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -43,26 +44,28 @@ public class WeeklyLogsActivity extends AppCompatActivity {
 
     private void prepareCardData() {
 
-        DayCard card = new DayCard("Maanantai", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
+        DayCard card = new DayCard("Maanantai", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
         cardList.add(card);
 
-        card = new DayCard("Tiistai", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
+        DayCard card2 = new DayCard("Tiistai", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
+        cardList.add(card2);
+
+        card = new DayCard("Keskiviikko", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
         cardList.add(card);
 
-        card = new DayCard("Keskiviikko", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
+        card = new DayCard("Torstai", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
         cardList.add(card);
 
-        card = new DayCard("Torstai", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
+        card = new DayCard("Perjantai", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
         cardList.add(card);
 
-        card = new DayCard("Perjantai", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
+        card = new DayCard("Lauantain", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
         cardList.add(card);
 
-        card = new DayCard("Launtai", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
+        card = new DayCard("Sunnuntai", new Task("putsaa auto", R.drawable.ic_add_circle_black_24dp), new Task("moi", R.drawable.ic_mode_edit_black_24dp));
         cardList.add(card);
 
-        card = new DayCard("Sunnuntai", "Affogato sugar, coffee iced in aftertaste flavour café au lait. Affogato bar, plunger pot decaffeinated grounds pumpkin spice milk caramelization. Frappuccino fair trade, skinny robust sit wings trifecta saucer con panna single origin rich. Qui, caffeine single shot flavour brewed macchiato americano beans lungo.");
-        cardList.add(card);
+
 
         cardAdapter.notifyDataSetChanged();
     }

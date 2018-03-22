@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import fi.konstal.bullet_your_life.task.Task;
+
 
 /**
  * Created by konka on 14.3.2018.
@@ -12,12 +14,12 @@ import java.util.Date;
 public class DayCard {
     String title;
     Date date;
-    String content;
+    Task[] tasks;
     String dateString;
 
-    public DayCard(String title, String content) {
+    public DayCard(String title, Task... tasks) {
         this.title = title;
-        this.content = content;
+        this.tasks = tasks;
         this.date = Calendar.getInstance().getTime();
 
 
@@ -42,12 +44,12 @@ public class DayCard {
         this.date = date;
     }
 
-    public String getContent() {
-        return content;
+    public Task[] getTasks() {
+        return tasks;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTasks(Task[] tasks) {
+        this.tasks = tasks;
     }
 
     public String getDateString() {

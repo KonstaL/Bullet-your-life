@@ -15,4 +15,6 @@
     <color name="white_primary">#f2f2f2</color>
     <color name="white_secondary">#d7d7d7</color>
     <color name="shadow_dark">#60000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white_pressed">#aeaeae</color>
 </resources>

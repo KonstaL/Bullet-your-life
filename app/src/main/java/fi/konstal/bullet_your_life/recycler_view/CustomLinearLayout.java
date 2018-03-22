@@ -6,8 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.widget.LinearLayout;
 
 import fi.konstal.bullet_your_life.R;
 
@@ -15,17 +15,17 @@ import fi.konstal.bullet_your_life.R;
  * Created by konka on 14.3.2018.
  */
 
-public class CustomConstraintLayout extends ConstraintLayout {
+public class CustomLinearLayout extends LinearLayout{
 
-    public CustomConstraintLayout(Context context) {
+    public CustomLinearLayout(Context context) {
         super(context);
     }
 
-    public CustomConstraintLayout(Context context, AttributeSet attrs) {
+    public CustomLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
