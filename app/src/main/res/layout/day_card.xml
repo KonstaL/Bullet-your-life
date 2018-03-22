@@ -8,14 +8,10 @@
     android:layout_height="wrap_content">
 
 
-    <fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout
-        android:id="@+id/card_content_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:padding="0dp"
-
-        android:background="@color/card_background"
         android:clickable="true"
         android:elevation="5dp"
         android:focusable="true"
@@ -60,44 +56,23 @@
 
         </RelativeLayout>
 
-
-        <TextView
-            android:id="@+id/card_content"
+        <fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout
+            android:id="@+id/card_content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:padding="10dp"
-            android:textColor="#000000"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_header" />
+            android:orientation="vertical"
+            android:background="@color/card_background"
+            android:padding="7dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="7dp"
+            >
 
 
-        <!--<ImageView-->
-        <!--android:id="@+id/addCircle"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:src="@drawable/ic_add_circle_black_24dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/card_content" />-->
 
-        <!--<ImageView-->
-            <!--android:id="@+id/modifyCircle"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginEnd="72dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:src="@drawable/ic_mode_edit_black_24dp"-->
-            <!--app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/card_content"-->
-            <!--app:layout_constraintVertical_bias="0.932" />-->
+        </fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout>
 
 
-    </fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

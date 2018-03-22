@@ -22,7 +22,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
         private Context context;
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
-            public TextView title, date, content;
+            public TextView title, date;
             public CustomLinearLayout cll;
 
             public MyViewHolder(View view) {
@@ -30,7 +30,6 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
                 cll = view.findViewById(R.id.card_content_layout);
                 title = (TextView) view.findViewById(R.id.title);
-                content = (TextView) view.findViewById(R.id.card_content);
                 date = (TextView) view.findViewById(R.id.card_date);
             }
         }
@@ -52,15 +51,16 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            ;
             DayCard dayCard = cardsList.get(position);
             holder.title.setText(dayCard.getTitle());
-            //holder.content.setText(dayCard.getContent());
+
             Task[] tasks = dayCard.getTasks();
             Log.d("shit", tasks.toString());
             for (Task task : tasks) {
                 TextView tv = new TextView(context);
+                tv.setPadding(0, 0, 0, 0);
                 tv.setCompoundDrawablesWithIntrinsicBounds(task.getTaskIconRef(), 0, 0, 0);
+                tv.setCompoundDrawablePadding(20);
                 tv.setText(task.getText());
                 holder.cll.addView(tv);
             }
