@@ -17,4 +17,5 @@
     <color name="shadow_dark">#60000000</color>
     <color name="white">#FFFFFF</color>
     <color name="white_pressed">#aeaeae</color>
+    <color name="enable_shadows_patterns">#ffffff</color>
 </resources>
