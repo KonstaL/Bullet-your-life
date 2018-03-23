@@ -2,38 +2,99 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fi.konstal.bullet_your_life.activities.EditCardActivity">
 
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:elevation="2dp"
+        android:orientation="vertical"
+        android:background="@color/enable_shadows_patterns">
 
-        <TextView
-            android:id="@+id/title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:id="@+id/card_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:background="@color/card_header_bg"
+            android:padding="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:clickable="false"
+            android:focusable="false"
+            >
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:text="@string/example_title"
+                android:textColor="@color/font_black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toStartOf="@+id/card_date"
+                app:layout_constraintHorizontal_bias="0.137"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/card_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/example_date"
+                android:textSize="15sp"/>
+
+        </RelativeLayout>
+
+        <fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout
+            android:id="@+id/card_content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="100dp"
+            android:orientation="vertical"
+            android:background="@color/card_background"
+            android:padding="7dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="7dp"
+            >
+
+        </fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout>
+
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/dimming_layer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:elevation="3dp"
         />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@+id/constraintLayout"
+        app:layout_anchor="@+id/card_content_layout"
         app:layout_anchorGravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_plus_white_24dp" />
+
 
     <!--Sub floating action buttons -->
     <include layout="@layout/fab_layout" />

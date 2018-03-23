@@ -10,15 +10,16 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.task.Task;
 
 public class EditCardActivity extends AppCompatActivity {
-    private String title;
-    private String dateString;
-    private Task[] tasks;
+    private DayCard dayCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,21 +28,49 @@ public class EditCardActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_edit_card);
 
-        DayCard dayCard = (DayCard) getIntent().getSerializableExtra("dayCard");
+        this.dayCard = (DayCard) getIntent().getSerializableExtra("dayCard");
+
+
+
+           /* Init card */
+        TextView cardTitle = findViewById(R.id.title);
+        TextView cardDate = findViewById(R.id.card_date);
+        CustomLinearLayout cardContentLayout = findViewById(R.id.card_content_layout);
 
         if(dayCard != null) {
-            this.title = dayCard.getTitle();
-            this.dateString = dayCard.getDateString();
-            this.tasks = dayCard.getTasks();
+            cardTitle.setText(dayCard.getTitle());
+            cardDate.setText(dayCard.getDateString());
+
+
+            for (Task task : dayCard.getTasks()) {
+                TextView tv = new TextView(this);
+                tv.setPadding(0, 0, 0, 0);
+                tv.setCompoundDrawablesWithIntrinsicBounds(task.getTaskIconRef(), 0, 0, 0);
+                tv.setCompoundDrawablePadding(20);
+                tv.setText(task.getText());
+
+                tv.setOnClickListener((event)-> {
+                    Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
+                });
+
+                cardContentLayout.addView(tv);
+            }
         } else {
-            this.title = "errors for everyone!";
+            cardTitle.setText("errors for everyone!");
         }
 
 
+
+
+
+
+
+        /*Init floating action button */
         FloatingActionButton fab = findViewById(R.id.fab);
         FloatingActionButton ll1 = findViewById(R.id.fab_1);
         FloatingActionButton ll2 = findViewById(R.id.fab_2);
         FloatingActionButton ll3 = findViewById(R.id.fab_3);
+        FloatingActionButton ll4 = findViewById(R.id.fab_4);
         ImageView dimming_layer = findViewById(R.id.dimming_layer);
 
         Animation mShowButton = AnimationUtils.loadAnimation(this, R.anim.fab_show);
@@ -56,22 +85,33 @@ public class EditCardActivity extends AppCompatActivity {
                 ll1.setVisibility(View.GONE);
                 ll2.setVisibility(View.GONE);
                 ll3.setVisibility(View.GONE);
+                ll4.setVisibility(View.GONE);
                 ll1.startAnimation(mHideLayout);
                 ll2.startAnimation(mHideLayout);
                 ll3.startAnimation(mHideLayout);
+                ll4.startAnimation(mHideLayout);
                 fab.startAnimation(mHideButton);
             } else {
                 dimming_layer.setBackgroundColor(getResources().getColor(R.color.login_image_overlay));
                 ll1.setVisibility(View.VISIBLE);
                 ll2.setVisibility(View.VISIBLE);
                 ll3.setVisibility(View.VISIBLE);
+                ll4.setVisibility(View.VISIBLE);
                 ll1.startAnimation(mShowLayout);
                 ll2.startAnimation(mShowLayout);
                 ll3.startAnimation(mShowLayout);
+                ll4.startAnimation(mShowLayout);
                 fab.startAnimation(mShowButton);
             }
         });
 
+
+    }
+
+    public void fabClick(View v) {
+        FloatingActionButton fab = (FloatingActionButton) v;
+
+        Toast.makeText(this, Integer.toString(fab.getId()), Toast.LENGTH_SHORT).show();
 
     }
 }

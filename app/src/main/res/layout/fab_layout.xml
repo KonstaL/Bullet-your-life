@@ -2,42 +2,60 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="100dp"
-<!--
-        android:visibility="invisible"
--->
-        android:src="@android:drawable/ic_menu_compass"
-        app:backgroundTint="@color/bright_red"
-        app:fabSize="mini" />
+    android:layout_height="match_parent"
+    android:elevation="9dp">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_marginRight="100dp"
-        android:src="@android:drawable/ic_menu_myplaces"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="95dp"
+        android:src="@drawable/ic_camera_white_24dp"
         android:visibility="invisible"
         app:backgroundTint="@color/bright_red"
-        app:fabSize="mini" />
+        app:fabSize="mini"
+        android:onClick="fabClick"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="95dp"
+        android:layout_marginRight="15dp"
+        android:visibility="invisible"
+        android:src="@drawable/ic_check_box_white_24dp"
+        app:backgroundTint="@color/bright_red"
+        app:fabSize="mini"
+        android:onClick="fabClick"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="85dp"
-        android:src="@android:drawable/ic_menu_share"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="100dp"
+        android:elevation="6dp"
+        android:src="@drawable/ic_event_white_24dp"
         android:visibility="invisible"
         app:backgroundTint="@color/bright_red"
-        app:fabSize="mini" />
+        app:fabSize="mini"
+        android:onClick="fabClick"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="100dp"
+        android:layout_marginRight="65dp"
+        android:visibility="invisible"
+        android:src="@drawable/ic_text_white_24dp"
+        app:backgroundTint="@color/bright_red"
+        app:fabSize="mini"
+        android:onClick="fabClick"/>
+
 </FrameLayout>
