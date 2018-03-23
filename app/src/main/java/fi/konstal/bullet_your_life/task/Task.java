@@ -1,10 +1,12 @@
 package fi.konstal.bullet_your_life.task;
 
+import java.io.Serializable;
+
 /**
  * Created by konka on 22.3.2018.
  */
 
-public class Task {
+public class Task implements Serializable {
     private String text;
     private boolean done;
     private int taskIconRef;

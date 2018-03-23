@@ -4,15 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="10dp"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
-    android:elevation="5dp"
     android:focusable="true"
+    android:elevation="5dp"
+
     android:orientation="vertical"
-    android:background="@color/enable_shadows_patterns"
->
+    android:background="@color/enable_shadows_patterns">
 
     <RelativeLayout
         android:id="@+id/card_header"
@@ -22,8 +21,25 @@
         android:background="@color/card_header_bg"
         android:padding="5dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingRight="10dp"
+        android:clickable="false"
+        android:focusable="false"
+        >
 
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:text="@string/example_title"
+            android:textColor="@color/font_black"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/card_date"
+            app:layout_constraintHorizontal_bias="0.137"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/card_date"
@@ -34,22 +50,7 @@
             android:layout_marginEnd="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="2017.12.11" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="10dp"
-            android:text="@string/filler_title"
-            android:textColor="@color/font_black"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/card_date"
-            app:layout_constraintHorizontal_bias="0.137"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            tools:text="@string/example_date" />
 
     </RelativeLayout>
 
@@ -57,11 +58,14 @@
         android:id="@+id/card_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
         android:orientation="vertical"
         android:background="@color/card_background"
         android:padding="7dp"
         android:paddingStart="10dp"
         android:paddingEnd="7dp"
+        android:clickable="true"
+        android:focusable="true"
         >
 
     </fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout>

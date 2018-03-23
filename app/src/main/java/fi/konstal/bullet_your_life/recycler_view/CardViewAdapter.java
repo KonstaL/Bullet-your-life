@@ -20,25 +20,13 @@ import fi.konstal.bullet_your_life.task.Task;
 public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyViewHolder> {
         private List<DayCard> cardsList;
         private Context context;
+        private RecyclerViewClickListener rvClickListerner;
 
-        public class MyViewHolder extends RecyclerView.ViewHolder {
-            public TextView title, date;
-            public CustomLinearLayout cll;
-
-            public MyViewHolder(View view) {
-                super(view);
-
-                cll = view.findViewById(R.id.card_content_layout);
-                title = (TextView) view.findViewById(R.id.title);
-                date = (TextView) view.findViewById(R.id.card_date);
-            }
-        }
-
-
-        public CardViewAdapter(Context context, List<DayCard> cardsList) {
+        //CONSTRUCTOR
+        public CardViewAdapter(Context context, RecyclerViewClickListener rvl,  List<DayCard> cardsList) {
             this.context = context;
+            this.rvClickListerner = rvl;
             this.cardsList = cardsList;
-
         }
 
         @Override
@@ -46,7 +34,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.day_card, parent, false);
 
-            return new MyViewHolder(itemView);
+            return new MyViewHolder(itemView, rvClickListerner);
         }
 
         @Override
@@ -71,5 +59,28 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
         public int getItemCount() {
             return cardsList.size();
         }
+
+
+
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public TextView title, date;
+        public CustomLinearLayout cll;
+        private RecyclerViewClickListener rvListener;
+
+        public MyViewHolder(View view, RecyclerViewClickListener listener) {
+            super(view);
+
+            rvListener = listener;
+            cll = view.findViewById(R.id.card_content_layout);
+            title = view.findViewById(R.id.title);
+            date = view.findViewById(R.id.card_date);
+        }
+
+        @Override
+        public void onClick(View view) {
+            rvListener.onClick(view, getAdapterPosition());
+        }
     }
+}
 

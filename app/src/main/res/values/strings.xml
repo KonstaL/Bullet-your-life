@@ -1,10 +1,20 @@
 <resources>
     <string name="app_name">Bullet Your Life</string>
     <string name="section_weekly_header">Weekly logs</string>
-    <string name="filler_title">This is a title</string>
     <string name="login_title">Begin Bulleting Your Life</string>
     <string name="login_with">Login with</string>
     <string name="not_now">Not now</string>
     <string name="sign_with_google">Sign in with Google</string>
     <string name="login_background_image_text">Picture of a notebook</string>
+    <string name="example_title">This is a example title</string>
+    <string name="example_task">This is a example task</string>
+    <string name="example_event">This is a example event</string>
+    <string name="example_date">2017.12.11</string>
+    <string name="mon">Monday</string>
+    <string name="tue">Tuesday</string>
+    <string name="wed">Wednesday</string>
+    <string name="thu">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="sat">Saturday</string>
+    <string name="sun">Sunday</string>
 </resources>
