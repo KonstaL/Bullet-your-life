@@ -6,7 +6,7 @@
     android:elevation="9dp">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_2"
+        android:id="@+id/addPicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -19,7 +19,7 @@
         android:onClick="fabClick"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_1"
+        android:id="@+id/addTodo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -32,7 +32,7 @@
         android:onClick="fabClick"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_3"
+        android:id="@+id/addEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -46,7 +46,7 @@
         android:onClick="fabClick"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_4"
+        android:id="@+id/addText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

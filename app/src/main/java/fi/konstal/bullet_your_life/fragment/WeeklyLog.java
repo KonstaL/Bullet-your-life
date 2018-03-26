@@ -133,13 +133,13 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         recyclerView.setAdapter(cardAdapter);
 
 
-        /*recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(this, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
 
                         DayCard myTest = cardList.get(position);
 
-                        Intent intent = new Intent(getApplicationContext() , EditCardActivity.class);
+                        Intent intent = new Intent(getContext() , EditCardActivity.class);
                         intent.putExtra("dayCard", myTest);
 
                         startActivity(intent);
@@ -149,7 +149,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
                         // do whatever
                     }
                 })
-        );*/
+        );
 
 
         prepareCardData();

@@ -2,15 +2,20 @@ package fi.konstal.bullet_your_life.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.internal.BottomNavigationMenuView;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -54,9 +59,6 @@ public class WeeklyLogsActivity extends AppCompatActivity implements FragmentInt
 
         ViewPager pager = findViewById(R.id.viewpager);
         setupViewPager(pager);
-
-        Log.d("debug", "oncreate");
-
 
     }
 

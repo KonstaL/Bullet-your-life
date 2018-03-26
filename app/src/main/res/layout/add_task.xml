@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:paddingBottom="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ImageView
+        android:id="@+id/task_icon"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_add_circle_black_24dp"/>
+
+    <EditText
+        android:id="@+id/task_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/task_icon"
+        android:hint="Your task text"
+        android:layout_marginRight="20dp"
+        android:textSize="14sp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cancel_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/task_text"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/proceed_fab"
+        android:src="@drawable/ic_cross_white_24dp"
+        app:backgroundTint="@color/bright_red"
+        app:fabSize="mini" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/proceed_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/task_text"
+        android:layout_below="@+id/task_text"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_check_white_24dp"
+        app:backgroundTint="#0fff0f"
+        app:fabSize="mini" />
+
+</RelativeLayout>
