@@ -4,6 +4,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
 
 /**
@@ -11,25 +15,31 @@ import fi.konstal.bullet_your_life.fragment.WeeklyLog;
  */
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    private static int NUM_ITEMS = 3;
+    private List<Fragment> fragments;
+
+
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
+        fragments = new ArrayList<>();
+    }
+
+    public ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+        super(fm);
+        this.fragments = fragments;
+    }
+
+    public void addFragment(Fragment fr) {
+        fragments.add(fr);
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch(position) {
-            case 0: return WeeklyLog.newInstance("frament 1", "");
-
-        }
-
-
-        return null;
+        return fragments.get(position);
     }
 
     @Override
     public int getCount() {
-        return NUM_ITEMS;
+        return fragments.size();
     }
 }

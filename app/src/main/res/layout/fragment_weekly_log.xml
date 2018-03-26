@@ -17,7 +17,7 @@
         android:layout_height="41dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="@string/section_weekly_header"
+        android:text="@string/fragment_weekly_title"
         android:textSize="30sp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
