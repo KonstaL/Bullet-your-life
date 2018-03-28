@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
@@ -42,7 +43,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             DayCard dayCard = cardsList.get(position);
             holder.title.setText(dayCard.getTitle());
 
-            Task[] tasks = dayCard.getTasks();
+            List<Task> tasks = dayCard.getTasks();
             Log.d("shit", tasks.toString());
             for (Task task : tasks) {
                 TextView tv = new TextView(context);

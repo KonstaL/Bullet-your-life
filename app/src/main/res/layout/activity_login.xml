@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:noHistory="true"
     tools:context="fi.konstal.bullet_your_life.activities.LoginActivity">
 
     <ImageView
@@ -47,13 +48,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/no_sign_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:onClick="startMainActivity"
+
             android:shadowColor="@color/shadow_dark"
             android:shadowDx="0"
             android:shadowDy="2"
@@ -81,25 +82,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="229dp"
-            android:layout_height="57dp"
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button_google"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@color/transparent"
-            android:clipToPadding="false"
-            android:contentDescription="@string/sign_with_google"
-            android:elevation="6dp"
-            android:scaleType="centerInside"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:srcCompat="@drawable/btn_google_signin" />
-
-
+            />
 
 
     </android.support.constraint.ConstraintLayout>

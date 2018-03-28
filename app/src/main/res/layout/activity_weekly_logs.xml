@@ -8,7 +8,7 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="0dp"
-    tools:context="fi.konstal.bullet_your_life.activities.WeeklyLogsActivity">
+    tools:context="fi.konstal.bullet_your_life.activities.LogsActivity">
 
     <FrameLayout
         android:layout_width="match_parent"

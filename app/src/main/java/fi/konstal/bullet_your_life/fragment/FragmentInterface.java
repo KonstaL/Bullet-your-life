@@ -11,4 +11,5 @@ import fi.konstal.bullet_your_life.recycler_view.DayCard;
 public interface FragmentInterface {
 
     void onCardClicked(DayCard card);
+
 }

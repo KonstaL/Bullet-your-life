@@ -21,12 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.task.Task;
 
 public class EditCardActivity extends AppCompatActivity {
     private DayCard dayCard;
+    private int index;
     private CustomLinearLayout cardContentLayout;
 
     private List<FloatingActionButton> fabs;
@@ -43,6 +45,8 @@ public class EditCardActivity extends AppCompatActivity {
 
         this.fabs = new ArrayList<>();
         this.dayCard = (DayCard) getIntent().getSerializableExtra("dayCard");
+        this.index = getIntent().getIntExtra("index", -1);
+
 
 
 
@@ -170,17 +174,15 @@ public class EditCardActivity extends AppCompatActivity {
     }
 
     public void addTaskToView(View v, int iconRef) {
-
-
-
         View taskView = getLayoutInflater().inflate(R.layout.display_task, null);
 
         ImageView icon = taskView.findViewById(R.id.task_icon);
         icon.setImageResource(iconRef);
 
         TextView tv = taskView.findViewById(R.id.task_text);
-        EditText temp2 = v.findViewById(R.id.task_text);
-        tv.setText(temp2.getText());
+        EditText editText = v.findViewById(R.id.task_text);
+        String tempTxt = editText.getText().toString();
+        tv.setText(tempTxt);
 
         taskView.setOnClickListener((event)-> {
             Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
@@ -188,7 +190,21 @@ public class EditCardActivity extends AppCompatActivity {
 
         cardContentLayout.removeView(v);
         cardContentLayout.addView(taskView);
+        dayCard.getTasks().add(new Task(tempTxt, iconRef));
 
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent data = new Intent();
+        data.putExtra("DayCard", dayCard);
+        data.putExtra("index", index);
+        setResult(RESULT_OK, data);
+        finish();
+
+        super.onBackPressed();
     }
 
     public void removeTask(View v) {
@@ -200,4 +216,5 @@ public class EditCardActivity extends AppCompatActivity {
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
     }
+
 }
