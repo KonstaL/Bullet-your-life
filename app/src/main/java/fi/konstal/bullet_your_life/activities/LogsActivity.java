@@ -1,11 +1,15 @@
 package fi.konstal.bullet_your_life.activities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -26,6 +30,7 @@ import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.Task;
 
 public class LogsActivity extends AppCompatActivity implements FragmentInterface, EditCardInterface {
+    private SharedPreferences pref;
     private CardDataHandler cardDataHandler;
     private List<DayCard> cardList;
     private RecyclerView recyclerView;
@@ -42,6 +47,7 @@ public class LogsActivity extends AppCompatActivity implements FragmentInterface
         getSupportActionBar().hide();*/
         setContentView(R.layout.activity_weekly_logs);
 
+        pref = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         cardDataHandler = new CardDataHandler(this);
         cardList = cardDataHandler.getDayCardList();
 
@@ -55,6 +61,16 @@ public class LogsActivity extends AppCompatActivity implements FragmentInterface
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.collapsing_toolbar_items, menu);
         return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+      //
+        Boolean test = pref.getBoolean("no_auth", false);
+        Toast.makeText(this, test.toString() , Toast.LENGTH_SHORT).show();
+
     }
 
 

@@ -2,7 +2,10 @@ package fi.konstal.bullet_your_life.activities;
 
 import fi.konstal.bullet_your_life.R;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,18 +39,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER), new Scope(Scopes.DRIVE_FILE))
                 .requestEmail()
                 .build();
 
-                //.requestIdToken("938103609957-29fg50am9hhnejkg5gkk2psdru7lc06f.apps.googleusercontent.com")
 
-
-
-        // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         SignInButton googleSib = findViewById(R.id.sign_in_button_google);
@@ -55,7 +52,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         googleSib.setOnClickListener(this);
 
         findViewById(R.id.no_sign_in).setOnClickListener(this);
-
     }
 
     @Override
@@ -67,6 +63,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void startMainActivityNoAuth() {
+
+        SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putBoolean("no_auth", true);
+        editor.putString("google_id", null);
+        editor.commit();
+
         Intent intent = new Intent(this, LogsActivity.class);
         startActivity(intent);
     }
@@ -99,7 +102,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
@@ -110,11 +112,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            Log.d("error", "in try");
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
-            Log.d("error", "still going");
-            // Signed in successfully, show authenticated UI.
+            // Signed in successfully, save login ID and show authenticated UI.
+            saveLogin(account.getIdToken());
             startMainActivity(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -122,5 +123,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(this, "Authentication failed, code " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
             startMainActivity(null);
         }
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private void saveLogin(String id_token){
+
+        SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("google_id", id_token);
+        editor.putBoolean("no_auth", false);
+        editor.commit();
     }
 }
