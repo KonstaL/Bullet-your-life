@@ -42,7 +42,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="showPopup"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

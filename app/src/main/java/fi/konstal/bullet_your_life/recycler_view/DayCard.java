@@ -10,13 +10,11 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.data.DataConverter;
-import fi.konstal.bullet_your_life.task.Task;
+import fi.konstal.bullet_your_life.task.CardTask;
 
 
 /**
@@ -40,15 +38,15 @@ public class DayCard implements Serializable {
     String dateString;
 
     @TypeConverters(DataConverter.class)
-    @ColumnInfo(name = "tasks")
-    private List<Task> tasks;
+    @ColumnInfo(name = "cardTasks")
+    private List<CardTask> cardTasks;
 
-    public DayCard(String title, Date date, Task... tasks) {
+    public DayCard(String title, Date date, CardTask... cardTasks) {
 
         this.title = title;
         this.date = date;
-        this.tasks = new ArrayList<>();
-        this.tasks.addAll(Arrays.asList(tasks));
+        this.cardTasks = new ArrayList<>();
+        this.cardTasks.addAll(Arrays.asList(cardTasks));
 
 
 
@@ -57,11 +55,11 @@ public class DayCard implements Serializable {
     }
 
 
-    public DayCard(String title, String dateString, Task... tasks) {
+    public DayCard(String title, String dateString, CardTask... cardTasks) {
         this.title = title;
         this.dateString = dateString;
-        this.tasks = new ArrayList<>();
-        this.tasks.addAll(Arrays.asList(tasks));
+        this.cardTasks = new ArrayList<>();
+        this.cardTasks.addAll(Arrays.asList(cardTasks));
     }
 
     // Empty constructor for database actions
@@ -91,15 +89,15 @@ public class DayCard implements Serializable {
         this.date = date;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public List<CardTask> getCardTasks() {
+        return cardTasks;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setCardTasks(List<CardTask> cardTasks) {
+        this.cardTasks = cardTasks;
     }
-    public void addTasks(Task... tasks) {
-        this.tasks.addAll(Arrays.asList(tasks));
+    public void addTasks(CardTask... cardTasks) {
+        this.cardTasks.addAll(Arrays.asList(cardTasks));
     }
 
     public String getDateString() {

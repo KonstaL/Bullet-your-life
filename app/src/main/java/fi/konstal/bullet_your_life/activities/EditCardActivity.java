@@ -2,9 +2,10 @@ package fi.konstal.bullet_your_life.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.Metadata;
+import com.google.android.gms.drive.MetadataBuffer;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,24 +47,22 @@ import java.util.List;
 
 
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
-import fi.konstal.bullet_your_life.task.Task;
+import fi.konstal.bullet_your_life.task.CardTask;
 
-public class EditCardActivity extends AppCompatActivity {
+public class EditCardActivity extends BaseActivity {
+    private static final String TAG = "EditCardActivity";
+
     private DayCard dayCard;
     private int index;
     private CustomLinearLayout cardContentLayout;
 
+    private DriveClient driveClient;
+
     private List<FloatingActionButton> fabs;
     private FloatingActionButton mainFab;
 
- /*   Drive mDriveClient = Drive.getDriveClient(getApplicationContext(), googleSignInAccount);
-    // Build a drive resource client.
-    DrivemDriveResourceClient =
-            Drive.getDriveResourceClient(getApplicationContext(), googleSignInAccount);
-*/
 
     private final static int RESULT_LOAD_IMG = 10;
 
@@ -69,14 +90,14 @@ public class EditCardActivity extends AppCompatActivity {
             cardDate.setText(dayCard.getDateString());
 
 
-            for (Task task : dayCard.getTasks()) {
+            for (CardTask cardTask : dayCard.getCardTasks()) {
                 View taskView = getLayoutInflater().inflate(R.layout.display_task, null);
                 ImageView icon = taskView.findViewById(R.id.task_icon);
-                icon.setImageResource(task.getTaskIconRef());
+                icon.setImageResource(cardTask.getTaskIconRef());
 
 
                 TextView tv = taskView.findViewById(R.id.task_text);
-                tv.setText(task.getText());
+                tv.setText(cardTask.getText());
 
                 taskView.setOnClickListener((event)-> {
                     Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
@@ -199,7 +220,7 @@ public class EditCardActivity extends AppCompatActivity {
 
         cardContentLayout.removeView(v);
         cardContentLayout.addView(taskView);
-        dayCard.getTasks().add(new Task(tempTxt, iconRef));
+        dayCard.getCardTasks().add(new CardTask(tempTxt, iconRef));
 
 
 
@@ -232,8 +253,9 @@ public class EditCardActivity extends AppCompatActivity {
         if( requestCode == RESULT_LOAD_IMG) {
             if(resultCode == RESULT_OK) {
                 Toast.makeText(this, "imageLoad OK", Toast.LENGTH_SHORT).show();
+                Uri imageUri = data.getData();
 
-
+                createFileInAppFolder(imageUri);
                /* mDriveClient = Drive.getDriveClient(getApplicationContext(), googleSignInAccount);
                 // Build a drive resource client.
                 mDriveResourceClient =
@@ -242,4 +264,132 @@ public class EditCardActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onDriveClientReady() {
+        this.driveClient = getDriveClient();
+    }
+
+    private void createFileInAppFolder(Uri imgUri) {
+
+
+        final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
+        final Task<DriveContents> createContentsTask = getDriveResourceClient().createContents();
+        Tasks.whenAll(appFolderTask, createContentsTask)
+                .continueWithTask(new Continuation<Void, Task<DriveFile>>() {
+                    @Override
+                    public Task<DriveFile> then(@NonNull Task<Void> task) throws Exception {
+                        DriveFolder parent = appFolderTask.getResult();
+                        DriveContents contents = createContentsTask.getResult();
+                        int cursor;
+
+                        try (OutputStream os = contents.getOutputStream();
+                        InputStream is = getContentResolver().openInputStream(imgUri)) {
+
+                            while((cursor = is.read())!=-1){
+                                os.write(cursor);
+                            }
+                        }
+
+                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                                .setTitle("new img")
+                                .setMimeType("image/jpeg")
+                                .build();
+
+
+                        return getDriveResourceClient().createFile(parent, changeSet, contents);
+                    }
+                })
+                .addOnSuccessListener(this,
+                            new OnSuccessListener<DriveFile>() {
+                                @Override
+                                public void onSuccess(DriveFile driveFile) {
+                                    showMessage("file created" +
+                                            driveFile.getDriveId().encodeToString());
+                                    // finish();
+
+                                    temp();
+
+
+
+
+                                }
+                            })
+                .addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Unable to create file", e);
+                        showMessage("error creating file");
+                       //finish();
+                    }
+                });
+    }
+
+
+    public void temp() {
+
+
+            final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
+
+
+            Tasks.whenAll(appFolderTask)
+                    .continueWith(new Continuation<Void, Task<MetadataBuffer>>() {
+                        @Override
+                        public Task<MetadataBuffer> then(@NonNull Task<Void> task) throws Exception {
+                            DriveFolder driveFolder = appFolderTask.getResult();
+
+
+                            return getDriveResourceClient().listChildren(driveFolder);
+                        }
+                    })
+                    .addOnSuccessListener(this, (Task<MetadataBuffer> metadataBufferTask) -> {
+                        Tasks.whenAll(metadataBufferTask)
+                                .continueWith((Task<Void> task) -> {
+                                    showMessage("for loopin edes");
+
+                                    MetadataBuffer metadataBuffer =  metadataBufferTask.getResult();
+
+
+                                    Log.i(TAG, "Ennen looppia");
+                                    Log.i(TAG, "metadata luku " + metadataBuffer.getCount());
+                                    Log.i(TAG, "olio " + metadataBuffer.get(0));
+                                    Log.i(TAG, "oliotitle " + metadataBuffer.get(0).getTitle());
+
+
+
+
+                                    for (int i = 0; i < metadataBuffer.getCount(); i++) {
+                                        Log.i(TAG, metadataBuffer.get(i).getTitle());
+                                        Log.i(TAG, metadataBuffer.get(i).getDriveId().toString());
+                                    }
+                                    Log.i(TAG, "jälkeen  looppia");
+
+                                    metadataBuffer.release();
+                                    metadataBufferTask.getResult().release();
+
+
+                                    return metadataBuffer;
+                                });
+
+
+
+
+                        // finish();
+                    })
+                    .addOnFailureListener(this, (exception) -> {
+                        Log.e(TAG, "Unable read metadata", exception);
+                        showMessage("error reading metadata");
+                        //finish();
+
+                    });
+
+
+    }
+
 }
+
+
+
+
+
+

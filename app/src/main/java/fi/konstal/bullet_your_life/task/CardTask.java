@@ -6,13 +6,13 @@ import java.io.Serializable;
  * Created by konka on 22.3.2018.
  */
 
-public class Task implements Serializable {
+public class CardTask implements Serializable {
     private String text;
     private boolean done;
     private int taskIconRef;
 
 
-    public Task(String text, int taskIconRef) {
+    public CardTask(String text, int taskIconRef) {
         this.text = text;
         this.done = false;
         this.taskIconRef = taskIconRef;

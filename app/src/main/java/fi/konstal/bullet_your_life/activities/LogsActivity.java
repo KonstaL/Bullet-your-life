@@ -5,10 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.gms.drive.DriveClient;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,7 +30,7 @@ import fi.konstal.bullet_your_life.fragment.MonthlyLog;
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.task.Task;
+import fi.konstal.bullet_your_life.task.CardTask;
 
 public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
 
@@ -33,6 +38,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     private List<DayCard> cardList;
     private RecyclerView recyclerView;
     private Boolean isAuthenticated;
+    private DriveClient driveClient;
 
 
 
@@ -105,8 +111,8 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         // add 7 days of cards and examples
         for(int i = 0; i < 7; i++) {
             dt = c.getTime();
-            cardList.add(new DayCard(Helper.weekdayString(this, dt), dt,  new Task(getString(R.string.example_task), R.drawable.ic_task_12dp),
-                    new Task(getString(R.string.example_event), R.drawable.ic_hollow_circle_16dp)));
+            cardList.add(new DayCard(Helper.weekdayString(this, dt), dt,  new CardTask(getString(R.string.example_task), R.drawable.ic_task_12dp),
+                    new CardTask(getString(R.string.example_event), R.drawable.ic_hollow_circle_16dp)));
 
             //move to the next day
             c.add(Calendar.DATE, 1);
@@ -115,12 +121,13 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
 
     @Override
-    public void addTaskToCard(int cardIndex, Task... task) {
-        cardList.get(cardIndex).getTasks().addAll(Arrays.asList(task));
+    public void addTaskToCard(int cardIndex, CardTask... cardTask) {
+        cardList.get(cardIndex).getCardTasks().addAll(Arrays.asList(cardTask));
     }
 
     @Override
     protected void onDriveClientReady() {
+        this.driveClient = super.getDriveClient();
         Toast.makeText(this, "logs on drive ready", Toast.LENGTH_SHORT).show();
     }
 
@@ -135,6 +142,32 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
     }
 */
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_popup, popup.getMenu());
+        popup.show();
+        popup.setOnMenuItemClickListener((item -> {
+            SharedPreferences preferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            switch (item.getItemId()) {
+                case R.id.popup_logout:
+                    editor.putBoolean("init_done", false);
+                    editor.commit();
+                    break;
+                case R.id.popup_login:
+
+                    editor.putBoolean("init_done", false);
+                    editor.putBoolean("is_auth", false);
+                    editor.commit();
+                    break;
+            }
+
+            return false;
+        }));
+    }
 
 
 }

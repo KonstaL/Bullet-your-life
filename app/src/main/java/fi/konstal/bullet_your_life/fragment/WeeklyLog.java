@@ -3,16 +3,15 @@ package fi.konstal.bullet_your_life.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -20,12 +19,8 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardDataHandler;
@@ -33,7 +28,6 @@ import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerViewClickListener;
-import fi.konstal.bullet_your_life.task.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -160,7 +154,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
                 DayCard modifiedCard = (DayCard) data.getSerializableExtra("DayCard");
 
 
-                cardList.get(index).setTasks(modifiedCard.getTasks());
+                cardList.get(index).setCardTasks(modifiedCard.getCardTasks());
 
                 Toast.makeText(getContext(), data.toString(), Toast.LENGTH_SHORT).show();
                 recyclerView.getRecycledViewPool().clear();
@@ -188,5 +182,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     startActivityForResult(
                   new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
 */
+
 
 }

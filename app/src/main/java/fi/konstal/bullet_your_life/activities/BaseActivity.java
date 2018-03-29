@@ -29,9 +29,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import fi.konstal.bullet_your_life.R;
 
@@ -133,7 +131,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * Prompts the user to select a text file using OpenFileActivity.
      *
-     * @return Task that resolves with the selected item's ID.
+     * @return CardTask that resolves with the selected item's ID.
      */
     protected Task<DriveId> pickTextFile() {
         OpenFileActivityOptions openOptions =
@@ -147,7 +145,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * Prompts the user to select a folder using OpenFileActivity.
      *
-     * @return Task that resolves with the selected item's ID.
+     * @return CardTask that resolves with the selected item's ID.
      */
     protected Task<DriveId> pickFolder() {
         OpenFileActivityOptions openOptions =
@@ -163,7 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * Prompts the user to select a folder using OpenFileActivity.
      *
      * @param openOptions Filter that should be applied to the selection
-     * @return Task that resolves with the selected item's ID.
+     * @return CardTask that resolves with the selected item's ID.
      */
     private Task<DriveId> pickItem(OpenFileActivityOptions openOptions) {
         mOpenItemTaskSource = new TaskCompletionSource<>();

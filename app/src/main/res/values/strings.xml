@@ -9,7 +9,7 @@
     <string name="sign_with_google">Sign in with Google</string>
     <string name="login_background_image_text">Picture of a notebook</string>
     <string name="example_title">This is a example title</string>
-    <string name="example_task">This is a example task</string>
+    <string name="example_task">This is a example cardTask</string>
     <string name="example_event">This is a example event</string>
     <string name="example_date">2017.12.11</string>
     <string name="mon">Monday</string>

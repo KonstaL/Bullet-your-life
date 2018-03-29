@@ -8,11 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.task.Task;
+import fi.konstal.bullet_your_life.task.CardTask;
 
 /**
  * Created by konka on 14.3.2018.
@@ -43,14 +42,14 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             DayCard dayCard = cardsList.get(position);
             holder.title.setText(dayCard.getTitle());
 
-            List<Task> tasks = dayCard.getTasks();
-            Log.d("shit", tasks.toString());
-            for (Task task : tasks) {
+            List<CardTask> cardTasks = dayCard.getCardTasks();
+            Log.d("shit", cardTasks.toString());
+            for (CardTask cardTask : cardTasks) {
                 TextView tv = new TextView(context);
                 tv.setPadding(0, 0, 0, 0);
-                tv.setCompoundDrawablesWithIntrinsicBounds(task.getTaskIconRef(), 0, 0, 0);
+                tv.setCompoundDrawablesWithIntrinsicBounds(cardTask.getTaskIconRef(), 0, 0, 0);
                 tv.setCompoundDrawablePadding(20);
-                tv.setText(task.getText());
+                tv.setText(cardTask.getText());
                 holder.cll.addView(tv);
             }
             holder.date.setText(dayCard.getDateString());

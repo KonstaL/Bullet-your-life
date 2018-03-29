@@ -20,6 +20,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_login);
 
         findViewById(R.id.no_sign_in).setOnClickListener(this);
+        findViewById(R.id.sign_in_button_google).setOnClickListener(this);
     }
 
     @Override

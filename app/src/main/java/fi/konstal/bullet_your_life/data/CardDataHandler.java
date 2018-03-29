@@ -25,7 +25,7 @@ public class CardDataHandler {
 
     public CardDataHandler(Context context) {
         this.context = context;
-        db = Room.databaseBuilder(context, AppDatabase.class, "database-appointments").build();
+        db = Room.databaseBuilder(context, AppDatabase.class, "database-daycards").build();
         cards = new ArrayList<>();
         lBroadcast = LocalBroadcastManager.getInstance(context);
         getNewData();
