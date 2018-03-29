@@ -1,13 +1,12 @@
 package fi.konstal.bullet_your_life.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -24,16 +23,17 @@ import fi.konstal.bullet_your_life.fragment.FragmentInterface;
 import fi.konstal.bullet_your_life.fragment.FutureLog;
 import fi.konstal.bullet_your_life.fragment.MonthlyLog;
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
-import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.Task;
 
-public class LogsActivity extends AppCompatActivity implements FragmentInterface, EditCardInterface {
-    private SharedPreferences pref;
+public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
+
     private CardDataHandler cardDataHandler;
     private List<DayCard> cardList;
     private RecyclerView recyclerView;
+    private Boolean isAuthenticated;
+
 
 
     private FutureLog futureLogFragment;
@@ -47,7 +47,19 @@ public class LogsActivity extends AppCompatActivity implements FragmentInterface
         getSupportActionBar().hide();*/
         setContentView(R.layout.activity_weekly_logs);
 
-        pref = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+
+
+        SharedPreferences prefs = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+        // If the the app is has not been started before
+        if(!prefs.getBoolean("init_done", false)) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+
+        isAuthenticated = prefs.getBoolean("is_auth", false);
+        Toast.makeText(this, "is auth: " + isAuthenticated , Toast.LENGTH_SHORT).show();
+
+
         cardDataHandler = new CardDataHandler(this);
         cardList = cardDataHandler.getDayCardList();
 
@@ -58,22 +70,15 @@ public class LogsActivity extends AppCompatActivity implements FragmentInterface
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.collapsing_toolbar_items, menu);
         return true;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-      //
-        Boolean test = pref.getBoolean("no_auth", false);
-        Toast.makeText(this, test.toString() , Toast.LENGTH_SHORT).show();
-
-    }
-
-
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -113,4 +118,23 @@ public class LogsActivity extends AppCompatActivity implements FragmentInterface
     public void addTaskToCard(int cardIndex, Task... task) {
         cardList.get(cardIndex).getTasks().addAll(Arrays.asList(task));
     }
+
+    @Override
+    protected void onDriveClientReady() {
+        Toast.makeText(this, "logs on drive ready", Toast.LENGTH_SHORT).show();
+    }
+
+ /*   public void tempTest(View v) {
+        DriveClient mDriveClient = Drive.getDriveClient(getApplicationContext(), gsa);
+        // Build a drive resource client.
+        DriveResourceClient mDriveResourceClient =
+                Drive.getDriveResourceClient(getApplicationContext(), gsa);
+        // Start camera.
+        startActivityForResult(
+                new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
+
+    }
+*/
+
+
 }

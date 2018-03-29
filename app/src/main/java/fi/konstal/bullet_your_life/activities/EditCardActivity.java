@@ -20,6 +20,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
@@ -33,6 +36,12 @@ public class EditCardActivity extends AppCompatActivity {
 
     private List<FloatingActionButton> fabs;
     private FloatingActionButton mainFab;
+
+ /*   Drive mDriveClient = Drive.getDriveClient(getApplicationContext(), googleSignInAccount);
+    // Build a drive resource client.
+    DrivemDriveResourceClient =
+            Drive.getDriveResourceClient(getApplicationContext(), googleSignInAccount);
+*/
 
     private final static int RESULT_LOAD_IMG = 10;
 
@@ -217,4 +226,20 @@ public class EditCardActivity extends AppCompatActivity {
         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if( requestCode == RESULT_LOAD_IMG) {
+            if(resultCode == RESULT_OK) {
+                Toast.makeText(this, "imageLoad OK", Toast.LENGTH_SHORT).show();
+
+
+               /* mDriveClient = Drive.getDriveClient(getApplicationContext(), googleSignInAccount);
+                // Build a drive resource client.
+                mDriveResourceClient =
+                        Drive.getDriveResourceClient(getApplicationContext(), googleSignInAccount);*/
+
+            }
+        }
+    }
 }

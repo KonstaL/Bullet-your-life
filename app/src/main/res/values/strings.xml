@@ -20,6 +20,8 @@
     <string name="sat">Saturday</string>
     <string name="sun">Sunday</string>
     <string name="server_client_id">580276684131-bc63staqgnfmjld8c29g7mvbimor79nv.apps.googleusercontent.com</string>
+    <string name="drive_select_folder">bullet your life folder select</string>
+    <string name="drive_select_file">bullet your life file select</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

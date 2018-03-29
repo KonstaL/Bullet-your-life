@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -176,5 +179,14 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         fragmentInterface.onCardClicked(card);
     }
 
+
+    /*mDriveClient = Drive.getDriveClient(getApplicationContext(), googleSignInAccount);
+    // Build a drive resource client.
+    mDriveResourceClient =
+            Drive.getDriveResourceClient(getApplicationContext(), googleSignInAccount);
+    // Start camera.
+    startActivityForResult(
+                  new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
+*/
 
 }
