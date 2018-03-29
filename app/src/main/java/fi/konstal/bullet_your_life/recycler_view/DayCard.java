@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.data.DataConverter;
+import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.task.CardTask;
 
 
@@ -38,15 +39,15 @@ public class DayCard implements Serializable {
     String dateString;
 
     @TypeConverters(DataConverter.class)
-    @ColumnInfo(name = "cardTasks")
-    private List<CardTask> cardTasks;
+    @ColumnInfo(name = "cardItems")
+    private List<CardItem> cardItems;
 
-    public DayCard(String title, Date date, CardTask... cardTasks) {
+    public DayCard(String title, Date date, CardItem... cardItems) {
 
         this.title = title;
         this.date = date;
-        this.cardTasks = new ArrayList<>();
-        this.cardTasks.addAll(Arrays.asList(cardTasks));
+        this.cardItems = new ArrayList<>();
+        this.cardItems.addAll(Arrays.asList(cardItems));
 
 
 
@@ -55,11 +56,11 @@ public class DayCard implements Serializable {
     }
 
 
-    public DayCard(String title, String dateString, CardTask... cardTasks) {
+    public DayCard(String title, String dateString, CardTask... cardItems) {
         this.title = title;
         this.dateString = dateString;
-        this.cardTasks = new ArrayList<>();
-        this.cardTasks.addAll(Arrays.asList(cardTasks));
+        this.cardItems = new ArrayList<>();
+        this.cardItems.addAll(Arrays.asList(cardItems));
     }
 
     // Empty constructor for database actions
@@ -89,15 +90,15 @@ public class DayCard implements Serializable {
         this.date = date;
     }
 
-    public List<CardTask> getCardTasks() {
-        return cardTasks;
+    public List<CardItem> getCardItems() {
+        return cardItems;
     }
 
-    public void setCardTasks(List<CardTask> cardTasks) {
-        this.cardTasks = cardTasks;
+    public void setCardItems(List<CardItem> cardItems) {
+        this.cardItems = cardItems;
     }
-    public void addTasks(CardTask... cardTasks) {
-        this.cardTasks.addAll(Arrays.asList(cardTasks));
+    public void addCardItems(CardItem... cardItems) {
+        this.cardItems.addAll(Arrays.asList(cardItems));
     }
 
     public String getDateString() {

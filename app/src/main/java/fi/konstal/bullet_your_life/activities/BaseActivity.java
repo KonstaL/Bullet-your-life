@@ -194,7 +194,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return mDriveClient;
     }
 
-    protected DriveResourceClient getDriveResourceClient() {
+    public DriveResourceClient getDriveResourceClient() {
         return mDriveResourceClient;
     }
 }

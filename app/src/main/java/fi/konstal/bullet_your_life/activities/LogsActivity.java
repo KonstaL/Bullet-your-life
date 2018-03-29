@@ -122,7 +122,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
     @Override
     public void addTaskToCard(int cardIndex, CardTask... cardTask) {
-        cardList.get(cardIndex).getCardTasks().addAll(Arrays.asList(cardTask));
+        cardList.get(cardIndex).getCardItems().addAll(Arrays.asList(cardTask));
     }
 
     @Override

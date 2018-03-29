@@ -9,32 +9,32 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.task.CardTask;
+import fi.konstal.bullet_your_life.task.CardItem;
 
 
 public class DataConverter implements Serializable {
 
     @TypeConverter // note this annotation
-    public String fromTaskList(List<CardTask> cardTaskList) {
-        if (cardTaskList == null) {
+    public String fromTaskList(List<CardItem> cardItemList) {
+        if (cardItemList == null) {
             return (null);
         }
         Gson gson = new Gson();
-        Type type = new TypeToken<List<CardTask>>() {
+        Type type = new TypeToken<List<CardItem>>() {
         }.getType();
-        String json = gson.toJson(cardTaskList, type);
+        String json = gson.toJson(cardItemList, type);
         return json;
     }
 
     @TypeConverter // note this annotation
-    public List<CardTask> toTaskList(String tasksListString) {
-        if (tasksListString == null) {
+    public List<CardItem> toTaskList(String itemListString) {
+        if (itemListString == null) {
             return (null);
         }
         Gson gson = new Gson();
-        Type type = new TypeToken<List<CardTask>>() {
+        Type type = new TypeToken<List<CardItem>>() {
         }.getType();
-        List<CardTask> cardTaskList = gson.fromJson(tasksListString, type);
+        List<CardItem> cardTaskList = gson.fromJson(itemListString, type);
         return cardTaskList;
     }
 

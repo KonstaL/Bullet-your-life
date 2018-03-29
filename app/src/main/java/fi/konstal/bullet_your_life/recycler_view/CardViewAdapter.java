@@ -11,7 +11,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.task.CardTask;
+import fi.konstal.bullet_your_life.task.CardItem;
+
 
 /**
  * Created by konka on 14.3.2018.
@@ -22,7 +23,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
         private Context context;
         private RecyclerViewClickListener rvClickListerner;
 
-        //CONSTRUCTOR
+
         public CardViewAdapter(Context context, RecyclerViewClickListener rvl,  List<DayCard> cardsList) {
             this.context = context;
             this.rvClickListerner = rvl;
@@ -42,15 +43,10 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             DayCard dayCard = cardsList.get(position);
             holder.title.setText(dayCard.getTitle());
 
-            List<CardTask> cardTasks = dayCard.getCardTasks();
-            Log.d("shit", cardTasks.toString());
-            for (CardTask cardTask : cardTasks) {
-                TextView tv = new TextView(context);
-                tv.setPadding(0, 0, 0, 0);
-                tv.setCompoundDrawablesWithIntrinsicBounds(cardTask.getTaskIconRef(), 0, 0, 0);
-                tv.setCompoundDrawablePadding(20);
-                tv.setText(cardTask.getText());
-                holder.cll.addView(tv);
+            List<CardItem> cardItems = dayCard.getCardItems();
+            Log.d("shit", cardItems.toString());
+            for (CardItem item : cardItems) {
+                item.buildView(context, holder.cll, null);
             }
             holder.date.setText(dayCard.getDateString());
         }
@@ -59,7 +55,6 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
         public int getItemCount() {
             return cardsList.size();
         }
-
 
 
 

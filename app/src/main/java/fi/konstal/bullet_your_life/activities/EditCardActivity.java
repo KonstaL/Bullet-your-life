@@ -2,6 +2,8 @@ package fi.konstal.bullet_your_life.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -18,28 +20,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
-import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +43,8 @@ import java.util.List;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.task.CardImage;
+import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.task.CardTask;
 
 public class EditCardActivity extends BaseActivity {
@@ -78,8 +74,6 @@ public class EditCardActivity extends BaseActivity {
         this.index = getIntent().getIntExtra("index", -1);
 
 
-
-
            /* Init card */
         cardContentLayout = findViewById(R.id.card_content_layout);
         TextView cardTitle = findViewById(R.id.title);
@@ -89,27 +83,15 @@ public class EditCardActivity extends BaseActivity {
             cardTitle.setText(dayCard.getTitle());
             cardDate.setText(dayCard.getDateString());
 
-
-            for (CardTask cardTask : dayCard.getCardTasks()) {
-                View taskView = getLayoutInflater().inflate(R.layout.display_task, null);
-                ImageView icon = taskView.findViewById(R.id.task_icon);
-                icon.setImageResource(cardTask.getTaskIconRef());
-
-
-                TextView tv = taskView.findViewById(R.id.task_text);
-                tv.setText(cardTask.getText());
-
-                taskView.setOnClickListener((event)-> {
+            for (CardItem cardItem : dayCard.getCardItems()) {
+                cardItem.buildView(this, cardContentLayout, (event)-> {
                     Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
                 });
-
-                cardContentLayout.addView(taskView);
             }
+
         } else {
             cardTitle.setText("errors for everyone!");
         }
-
-
 
 
 
@@ -146,8 +128,6 @@ public class EditCardActivity extends BaseActivity {
                 }
             }
         });
-
-
     }
 
     public void fabClick(View v) {
@@ -166,19 +146,16 @@ public class EditCardActivity extends BaseActivity {
             case R.id.addText:
                 addTask(R.drawable.ic_line_black_24dp);
                 break;
-
         }
-
     }
 
 
-
-    public void addTask(int fabRef) {
+    public void addTask(int drawableRef) {
         mainFab.callOnClick();
         View addTaskView = getLayoutInflater().inflate(R.layout.add_task, null);
 
         ImageView icon = addTaskView.findViewById(R.id.task_icon);
-        icon.setImageResource(fabRef);
+        icon.setImageResource(drawableRef);
 
         EditText textField = addTaskView.findViewById(R.id.task_text);
         textField.requestFocus();
@@ -191,39 +168,33 @@ public class EditCardActivity extends BaseActivity {
         FloatingActionButton proceedFab = addTaskView.findViewById(R.id.proceed_fab);
 
         cancelFab.setOnClickListener((event)-> {
-            removeTask(addTaskView);
-
+            removeView(addTaskView);
         });
 
         proceedFab.setOnClickListener((event)-> {
-            addTaskToView(addTaskView, fabRef);
+            CardItem cardItem = new CardTask(textField.getText().toString(), drawableRef);
+
+            removeView(addTaskView);
+            addItemData(cardItem);
+            addCardItemView(cardItem);
 
         });
 
         cardContentLayout.addView(addTaskView);
     }
 
-    public void addTaskToView(View v, int iconRef) {
-        View taskView = getLayoutInflater().inflate(R.layout.display_task, null);
+    public void addItemData(CardItem cardItem) {
+        this.dayCard.addCardItems(cardItem);
+    }
 
-        ImageView icon = taskView.findViewById(R.id.task_icon);
-        icon.setImageResource(iconRef);
+    public void addCardItemView(CardItem cardItem) {
+        cardItem.buildView(this, cardContentLayout, null);
+    }
 
-        TextView tv = taskView.findViewById(R.id.task_text);
-        EditText editText = v.findViewById(R.id.task_text);
-        String tempTxt = editText.getText().toString();
-        tv.setText(tempTxt);
-
-        taskView.setOnClickListener((event)-> {
-            Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
-        });
-
+    public void removeView(View v) {
         cardContentLayout.removeView(v);
-        cardContentLayout.addView(taskView);
-        dayCard.getCardTasks().add(new CardTask(tempTxt, iconRef));
-
-
-
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     @Override
@@ -233,12 +204,7 @@ public class EditCardActivity extends BaseActivity {
         data.putExtra("index", index);
         setResult(RESULT_OK, data);
         finish();
-
         super.onBackPressed();
-    }
-
-    public void removeTask(View v) {
-        cardContentLayout.removeView(v);
     }
 
     public void getImageIntent() {
@@ -247,48 +213,33 @@ public class EditCardActivity extends BaseActivity {
         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if( requestCode == RESULT_LOAD_IMG) {
             if(resultCode == RESULT_OK) {
-                Toast.makeText(this, "imageLoad OK", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "ImageIntent OK", Toast.LENGTH_SHORT).show();
                 Uri imageUri = data.getData();
 
                 createFileInAppFolder(imageUri);
-               /* mDriveClient = Drive.getDriveClient(getApplicationContext(), googleSignInAccount);
-                // Build a drive resource client.
-                mDriveResourceClient =
-                        Drive.getDriveResourceClient(getApplicationContext(), googleSignInAccount);*/
-
             }
         }
     }
 
-    @Override
-    protected void onDriveClientReady() {
-        this.driveClient = getDriveClient();
-    }
-
     private void createFileInAppFolder(Uri imgUri) {
-
-
         final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
         final Task<DriveContents> createContentsTask = getDriveResourceClient().createContents();
-        Tasks.whenAll(appFolderTask, createContentsTask)
-                .continueWithTask(new Continuation<Void, Task<DriveFile>>() {
-                    @Override
-                    public Task<DriveFile> then(@NonNull Task<Void> task) throws Exception {
-                        DriveFolder parent = appFolderTask.getResult();
-                        DriveContents contents = createContentsTask.getResult();
-                        int cursor;
 
-                        try (OutputStream os = contents.getOutputStream();
+        Tasks.whenAll(appFolderTask, createContentsTask) //when both tasks are ready
+                .continueWithTask(task -> {
+                    DriveFolder parent = appFolderTask.getResult();
+                    DriveContents contents = createContentsTask.getResult();
+                    int cursor;
+
+                    try (OutputStream os = contents.getOutputStream();
                         InputStream is = getContentResolver().openInputStream(imgUri)) {
 
-                            while((cursor = is.read())!=-1){
-                                os.write(cursor);
-                            }
+                        while((cursor = is.read())!=-1){
+                            os.write(cursor);
                         }
 
                         MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
@@ -296,41 +247,31 @@ public class EditCardActivity extends BaseActivity {
                                 .setMimeType("image/jpeg")
                                 .build();
 
-
                         return getDriveResourceClient().createFile(parent, changeSet, contents);
+
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                        return null;
                     }
                 })
-                .addOnSuccessListener(this,
-                            new OnSuccessListener<DriveFile>() {
-                                @Override
-                                public void onSuccess(DriveFile driveFile) {
-                                    showMessage("file created" +
-                                            driveFile.getDriveId().encodeToString());
-                                    // finish();
-
-                                    temp();
-
-
-
-
-                                }
-                            })
-                .addOnFailureListener(this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "Unable to create file", e);
-                        showMessage("error creating file");
-                       //finish();
-                    }
-                });
+                .addOnSuccessListener(this, driveFile -> {
+                            showMessage("file saved");
+                            CardItem cardItem = new CardImage(driveFile.getDriveId());
+                            addItemData(cardItem);
+                            //add reference to persistant storage
+                            addCardItemView(cardItem);
+                            //temp();
+                })
+                .addOnFailureListener(this, e -> {
+                    Log.e(TAG, "Unable to create file", e);
+                    showMessage("error creating file");
+            });
     }
 
 
     public void temp() {
 
-
             final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
-
 
             Tasks.whenAll(appFolderTask)
                     .continueWith(new Continuation<Void, Task<MetadataBuffer>>() {
@@ -350,29 +291,31 @@ public class EditCardActivity extends BaseActivity {
                                     MetadataBuffer metadataBuffer =  metadataBufferTask.getResult();
 
 
-                                    Log.i(TAG, "Ennen looppia");
-                                    Log.i(TAG, "metadata luku " + metadataBuffer.getCount());
-                                    Log.i(TAG, "olio " + metadataBuffer.get(0));
-                                    Log.i(TAG, "oliotitle " + metadataBuffer.get(0).getTitle());
+                                    DriveFile driveFile = metadataBuffer.get(6).getDriveId().asDriveFile();
+                                    Task<DriveContents> file = getDriveResourceClient().openFile(driveFile, DriveFile.MODE_READ_ONLY);
 
+                                    Tasks.whenAll(file)
+                                           .addOnSuccessListener((success) -> {
+                                               DriveContents imgFile = file.getResult();
 
+                                               Bitmap img;
+                                               try(InputStream is = imgFile.getInputStream()) {
+                                                   img = BitmapFactory.decodeStream(is);
 
-
-                                    for (int i = 0; i < metadataBuffer.getCount(); i++) {
-                                        Log.i(TAG, metadataBuffer.get(i).getTitle());
-                                        Log.i(TAG, metadataBuffer.get(i).getDriveId().toString());
-                                    }
-                                    Log.i(TAG, "jälkeen  looppia");
+                                                   View v = getLayoutInflater().inflate(R.layout.partial_card_item_image, null);
+                                                   ImageView imgView = v.findViewById(R.id.card_item_image);
+                                                   imgView.setImageBitmap(img);
+                                                   cardContentLayout.addView(v);
+                                               } catch (Exception e) {
+                                                    Log.d(TAG, e.toString());
+                                                   Toast.makeText(this, "Image adding failed", Toast.LENGTH_SHORT).show();
+                                               }
+                                           });
 
                                     metadataBuffer.release();
-                                    metadataBufferTask.getResult().release();
-
 
                                     return metadataBuffer;
                                 });
-
-
-
 
                         // finish();
                     })
@@ -382,14 +325,11 @@ public class EditCardActivity extends BaseActivity {
                         //finish();
 
                     });
+    }
 
-
+    @Override
+    protected void onDriveClientReady() {
+        this.driveClient = getDriveClient();
     }
 
 }
-
-
-
-
-
-
