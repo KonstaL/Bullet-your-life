@@ -220,6 +220,7 @@ public class EditCardActivity extends BaseActivity {
                 Toast.makeText(this, "ImageIntent OK", Toast.LENGTH_SHORT).show();
                 Uri imageUri = data.getData();
 
+
                 createFileInAppFolder(imageUri);
             }
         }

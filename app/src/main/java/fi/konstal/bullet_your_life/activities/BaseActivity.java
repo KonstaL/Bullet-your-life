@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,6 +32,8 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.konstal.bullet_your_life.AsyncDriveDownload;
+import fi.konstal.bullet_your_life.DownloadReceiver;
 import fi.konstal.bullet_your_life.R;
 
 /**
@@ -128,54 +131,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         onDriveClientReady();
     }
 
-    /**
-     * Prompts the user to select a text file using OpenFileActivity.
-     *
-     * @return CardTask that resolves with the selected item's ID.
-     */
-    protected Task<DriveId> pickTextFile() {
-        OpenFileActivityOptions openOptions =
-                new OpenFileActivityOptions.Builder()
-                        .setSelectionFilter(Filters.eq(SearchableField.MIME_TYPE, "text/plain"))
-                        .setActivityTitle(getString(R.string.drive_select_file))
-                        .build();
-        return pickItem(openOptions);
+
+    public void downloadDriveImage(DriveId driveId, DownloadReceiver<Bitmap> downloadReceiver) {
+        new AsyncDriveDownload(driveId, mDriveResourceClient, downloadReceiver).execute();
     }
 
-    /**
-     * Prompts the user to select a folder using OpenFileActivity.
-     *
-     * @return CardTask that resolves with the selected item's ID.
-     */
-    protected Task<DriveId> pickFolder() {
-        OpenFileActivityOptions openOptions =
-                new OpenFileActivityOptions.Builder()
-                        .setSelectionFilter(
-                                Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE))
-                        .setActivityTitle(getString(R.string.drive_select_folder))
-                        .build();
-        return pickItem(openOptions);
-    }
-
-    /**
-     * Prompts the user to select a folder using OpenFileActivity.
-     *
-     * @param openOptions Filter that should be applied to the selection
-     * @return CardTask that resolves with the selected item's ID.
-     */
-    private Task<DriveId> pickItem(OpenFileActivityOptions openOptions) {
-        mOpenItemTaskSource = new TaskCompletionSource<>();
-        getDriveClient()
-                .newOpenFileActivityIntentSender(openOptions)
-                .continueWith(new Continuation<IntentSender, Void>() {
-                    @Override
-                    public Void then(@NonNull Task<IntentSender> task) throws Exception {
-                        startIntentSenderForResult(
-                                task.getResult(), REQUEST_CODE_OPEN_ITEM, null, 0, 0, 0);
-                        return null;
-                    }
-                });
-        return mOpenItemTaskSource.getTask();
+    public void uploadDriveImage(DriveId driveId) {
+        //
     }
 
     /**
