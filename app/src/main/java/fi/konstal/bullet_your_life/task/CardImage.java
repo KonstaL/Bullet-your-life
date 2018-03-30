@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
@@ -27,11 +28,12 @@ import fi.konstal.bullet_your_life.activities.BaseActivity;
  * Created by e4klehti on 29.3.2018.
  */
 
-public class CardImage implements CardItem, Serializable {
+public class CardImage extends CardItem implements Serializable {
     private static final String TAG = "CardImage";
     private String driveId;
 
     public CardImage(DriveId driveId) {
+        super();
         this.driveId = driveId.encodeToString();
     }
 
@@ -44,11 +46,22 @@ public class CardImage implements CardItem, Serializable {
     }
 
     @Override
+    public CardItem replicate() {
+        return new CardImage(getDriveId());
+    }
+
+    @Override
     public void buildView(Context context, ViewGroup parent, View.OnClickListener onClickListener) {
 
 
         DriveFile driveFile = this.getDriveId().asDriveFile();
-        Task<DriveContents> fileTask = ((BaseActivity) context).getDriveResourceClient().openFile(driveFile, DriveFile.MODE_READ_ONLY);
+        BaseActivity baseActivity = ((BaseActivity) context);
+        Log.i(TAG, "context: " +baseActivity);
+        DriveResourceClient driveResourceClient = baseActivity.getDriveResourceClient();
+        Log.i(TAG, "Drive resource: " +driveResourceClient);
+
+
+        Task<DriveContents> fileTask = driveResourceClient.openFile(driveFile, DriveFile.MODE_READ_ONLY);
         Tasks.whenAll(fileTask)
             .addOnSuccessListener((success) -> {
                 DriveContents imgFile = fileTask.getResult();

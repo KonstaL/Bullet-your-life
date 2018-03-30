@@ -44,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected static final int REQUEST_CODE_OPEN_ITEM = 401;
 
     private DriveClient mDriveClient;
-    private DriveResourceClient mDriveResourceClient;
+    private static DriveResourceClient mDriveResourceClient;
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
 
     @Override

@@ -36,10 +36,10 @@ public class DayCard implements Serializable {
     private String title;
 
     @Ignore
-    Date date;
+    private Date date;
 
     @ColumnInfo(name = "dateString")
-    String dateString;
+    private String dateString;
 
     @TypeConverters(DataConverter.class)
     @ColumnInfo(name = "cardItems")
@@ -56,7 +56,7 @@ public class DayCard implements Serializable {
         this.dateString = formater.format(date);
     }
 
-    public DayCard(String title, String dateString, CardTask... cardItems) {
+    public DayCard(String title, String dateString, CardItem... cardItems) {
         this.title = title;
         this.dateString = dateString;
         this.cardItems = new ArrayList<>();
@@ -108,5 +108,19 @@ public class DayCard implements Serializable {
 
     public void setDateString(String dateString) {
         this.dateString = dateString;
+    }
+
+    public DayCard replicate() {
+
+        CardItem[] newArray =  new CardItem[cardItems.size()];
+
+        for (int i = 0; i < cardItems.size() ; i++) {
+            newArray[i] = cardItems.get(i).replicate();
+        }
+
+        DayCard newCard = new DayCard(title, date, newArray);
+        newCard.setId(this.id);
+
+        return newCard;
     }
 }

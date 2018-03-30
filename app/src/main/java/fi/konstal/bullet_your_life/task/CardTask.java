@@ -17,7 +17,7 @@ import fi.konstal.bullet_your_life.R;
  * Created by konka on 22.3.2018.
  */
 
-public class CardTask implements CardItem, Serializable {
+public class CardTask extends CardItem implements Serializable {
     private String text;
     private boolean done;
     private int taskIconRef;
@@ -25,6 +25,7 @@ public class CardTask implements CardItem, Serializable {
 
 
     public CardTask(String text, int taskIconRef) {
+        super();
         this.text = text;
         this.done = false;
         this.taskIconRef = taskIconRef;
@@ -54,6 +55,11 @@ public class CardTask implements CardItem, Serializable {
         this.taskIconRef = taskIconRef;
     }
 
+
+    @Override
+    public CardItem replicate() {
+        return new CardTask(text, taskIconRef);
+    }
 
     @Override
     public void buildView(Context context, ViewGroup parent, View.OnClickListener onClickListener) {

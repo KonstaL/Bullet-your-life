@@ -329,6 +329,7 @@ public class EditCardActivity extends BaseActivity {
 
     @Override
     protected void onDriveClientReady() {
+        Log.i(TAG, "has received driveClient");
         this.driveClient = getDriveClient();
     }
 
