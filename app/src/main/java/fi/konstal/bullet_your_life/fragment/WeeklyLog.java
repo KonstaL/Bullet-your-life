@@ -154,7 +154,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
                 cardList.get(index).setCardItems(modifiedCard.getCardItems());
 
-                Toast.makeText(getContext(), data.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "data received from edit intent", Toast.LENGTH_SHORT).show();
                 recyclerView.getRecycledViewPool().clear();
             } else {
                 Toast.makeText(getContext(), "MOFIFY CARD NOT OK", Toast.LENGTH_SHORT).show();

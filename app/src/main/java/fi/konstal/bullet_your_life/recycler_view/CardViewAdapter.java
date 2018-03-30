@@ -41,14 +41,16 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             DayCard dayCard = cardsList.get(position);
-            holder.title.setText(dayCard.getTitle());
+            if(!holder.title.getText().equals(dayCard.getTitle())) {
+                holder.title.setText(dayCard.getTitle());
 
-            List<CardItem> cardItems = dayCard.getCardItems();
-            Log.d("shit", cardItems.toString());
-            for (CardItem item : cardItems) {
-                item.buildView(context, holder.cll, null);
+                List<CardItem> cardItems = dayCard.getCardItems();
+
+                for (CardItem item : cardItems) {
+                    item.buildView(context, holder.cll, null);
+                }
+                holder.date.setText(dayCard.getDateString());
             }
-            holder.date.setText(dayCard.getDateString());
         }
 
         @Override

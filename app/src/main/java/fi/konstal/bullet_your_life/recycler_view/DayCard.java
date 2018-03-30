@@ -29,6 +29,9 @@ public class DayCard implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @Ignore
+    private static int idCounter;
+
     @ColumnInfo(name = "title")
     private String title;
 
@@ -43,24 +46,22 @@ public class DayCard implements Serializable {
     private List<CardItem> cardItems;
 
     public DayCard(String title, Date date, CardItem... cardItems) {
-
         this.title = title;
         this.date = date;
         this.cardItems = new ArrayList<>();
         this.cardItems.addAll(Arrays.asList(cardItems));
-
-
+        id = idCounter++;
 
         SimpleDateFormat formater = new SimpleDateFormat("dd.MM.yyyy");
         this.dateString = formater.format(date);
     }
-
 
     public DayCard(String title, String dateString, CardTask... cardItems) {
         this.title = title;
         this.dateString = dateString;
         this.cardItems = new ArrayList<>();
         this.cardItems.addAll(Arrays.asList(cardItems));
+        id = idCounter++;
     }
 
     // Empty constructor for database actions
