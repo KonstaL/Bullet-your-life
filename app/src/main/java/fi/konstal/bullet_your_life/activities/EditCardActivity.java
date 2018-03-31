@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.ReturnMode;
+import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
@@ -32,6 +36,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -208,13 +213,22 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void getImageIntent() {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
+        //OLD
+/*        Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        photoPickerIntent.setType("image/*");
-    /*    photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        photoPickerIntent.setType("image*//*");
+    *//*    photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         photoPickerIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        photoPickerIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);*/
-        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        photoPickerIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);*//*
+        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);*/
+
+        ImagePicker.create(this)
+                .toolbarFolderTitle("Folder") // folder selection title
+                .toolbarImageTitle("Tap to select") // image selection title
+                .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
+                .limit(10) // max images can be selected (99 by default)
+                .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+                .start(RESULT_LOAD_IMG); // start image picker activity with request code
     }
 
     @Override
@@ -223,17 +237,21 @@ public class EditCardActivity extends BaseActivity {
             if(resultCode == RESULT_OK) {
                 Toast.makeText(this, "ImageIntent OK", Toast.LENGTH_SHORT).show();
 
+                List<Image> images = ImagePicker.getImages(data);
 
-                //JÄIT TÄHÄN ==============================================================
+                for (Image image : images) {
+                    Uri imageUri = Uri.fromFile(new File(image.getPath()));
+                    createFileInAppFolder(imageUri);
+                }
 
 
-
+                //OLD
                 //final int flags = data.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                Uri imageUri = data.getData();
+                /*Uri imageUri = data.getData();
 
                 getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                createFileInAppFolder(imageUri);
+                createFileInAppFolder(imageUri);*/
             }
         }
     }
