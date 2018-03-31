@@ -3,34 +3,33 @@ package fi.konstal.bullet_your_life.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardDataHandler;
+import fi.konstal.bullet_your_life.recycler_view.CardListDiffCallback;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerViewClickListener;
-import fi.konstal.bullet_your_life.task.Task;
+import fi.konstal.bullet_your_life.task.CardImage;
+import fi.konstal.bullet_your_life.task.CardItem;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +40,9 @@ import fi.konstal.bullet_your_life.task.Task;
  * create an instance of this fragment.
  */
 public class WeeklyLog extends Fragment implements FragmentInterface {
+    private static final String TAG = "WeeklyLog";
+
+
     public final static int MODIFY_CARD = 10;
 
 
@@ -53,8 +55,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     private FragmentInterface fragmentInterface;
     private EditCardInterface editCardInterface;
 
-
-    // TODO: Rename parameter arguments, choose names that match
 
     public WeeklyLog(CardDataHandler cardDataHandler) {
         this.cardDataHandler = cardDataHandler;
@@ -156,11 +156,20 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
                 int index = data.getIntExtra("index", -1);
                 DayCard modifiedCard = (DayCard) data.getSerializableExtra("DayCard");
 
+                // TODO: modify this so that there is no need for new lists and cloning
+                ArrayList<DayCard> newList = new ArrayList<>();
 
-                cardList.get(index).setTasks(modifiedCard.getTasks());
 
-                Toast.makeText(getContext(), data.toString(), Toast.LENGTH_SHORT).show();
-                recyclerView.getRecycledViewPool().clear();
+                //Copy the array and replace the target card so with the modified
+                for (int i = 0; i < cardList.size(); i++) {
+                    if(i == index) newList.add(modifiedCard);
+                    else newList.add(cardList.get(i));
+                }
+
+                //Compares differences and update only modified DayCards/DayCard fields
+                cardAdapter.updateCardList(newList);
+
+                Toast.makeText(getContext(), "data received from edit intent", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "MOFIFY CARD NOT OK", Toast.LENGTH_SHORT).show();
             }
@@ -168,13 +177,9 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     }
 
 
-
-
-
     @Override
     public void onCardClicked(DayCard card) {
         fragmentInterface.onCardClicked(card);
     }
-
 
 }

@@ -9,7 +9,7 @@
     <string name="sign_with_google">Sign in with Google</string>
     <string name="login_background_image_text">Picture of a notebook</string>
     <string name="example_title">This is a example title</string>
-    <string name="example_task">This is a example task</string>
+    <string name="example_task">This is a example cardTask</string>
     <string name="example_event">This is a example event</string>
     <string name="example_date">2017.12.11</string>
     <string name="mon">Monday</string>
@@ -20,6 +20,8 @@
     <string name="sat">Saturday</string>
     <string name="sun">Sunday</string>
     <string name="server_client_id">580276684131-bc63staqgnfmjld8c29g7mvbimor79nv.apps.googleusercontent.com</string>
+    <string name="drive_select_folder">bullet your life folder select</string>
+    <string name="drive_select_file">bullet your life file select</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

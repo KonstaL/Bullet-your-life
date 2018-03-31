@@ -10,13 +10,12 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.data.DataConverter;
-import fi.konstal.bullet_your_life.task.Task;
+import fi.konstal.bullet_your_life.task.CardItem;
+import fi.konstal.bullet_your_life.task.CardTask;
 
 
 /**
@@ -30,38 +29,39 @@ public class DayCard implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @Ignore
+    private static int idCounter;
+
     @ColumnInfo(name = "title")
     private String title;
 
     @Ignore
-    Date date;
+    private Date date;
 
     @ColumnInfo(name = "dateString")
-    String dateString;
+    private String dateString;
 
     @TypeConverters(DataConverter.class)
-    @ColumnInfo(name = "tasks")
-    private List<Task> tasks;
+    @ColumnInfo(name = "cardItems")
+    private List<CardItem> cardItems;
 
-    public DayCard(String title, Date date, Task... tasks) {
-
+    public DayCard(String title, Date date, CardItem... cardItems) {
         this.title = title;
         this.date = date;
-        this.tasks = new ArrayList<>();
-        this.tasks.addAll(Arrays.asList(tasks));
-
-
+        this.cardItems = new ArrayList<>();
+        this.cardItems.addAll(Arrays.asList(cardItems));
+        id = idCounter++;
 
         SimpleDateFormat formater = new SimpleDateFormat("dd.MM.yyyy");
         this.dateString = formater.format(date);
     }
 
-
-    public DayCard(String title, String dateString, Task... tasks) {
+    public DayCard(String title, String dateString, CardItem... cardItems) {
         this.title = title;
         this.dateString = dateString;
-        this.tasks = new ArrayList<>();
-        this.tasks.addAll(Arrays.asList(tasks));
+        this.cardItems = new ArrayList<>();
+        this.cardItems.addAll(Arrays.asList(cardItems));
+        id = idCounter++;
     }
 
     // Empty constructor for database actions
@@ -91,15 +91,15 @@ public class DayCard implements Serializable {
         this.date = date;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public List<CardItem> getCardItems() {
+        return cardItems;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setCardItems(List<CardItem> cardItems) {
+        this.cardItems = cardItems;
     }
-    public void addTasks(Task... tasks) {
-        this.tasks.addAll(Arrays.asList(tasks));
+    public void addCardItems(CardItem... cardItems) {
+        this.cardItems.addAll(Arrays.asList(cardItems));
     }
 
     public String getDateString() {
@@ -108,5 +108,19 @@ public class DayCard implements Serializable {
 
     public void setDateString(String dateString) {
         this.dateString = dateString;
+    }
+
+    public DayCard replicate() {
+
+        CardItem[] newArray =  new CardItem[cardItems.size()];
+
+        for (int i = 0; i < cardItems.size() ; i++) {
+            newArray[i] = cardItems.get(i).replicate();
+        }
+
+        DayCard newCard = new DayCard(title, date, newArray);
+        newCard.setId(this.id);
+
+        return newCard;
     }
 }
