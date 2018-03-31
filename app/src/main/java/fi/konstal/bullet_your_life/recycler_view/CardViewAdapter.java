@@ -46,16 +46,14 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         DayCard dayCard = cardsList.get(position);
-        if(!holder.title.getText().equals(dayCard.getTitle())) {
-            holder.title.setText(dayCard.getTitle());
+        holder.title.setText(dayCard.getTitle());
 
-            List<CardItem> cardItems = dayCard.getCardItems();
+        List<CardItem> cardItems = dayCard.getCardItems();
 
-            for (CardItem item : cardItems) {
-                item.buildView(context, holder.cll, null);
-            }
-            holder.date.setText(dayCard.getDateString());
+        for (CardItem item : cardItems) {
+            item.buildView(context, holder.cll, null);
         }
+        holder.date.setText(dayCard.getDateString());
     }
 
     @Override
@@ -99,6 +97,17 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
     public void updateCardList(List<DayCard> newList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardListDiffCallback(cardsList, newList));
         diffResult.dispatchUpdatesTo(this);
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
 

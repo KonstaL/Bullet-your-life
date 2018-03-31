@@ -208,8 +208,12 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void getImageIntent() {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         photoPickerIntent.setType("image/*");
+    /*    photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        photoPickerIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        photoPickerIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);*/
         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
     }
 
@@ -218,8 +222,16 @@ public class EditCardActivity extends BaseActivity {
         if( requestCode == RESULT_LOAD_IMG) {
             if(resultCode == RESULT_OK) {
                 Toast.makeText(this, "ImageIntent OK", Toast.LENGTH_SHORT).show();
+
+
+                //JÄIT TÄHÄN ==============================================================
+
+
+
+                //final int flags = data.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION;
                 Uri imageUri = data.getData();
 
+                getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 createFileInAppFolder(imageUri);
             }
@@ -227,46 +239,9 @@ public class EditCardActivity extends BaseActivity {
     }
 
     private void createFileInAppFolder(Uri imgUri) {
-        final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
-        final Task<DriveContents> createContentsTask = getDriveResourceClient().createContents();
-
-        Tasks.whenAll(appFolderTask, createContentsTask) //when both tasks are ready
-                .continueWithTask(task -> {
-                    DriveFolder parent = appFolderTask.getResult();
-                    DriveContents contents = createContentsTask.getResult();
-                    int cursor;
-
-                    try (OutputStream os = contents.getOutputStream();
-                        InputStream is = getContentResolver().openInputStream(imgUri)) {
-
-                        while((cursor = is.read())!=-1){
-                            os.write(cursor);
-                        }
-
-                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                                .setTitle("new img")
-                                .setMimeType("image/jpeg")
-                                .build();
-
-                        return getDriveResourceClient().createFile(parent, changeSet, contents);
-
-                    } catch (Exception e) {
-                        Log.e(TAG, e.getMessage());
-                        return null;
-                    }
-                })
-                .addOnSuccessListener(this, driveFile -> {
-                            showMessage("file saved");
-                            CardItem cardItem = new CardImage(driveFile.getDriveId());
-                            addItemData(cardItem);
-                            //add reference to persistant storage
-                            addCardItemView(cardItem);
-                            //temp();
-                })
-                .addOnFailureListener(this, e -> {
-                    Log.e(TAG, "Unable to create file", e);
-                    showMessage("error creating file");
-            });
+        CardImage cardImage = new CardImage(imgUri);
+        uploadDriveImage(this, cardImage, imgUri); // Start Async uploading and adds DriveID when done
+        dayCard.addCardItems(cardImage);
     }
 
 

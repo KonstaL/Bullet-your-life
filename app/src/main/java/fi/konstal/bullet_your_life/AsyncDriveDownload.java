@@ -26,15 +26,15 @@ import java.util.concurrent.TimeoutException;
 public class AsyncDriveDownload extends AsyncTask<Void, Void, Bitmap> {
     private DriveId driveId;
     private DriveResourceClient driveResourceClient;
-    private DownloadReceiver<Bitmap> downloadReceiver;
+    private DriveDownloadListener<Bitmap> driveDownloadListener;
 
 
 
     public AsyncDriveDownload(DriveId driveId, DriveResourceClient driveResourceClient,
-                              DownloadReceiver<Bitmap> downloadReceiver) {
+                              DriveDownloadListener<Bitmap> driveDownloadListener) {
         this.driveId = driveId;
         this.driveResourceClient = driveResourceClient;
-        this.downloadReceiver = downloadReceiver;
+        this.driveDownloadListener = driveDownloadListener;
     }
 
     @Override
@@ -61,13 +61,13 @@ public class AsyncDriveDownload extends AsyncTask<Void, Void, Bitmap> {
 
     @Override
     public void onPostExecute(Bitmap bitmap) {
-        downloadReceiver.onSuccess(bitmap);
+        driveDownloadListener.onDownloadSuccess(bitmap);
     }
 
     @Override
     public void onCancelled() {
         //TODO: Custom exception class
-        downloadReceiver.onError(new RuntimeException("Imagedownload failed!"));
+        driveDownloadListener.onDownloadError(new RuntimeException("Imagedownload failed!"));
     }
 
 

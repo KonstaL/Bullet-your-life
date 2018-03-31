@@ -1,32 +1,23 @@
 package fi.konstal.bullet_your_life.task;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.DownloadListener;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 
-import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 
-import fi.konstal.bullet_your_life.DownloadReceiver;
+import fi.konstal.bullet_your_life.DriveDownloadListener;
 
+import fi.konstal.bullet_your_life.DriveUploadListener;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.BaseActivity;
 
@@ -34,9 +25,9 @@ import fi.konstal.bullet_your_life.activities.BaseActivity;
  * Created by e4klehti on 29.3.2018.
  */
 
-public class CardImage extends CardItem implements Serializable, DownloadReceiver<Bitmap> {
+public class CardImage extends CardItem implements Serializable, DriveDownloadListener<Bitmap>, DriveUploadListener {
     private static final String TAG = "CardImage";
-    private Uri imageUri;
+    private String imageUriString;
     private String driveId;
 
     private transient Bitmap image;
@@ -44,6 +35,11 @@ public class CardImage extends CardItem implements Serializable, DownloadReceive
     public CardImage(DriveId driveId) {
         super();
         this.driveId = driveId.encodeToString();
+    }
+
+    public CardImage(Uri imageUri) {
+        super();
+        setImageUri(imageUri);
     }
 
     public DriveId getDriveId() {
@@ -63,13 +59,34 @@ public class CardImage extends CardItem implements Serializable, DownloadReceive
         this.image = image;
     }
 
+    public Uri getImageUri() {
+        return Uri.parse(imageUriString);
+    }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUriString = imageUri.toString();
+    }
+
     @Override
     public void buildView(Context context, ViewGroup parent, View.OnClickListener onClickListener) {
 
         //if null, start downloading the image
         if(image == null) {
-            BaseActivity baseActivity = ((BaseActivity) context);
-            baseActivity.downloadDriveImage(getDriveId(), this);
+            if(getImageUri() == null) {
+                //Start downloading the picture
+                BaseActivity baseActivity = ((BaseActivity) context);
+                baseActivity.downloadDriveImage(getDriveId(), this);
+            } else {
+                try {
+                    //Load image from URI
+                    image = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri()));
+                } catch (FileNotFoundException e) {
+                    //URI is invalid, remove it
+                    setImageUri(null);
+                    e.printStackTrace();
+                }
+            }
+
         }
 
 
@@ -82,13 +99,24 @@ public class CardImage extends CardItem implements Serializable, DownloadReceive
     }
 
     @Override
-    public void onSuccess(Bitmap data) {
+    public void onDownloadSuccess(Bitmap data) {
         image = data;
     }
 
     @Override
-    public void onError(Exception exception) {
+    public void onDownloadError(Exception exception) {
         Log.e(TAG, exception.toString());
         exception.printStackTrace();
+    }
+
+    @Override
+    public void onUploadSuccess(DriveId driveId) {
+        setDriveId(driveId);
+        Log.i(TAG, "Drive ID: " + this.driveId + " has been successfully saved");
+    }
+
+    @Override
+    public void onUploadFailure(Exception e) {
+        e.printStackTrace();
     }
 }

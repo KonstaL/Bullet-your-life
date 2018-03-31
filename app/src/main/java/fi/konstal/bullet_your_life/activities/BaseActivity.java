@@ -1,13 +1,11 @@
 package fi.konstal.bullet_your_life.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,13 +17,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.drive.OpenFileActivityOptions;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 
@@ -33,8 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.AsyncDriveDownload;
-import fi.konstal.bullet_your_life.DownloadReceiver;
-import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.AsyncDriveUpload;
+import fi.konstal.bullet_your_life.DriveDownloadListener;
+import fi.konstal.bullet_your_life.DriveUploadListener;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive
@@ -132,12 +127,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void downloadDriveImage(DriveId driveId, DownloadReceiver<Bitmap> downloadReceiver) {
-        new AsyncDriveDownload(driveId, mDriveResourceClient, downloadReceiver).execute();
+    public void downloadDriveImage(DriveId driveId, DriveDownloadListener<Bitmap> driveDownloadListener) {
+        new AsyncDriveDownload(driveId, mDriveResourceClient, driveDownloadListener).execute();
     }
 
-    public void uploadDriveImage(DriveId driveId) {
-        //
+    public void uploadDriveImage(Context context, DriveUploadListener driveUploadListener, Uri imgUri) {
+        new AsyncDriveUpload(context, imgUri, mDriveResourceClient, driveUploadListener).execute();
     }
 
     /**
