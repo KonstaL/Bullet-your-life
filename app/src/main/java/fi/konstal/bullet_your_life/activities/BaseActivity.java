@@ -132,7 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void uploadDriveImage(Context context, DriveUploadListener driveUploadListener, Uri imgUri) {
-        new AsyncDriveUpload(context, imgUri, mDriveResourceClient, driveUploadListener).execute();
+       new AsyncDriveUpload(context, imgUri, mDriveResourceClient, driveUploadListener).execute();
     }
 
     /**
