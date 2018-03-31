@@ -3,6 +3,8 @@ package fi.konstal.bullet_your_life.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -55,6 +57,8 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
 
 
+
+
         SharedPreferences prefs = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         // If the the app is has not been started before
         if(!prefs.getBoolean("init_done", false)) {
@@ -70,7 +74,23 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         cardList = cardDataHandler.getDayCardList();
 
         ViewPager pager = findViewById(R.id.viewpager);
-        setupViewPager(pager);
+
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener((item)-> {
+            switch (item.getItemId()) {
+                case R.id.menu_weekly:
+                    pager.setCurrentItem(0);
+                    break;
+                case R.id.menu_monthly:
+                    pager.setCurrentItem(1);
+                    break;
+                case R.id.menu_future:
+                    pager.setCurrentItem(3);
+            }
+            return true;
+        });
+
+        setupViewPager(pager, navigation);
 
         prepareCardData();
     }
@@ -86,7 +106,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         return true;
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, BottomNavigationView navigation) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         weeklyLogFragment = new WeeklyLog(cardDataHandler);
         monthlyLogFragment = new MonthlyLog();
@@ -96,6 +116,13 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         adapter.addFragment(futureLogFragment);
 
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageSelected(int position) {
+                navigation.getMenu().getItem(position).setChecked(true);
+            }
+        });
     }
 
 
@@ -128,20 +155,8 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     @Override
     protected void onDriveClientReady() {
         this.driveClient = super.getDriveClient();
-        Toast.makeText(this, "logs on drive ready", Toast.LENGTH_SHORT).show();
     }
 
- /*   public void tempTest(View v) {
-        DriveClient mDriveClient = Drive.getDriveClient(getApplicationContext(), gsa);
-        // Build a drive resource client.
-        DriveResourceClient mDriveResourceClient =
-                Drive.getDriveResourceClient(getApplicationContext(), gsa);
-        // Start camera.
-        startActivityForResult(
-                new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
-
-    }
-*/
 
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);

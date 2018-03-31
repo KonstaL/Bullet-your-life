@@ -3,12 +3,18 @@ package fi.konstal.bullet_your_life.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,10 +119,42 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
 
         recyclerView =  getView().findViewById(R.id.recycler_view);
+        recyclerView.setNestedScrollingEnabled(false);
         RecyclerViewClickListener listener = (view, position) -> {
             Toast.makeText(getContext(), "Click on " + position, Toast.LENGTH_SHORT).show();
             Log.d("shit", "click tapahtu");
         };
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
+        CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
+        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+
+        AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+        Drawable drawable = toolbar.getMenu().getItem(0).getIcon();
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow;
+            int scrollRange = -1;
+
+
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    //collapse map
+                    isShow = true;
+                    drawable.setColorFilter(getResources().getColor(R.color.font_black), PorterDuff.Mode.SRC_ATOP);
+                } else if (isShow) {
+                    //expanded map
+                    isShow = false;
+                    drawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                }
+            }
+        });
 
 
 
