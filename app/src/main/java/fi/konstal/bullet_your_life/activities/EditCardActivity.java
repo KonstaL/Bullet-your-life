@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -44,6 +45,7 @@ import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.edit_recycler_view.CardItemViewAdapter;
+import fi.konstal.bullet_your_life.edit_recycler_view.SimpleItemTouchHelperCallback;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
@@ -96,6 +98,11 @@ public class EditCardActivity extends BaseActivity {
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(recyclerViewAdapter);
+
+            ItemTouchHelper.Callback callback =
+                    new SimpleItemTouchHelperCallback(recyclerViewAdapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(recyclerView);
 
 
 
@@ -202,7 +209,9 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void addCardItemToView(CardItem cardItem) {
-        cardItem.buildView(this, cardContentLayout, null);
+        dayCard.getCardItems().add(cardItem);
+        recyclerViewAdapter.notifyDataSetChanged();
+        //cardItem.buildView(this, cardContentLayout, null);
     }
 
     public void removeView(View v) {

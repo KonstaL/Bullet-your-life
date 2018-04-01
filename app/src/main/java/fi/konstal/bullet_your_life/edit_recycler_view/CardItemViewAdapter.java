@@ -2,13 +2,8 @@ package fi.konstal.bullet_your_life.edit_recycler_view;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
@@ -30,16 +25,18 @@ import fi.konstal.bullet_your_life.task.CardTask;
  * Created by konka on 14.3.2018.
  */
 
-public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapter.ViewHolder> {
-    private List<CardItem> cardsList;
+public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapter.ViewHolder>
+    implements ItemTouchHelperAdapter {
+
+    private List<CardItem> cardItemList;
     private Context context;
     private RecyclerViewClickListener rvClickListerner;
 
 
-    public CardItemViewAdapter(Context context, RecyclerViewClickListener rvl, List<CardItem> cardsList) {
+    public CardItemViewAdapter(Context context, RecyclerViewClickListener rvl, List<CardItem> cardItemList) {
         this.context = context;
         this.rvClickListerner = rvl;
-        this.cardsList = cardsList;
+        this.cardItemList = cardItemList;
     }
 
     @Override
@@ -55,8 +52,8 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(!holder.isInitialized) {
-            if(cardsList.get(position) instanceof CardImage) {
-                CardImage cardImage = (CardImage) cardsList.get(position);
+            if(cardItemList.get(position) instanceof CardImage) {
+                CardImage cardImage = (CardImage) cardItemList.get(position);
                 holder.imageView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 holder.imageView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
                 try {
@@ -66,7 +63,7 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
                 }
             } else {
 
-                CardTask cardTask = (CardTask) cardsList.get(position);
+                CardTask cardTask = (CardTask) cardItemList.get(position);
                 holder.taskText.setText(cardTask.getText());
                 holder.imageView.setImageDrawable(context.getResources().getDrawable(cardTask.getTaskIconRef()));
 
@@ -84,7 +81,7 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
            /* Log.i("onBindViewHolder", "payload ei ollu tyhjä");
 
             Bundle o = (Bundle) payloads.get(0);
-            DayCard card = cardsList.get(position);
+            DayCard card = cardItemList.get(position);
             for (String key : o.keySet()) {
                 if (key.equals("card_item_list")) {
                     card.setCardItems((List<CardItem>) o.get(key)); // TODO: maybe put this inside a try catch
@@ -107,15 +104,15 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
 
     @Override
     public int getItemCount() {
-        return cardsList.size();
+        return cardItemList.size();
     }
 
  /*   public List<DayCard> getCardList() {
-        return cardsList;
+        return cardItemList;
     }
 */
     /*public void updateCardList(List<DayCard> newList) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardListDiffCallback(cardsList, newList));
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardListDiffCallback(cardItemList, newList));
         diffResult.dispatchUpdatesTo(this);
     }*/
 
@@ -128,6 +125,27 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(cardItemList, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(cardItemList, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        cardItemList.remove(position);
+        notifyItemRemoved(position);
     }
 
 
