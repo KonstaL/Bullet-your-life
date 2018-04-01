@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
@@ -7,13 +8,9 @@
     android:layout_height="match_parent"
     tools:context="fi.konstal.bullet_your_life.activities.EditCardActivity">
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/nested_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
 
     <LinearLayout
+        android:id="@+id/card_layout"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -67,7 +64,7 @@
         <fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout
             android:id="@+id/card_content_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:minHeight="300dp"
             android:orientation="vertical"
             android:background="@color/card_background"
@@ -77,10 +74,18 @@
             android:paddingEnd="7dp"
             >
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/card_item_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+            </android.support.v7.widget.RecyclerView>
+
         </fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout>
 
     </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+
 
 
     <ImageView
@@ -94,7 +99,7 @@
         android:id="@+id/main_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@+id/nested_scroll_view"
+        app:layout_anchor="@+id/card_layout"
         app:layout_anchorGravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_plus_white_24dp" />

@@ -10,7 +10,6 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bright_red"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -20,8 +19,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/white"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
+            app:expandedTitleMarginStart="40dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             >
 
@@ -43,7 +41,7 @@
                 app:layout_collapseMode="pin"
                 app:layout_collapseParallaxMultiplier="1.0"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:title="@string/fragment_future_title"
+                app:title="@string/fragment_weekly_title"
                 />
 
         </android.support.design.widget.CollapsingToolbarLayout>

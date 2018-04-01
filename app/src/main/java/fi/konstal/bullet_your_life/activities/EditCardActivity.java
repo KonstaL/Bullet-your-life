@@ -10,6 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -40,6 +43,8 @@ import java.util.List;
 
 
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.edit_recycler_view.CardItemViewAdapter;
+import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.task.CardImage;
@@ -52,6 +57,8 @@ public class EditCardActivity extends BaseActivity {
     private DayCard dayCard;
     private int index;
     private CustomLinearLayout cardContentLayout;
+    private RecyclerView recyclerView;
+    private CardItemViewAdapter recyclerViewAdapter;
 
     private DriveClient driveClient;
 
@@ -75,6 +82,8 @@ public class EditCardActivity extends BaseActivity {
 
            /* Init card */
         cardContentLayout = findViewById(R.id.card_content_layout);
+        recyclerView = findViewById(R.id.card_item_recycler_view);
+
         TextView cardTitle = findViewById(R.id.title);
         TextView cardDate = findViewById(R.id.card_date);
 
@@ -82,11 +91,19 @@ public class EditCardActivity extends BaseActivity {
             cardTitle.setText(dayCard.getTitle());
             cardDate.setText(dayCard.getDateString());
 
-            for (CardItem cardItem : dayCard.getCardItems()) {
+            recyclerViewAdapter= new CardItemViewAdapter(this, null, dayCard.getCardItems());
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(recyclerViewAdapter);
+
+
+
+         /*   for (CardItem cardItem : dayCard.getCardItems()) {
                 cardItem.buildView(this, cardContentLayout, (event)-> {
                     Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
                 });
-            }
+            }*/
 
         } else {
             cardTitle.setText("errors for everyone!");
