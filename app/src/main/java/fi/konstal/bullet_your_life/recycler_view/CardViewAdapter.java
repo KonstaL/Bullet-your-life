@@ -45,15 +45,18 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        DayCard dayCard = cardsList.get(position);
-        holder.title.setText(dayCard.getTitle());
+        if(!holder.isInitialized) {
+            DayCard dayCard = cardsList.get(position);
+            holder.title.setText(dayCard.getTitle());
 
-        List<CardItem> cardItems = dayCard.getCardItems();
+            List<CardItem> cardItems = dayCard.getCardItems();
 
-        for (CardItem item : cardItems) {
-            item.buildView(context, holder.cll, null);
+            for (CardItem item : cardItems) {
+                item.buildView(context, holder.cll, null);
+            }
+            holder.date.setText(dayCard.getDateString());
+            holder.isInitialized = true;
         }
-        holder.date.setText(dayCard.getDateString());
     }
 
     @Override
@@ -114,13 +117,14 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private boolean isInitialized;
         public TextView title, date;
         public CustomLinearLayout cll;
         private RecyclerViewClickListener rvListener;
 
         public MyViewHolder(View view, RecyclerViewClickListener listener) {
             super(view);
-
+            isInitialized = false;
             rvListener = listener;
             cll = view.findViewById(R.id.card_content_layout);
             title = view.findViewById(R.id.title);

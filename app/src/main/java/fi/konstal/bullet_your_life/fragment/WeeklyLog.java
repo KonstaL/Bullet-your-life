@@ -149,7 +149,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         });
 
         recyclerView =  getView().findViewById(R.id.recycler_view);
-        recyclerView.setNestedScrollingEnabled(false);
+        //recyclerView.setNestedScrollingEnabled(false);
         cardAdapter= new CardViewAdapter(getContext(), null, cardList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
