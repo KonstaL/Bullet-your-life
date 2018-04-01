@@ -18,6 +18,7 @@ import java.io.Serializable;
 import fi.konstal.bullet_your_life.DriveDownloadListener;
 
 import fi.konstal.bullet_your_life.DriveUploadListener;
+import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.BaseActivity;
 
@@ -56,7 +57,8 @@ public class CardImage extends CardItem implements Serializable, DriveDownloadLi
     }
 
     public void setImage(Bitmap image) {
-        this.image = image;
+        //new Thread(()-> this.image = Helper.getResizedBitmap(image, Helper.SCALE_BY_HEIGHT, 300) ).start();
+        this.image = Helper.getResizedBitmap(image, Helper.SCALE_BY_HEIGHT, 300);
     }
 
     public Uri getImageUri() {
@@ -79,7 +81,7 @@ public class CardImage extends CardItem implements Serializable, DriveDownloadLi
             } else {
                 try {
                     //Load image from URI
-                    image = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri()));
+                    setImage(BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri())));
                 } catch (FileNotFoundException e) {
                     //URI is invalid, remove it
                     setImageUri(null);
@@ -100,7 +102,7 @@ public class CardImage extends CardItem implements Serializable, DriveDownloadLi
 
     @Override
     public void onDownloadSuccess(Bitmap data) {
-        image = data;
+        image =  Helper.getResizedBitmap(data, Helper.SCALE_BY_HEIGHT, 300);
     }
 
     @Override

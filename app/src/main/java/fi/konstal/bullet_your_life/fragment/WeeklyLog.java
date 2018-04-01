@@ -117,14 +117,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
 
-
-        recyclerView =  getView().findViewById(R.id.recycler_view);
-        recyclerView.setNestedScrollingEnabled(false);
-        RecyclerViewClickListener listener = (view, position) -> {
-            Toast.makeText(getContext(), "Click on " + position, Toast.LENGTH_SHORT).show();
-            Log.d("shit", "click tapahtu");
-        };
-
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
         CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
@@ -156,9 +148,9 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
             }
         });
 
-
-
-        cardAdapter= new CardViewAdapter(getContext(), listener, cardList);
+        recyclerView =  getView().findViewById(R.id.recycler_view);
+        recyclerView.setNestedScrollingEnabled(false);
+        cardAdapter= new CardViewAdapter(getContext(), null, cardList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -196,7 +188,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
                 // TODO: modify this so that there is no need for new lists and cloning
                 ArrayList<DayCard> newList = new ArrayList<>();
-
 
                 //Copy the array and replace the target card so with the modified
                 for (int i = 0; i < cardList.size(); i++) {

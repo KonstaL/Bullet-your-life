@@ -58,11 +58,13 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position, List<Object> payloads) {
-
+        Log.i("onBindViewHolder", "TÄÄLÄ");
 
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
+            Log.i("onBindViewHolder", "payload ei ollu tyhjä");
+
             Bundle o = (Bundle) payloads.get(0);
             DayCard card = cardsList.get(position);
             for (String key : o.keySet()) {
