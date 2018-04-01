@@ -1,11 +1,13 @@
 package fi.konstal.bullet_your_life.edit_recycler_view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.CardImage;
 import fi.konstal.bullet_your_life.task.CardItem;
@@ -57,10 +61,24 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         if(!holder.isInitialized) {
             if(cardItemList.get(position) instanceof CardImage) {
                 CardImage cardImage = (CardImage) cardItemList.get(position);
-                holder.imageView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+                final float scale = context.getResources().getDisplayMetrics().density;
+
+                holder.imageView.getLayoutParams().height = (int) (250 * scale + 0.5f);
                 holder.imageView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+                holder.layout.removeView(holder.taskText);
                 try {
-                    cardImage.setImage(BitmapFactory.decodeStream(context.getContentResolver().openInputStream(cardImage.getImageUri())));
+                    //TODO do this properly
+                     InputStream is = context.getContentResolver().openInputStream(cardImage.getImageUri());
+
+                    holder.imageView.setImageBitmap(
+                            Helper.getResizedBitmap(
+                                BitmapFactory.decodeStream(is),
+                                Helper.SCALE_BY_HEIGHT,
+                                300
+                            )
+                    );
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }

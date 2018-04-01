@@ -7,6 +7,11 @@ import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import fi.konstal.bullet_your_life.data.CardDataHandler;
+import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.task.CardTask;
 
 /**
  * Created by e4klehti on 22.3.2018.
@@ -54,5 +59,34 @@ public class Helper  {
         int newHeight = (int)(height*scale);
 
         return Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
+    }
+
+    public static void seedCardData(Context context, CardDataHandler cardDataHandler) {
+        List<DayCard> cardList = cardDataHandler.getDayCardList();
+        Date date = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        // add 7 days of cards and examples
+        for(int i = 0; i < 7; i++) {
+            date = c.getTime();
+            cardList.add(
+                new DayCard(
+                    Helper.weekdayString(context, date),
+                    date,
+                    new CardTask(
+                        context.getString(R.string.example_task),
+                        R.drawable.ic_task_12dp
+                    ),
+                    new CardTask(
+                        context.getString(R.string.example_event),
+                        R.drawable.ic_hollow_circle_16dp
+                    )
+                )
+            );
+
+            //move to the next day
+            c.add(Calendar.DATE, 1);
+        }
     }
 }

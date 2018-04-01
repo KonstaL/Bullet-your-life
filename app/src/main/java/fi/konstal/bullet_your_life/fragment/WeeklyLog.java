@@ -22,12 +22,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
+import fi.konstal.bullet_your_life.activities.LogsActivity;
 import fi.konstal.bullet_your_life.data.CardDataHandler;
 import fi.konstal.bullet_your_life.recycler_view.CardListDiffCallback;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
@@ -37,21 +39,10 @@ import fi.konstal.bullet_your_life.recycler_view.RecyclerViewClickListener;
 import fi.konstal.bullet_your_life.task.CardImage;
 import fi.konstal.bullet_your_life.task.CardItem;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * { WeeklyLog.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link WeeklyLog#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WeeklyLog extends Fragment implements FragmentInterface {
     private static final String TAG = "WeeklyLog";
 
-
     public final static int MODIFY_CARD = 10;
-
-
 
     private RecyclerView recyclerView;
     private CardViewAdapter cardAdapter;
@@ -62,28 +53,23 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     private EditCardInterface editCardInterface;
 
 
-    public WeeklyLog(CardDataHandler cardDataHandler) {
-        this.cardDataHandler = cardDataHandler;
-        this.cardList = cardDataHandler.getDayCardList();
-    }
+    public WeeklyLog() {}
 
-    public WeeklyLog() {
-        this.cardList = new ArrayList<>();
-    }
-
-
-    public static WeeklyLog newInstance(String param1, String param2) {
+    public static WeeklyLog newInstance() {
         WeeklyLog fragment = new WeeklyLog();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        cardDataHandler = new CardDataHandler(getContext());
+        Helper.seedCardData(getContext(), cardDataHandler);
+        cardList = cardDataHandler.getDayCardList();
+        ((LogsActivity)getActivity()).setCardList(cardList);
+
     }
 
     @Override
@@ -209,6 +195,10 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     @Override
     public void onCardClicked(DayCard card) {
         fragmentInterface.onCardClicked(card);
+    }
+
+    public CardDataHandler getCardDataHandler() {
+        return cardDataHandler;
     }
 
 }

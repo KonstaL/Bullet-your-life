@@ -36,13 +36,10 @@ import fi.konstal.bullet_your_life.task.CardTask;
 
 public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
 
-    private CardDataHandler cardDataHandler;
-    private List<DayCard> cardList;
-    private RecyclerView recyclerView;
     private Boolean isAuthenticated;
     private DriveClient driveClient;
 
-
+    private List<DayCard> cardList;
 
     private FutureLog futureLogFragment;
     private WeeklyLog weeklyLogFragment;
@@ -51,13 +48,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        getSupportActionBar().hide();*/
         setContentView(R.layout.activity_weekly_logs);
-
-
-
-
 
         SharedPreferences prefs = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         // If the the app is has not been started before
@@ -69,9 +60,6 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         isAuthenticated = prefs.getBoolean("is_auth", false);
         Toast.makeText(this, "is auth: " + isAuthenticated , Toast.LENGTH_SHORT).show();
 
-
-        cardDataHandler = new CardDataHandler(this);
-        cardList = cardDataHandler.getDayCardList();
 
         ViewPager pager = findViewById(R.id.viewpager);
 
@@ -92,7 +80,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
         setupViewPager(pager, navigation);
 
-        prepareCardData();
+
     }
 
     @Override
@@ -108,7 +96,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
     private void setupViewPager(ViewPager viewPager, BottomNavigationView navigation) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        weeklyLogFragment = new WeeklyLog(cardDataHandler);
+        weeklyLogFragment = WeeklyLog.newInstance();
         monthlyLogFragment = new MonthlyLog();
         futureLogFragment = new FutureLog();
         adapter.addFragment(weeklyLogFragment);
@@ -130,21 +118,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     public void onCardClicked(DayCard card) {
         Log.d("cardClick", card.toString());
     }
-    private void prepareCardData() {
-        Date dt = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(dt);
 
-        // add 7 days of cards and examples
-        for(int i = 0; i < 7; i++) {
-            dt = c.getTime();
-            cardList.add(new DayCard(Helper.weekdayString(this, dt), dt,  new CardTask(getString(R.string.example_task), R.drawable.ic_task_12dp),
-                    new CardTask(getString(R.string.example_event), R.drawable.ic_hollow_circle_16dp)));
-
-            //move to the next day
-            c.add(Calendar.DATE, 1);
-        }
-    }
 
 
     @Override
@@ -182,6 +156,10 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
             return false;
         }));
+    }
+
+    public void setCardList(List<DayCard> dayCards) {
+        this.cardList = dayCards;
     }
 
 
