@@ -2,6 +2,8 @@ package fi.konstal.bullet_your_life.edit_recycler_view;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,28 +81,15 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
-           /* Log.i("onBindViewHolder", "payload ei ollu tyhjä");
-
             Bundle o = (Bundle) payloads.get(0);
-            DayCard card = cardItemList.get(position);
+            CardTask cardItem = (CardTask) cardItemList.get(position);
             for (String key : o.keySet()) {
-                if (key.equals("card_item_list")) {
-                    card.setCardItems((List<CardItem>) o.get(key)); // TODO: maybe put this inside a try catch
-                    holder.layout.removeAllViews();
-                    for(CardItem item : card.getCardItems()) {
-                        item.buildView(context, holder.layout, null);
-                    }
-                } else if (key.equals("card_title")) {
-                    String title = (String) o.get(key);
-                    card.setTitle(title);
-                    holder.title.setText(title);
-                } else if (key.equals("card_date_string")) {
-                    String date = (String) o.get(key);
-                    card.setDateString(date);
-                    holder.date.setText(date);
-                }*/
+                if (key.equals("card_task_text")) {
+                    cardItem.setText((String) o.get(key));
+                }
             }
         }
+    }
 
 
     @Override
@@ -107,25 +97,21 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         return cardItemList.size();
     }
 
- /*   public List<DayCard> getCardList() {
-        return cardItemList;
-    }
-*/
-    /*public void updateCardList(List<DayCard> newList) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardListDiffCallback(cardItemList, newList));
-        diffResult.dispatchUpdatesTo(this);
-    }*/
 
+    public void addCardItem(CardItem cardItem) {
+        List<CardItem> newList = new ArrayList<>();
+        newList.addAll(cardItemList);
+        newList.add(cardItem);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardItemListDiffCallback(cardItemList, newList));
+        diffResult.dispatchUpdatesTo(this);
+
+    }
 
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {

@@ -209,8 +209,9 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void addCardItemToView(CardItem cardItem) {
-        dayCard.getCardItems().add(cardItem);
-        recyclerViewAdapter.notifyDataSetChanged();
+        //recyclerViewAdapter.notifyDataSetChanged();
+        recyclerViewAdapter.addCardItem(cardItem);
+
         //cardItem.buildView(this, cardContentLayout, null);
     }
 

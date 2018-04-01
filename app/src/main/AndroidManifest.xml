@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.EditCardActivity" />
+        <activity android:name=".activities.EditCardActivity"
+            android:windowSoftInputMode="adjustPan"/>
 
         <service
             android:name=".DriveFileDownloadIntentService"
