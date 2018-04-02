@@ -1,13 +1,12 @@
 package fi.konstal.bullet_your_life.task;
 
-import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.Serializable;
 
@@ -21,8 +20,6 @@ public class CardTask extends CardItem implements Serializable {
     private String text;
     private boolean done;
     private int taskIconRef;
-
-
 
     public CardTask(String text, int taskIconRef) {
         super();
@@ -64,12 +61,13 @@ public class CardTask extends CardItem implements Serializable {
     @Override
     public void buildView(Context context, ViewGroup parent, View.OnClickListener onClickListener) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.display_task, null);
+        View view = layoutInflater.inflate(R.layout.partial_card_item_task, null);
 
         ImageView icon = view.findViewById(R.id.task_icon);
         icon.setImageResource(taskIconRef);
         TextView tv = view.findViewById(R.id.task_text);
         tv.setText(text);
+
 
         view.setOnClickListener(onClickListener);
 

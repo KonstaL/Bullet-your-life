@@ -3,6 +3,8 @@ package fi.konstal.bullet_your_life.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -34,13 +36,10 @@ import fi.konstal.bullet_your_life.task.CardTask;
 
 public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
 
-    private CardDataHandler cardDataHandler;
-    private List<DayCard> cardList;
-    private RecyclerView recyclerView;
     private Boolean isAuthenticated;
     private DriveClient driveClient;
 
-
+    private List<DayCard> cardList;
 
     private FutureLog futureLogFragment;
     private WeeklyLog weeklyLogFragment;
@@ -49,11 +48,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        getSupportActionBar().hide();*/
         setContentView(R.layout.activity_weekly_logs);
-
-
 
         SharedPreferences prefs = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         // If the the app is has not been started before
@@ -66,13 +61,26 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         Toast.makeText(this, "is auth: " + isAuthenticated , Toast.LENGTH_SHORT).show();
 
 
-        cardDataHandler = new CardDataHandler(this);
-        cardList = cardDataHandler.getDayCardList();
-
         ViewPager pager = findViewById(R.id.viewpager);
-        setupViewPager(pager);
 
-        prepareCardData();
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener((item)-> {
+            switch (item.getItemId()) {
+                case R.id.menu_weekly:
+                    pager.setCurrentItem(0);
+                    break;
+                case R.id.menu_monthly:
+                    pager.setCurrentItem(1);
+                    break;
+                case R.id.menu_future:
+                    pager.setCurrentItem(3);
+            }
+            return true;
+        });
+
+        setupViewPager(pager, navigation);
+
+
     }
 
     @Override
@@ -86,9 +94,9 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         return true;
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, BottomNavigationView navigation) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        weeklyLogFragment = new WeeklyLog(cardDataHandler);
+        weeklyLogFragment = WeeklyLog.newInstance();
         monthlyLogFragment = new MonthlyLog();
         futureLogFragment = new FutureLog();
         adapter.addFragment(weeklyLogFragment);
@@ -96,6 +104,13 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         adapter.addFragment(futureLogFragment);
 
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageSelected(int position) {
+                navigation.getMenu().getItem(position).setChecked(true);
+            }
+        });
     }
 
 
@@ -103,21 +118,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     public void onCardClicked(DayCard card) {
         Log.d("cardClick", card.toString());
     }
-    private void prepareCardData() {
-        Date dt = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(dt);
 
-        // add 7 days of cards and examples
-        for(int i = 0; i < 7; i++) {
-            dt = c.getTime();
-            cardList.add(new DayCard(Helper.weekdayString(this, dt), dt,  new CardTask(getString(R.string.example_task), R.drawable.ic_task_12dp),
-                    new CardTask(getString(R.string.example_event), R.drawable.ic_hollow_circle_16dp)));
-
-            //move to the next day
-            c.add(Calendar.DATE, 1);
-        }
-    }
 
 
     @Override
@@ -128,20 +129,8 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     @Override
     protected void onDriveClientReady() {
         this.driveClient = super.getDriveClient();
-        Toast.makeText(this, "logs on drive ready", Toast.LENGTH_SHORT).show();
     }
 
- /*   public void tempTest(View v) {
-        DriveClient mDriveClient = Drive.getDriveClient(getApplicationContext(), gsa);
-        // Build a drive resource client.
-        DriveResourceClient mDriveResourceClient =
-                Drive.getDriveResourceClient(getApplicationContext(), gsa);
-        // Start camera.
-        startActivityForResult(
-                new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
-
-    }
-*/
 
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);
@@ -167,6 +156,10 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
             return false;
         }));
+    }
+
+    public void setCardList(List<DayCard> dayCards) {
+        this.cardList = dayCards;
     }
 
 

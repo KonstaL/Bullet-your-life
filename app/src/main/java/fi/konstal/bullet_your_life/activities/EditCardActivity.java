@@ -6,11 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,23 +25,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
-import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.MetadataBuffer;
-import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +44,9 @@ import java.util.List;
 
 
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.edit_recycler_view.CardItemViewAdapter;
+import fi.konstal.bullet_your_life.edit_recycler_view.SimpleItemTouchHelperCallback;
+import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.task.CardImage;
@@ -58,6 +59,8 @@ public class EditCardActivity extends BaseActivity {
     private DayCard dayCard;
     private int index;
     private CustomLinearLayout cardContentLayout;
+    private RecyclerView recyclerView;
+    private CardItemViewAdapter recyclerViewAdapter;
 
     private DriveClient driveClient;
 
@@ -81,6 +84,8 @@ public class EditCardActivity extends BaseActivity {
 
            /* Init card */
         cardContentLayout = findViewById(R.id.card_content_layout);
+        recyclerView = findViewById(R.id.card_item_recycler_view);
+
         TextView cardTitle = findViewById(R.id.title);
         TextView cardDate = findViewById(R.id.card_date);
 
@@ -88,11 +93,24 @@ public class EditCardActivity extends BaseActivity {
             cardTitle.setText(dayCard.getTitle());
             cardDate.setText(dayCard.getDateString());
 
-            for (CardItem cardItem : dayCard.getCardItems()) {
+            recyclerViewAdapter= new CardItemViewAdapter(this, null, dayCard.getCardItems());
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(recyclerViewAdapter);
+
+            ItemTouchHelper.Callback callback =
+                    new SimpleItemTouchHelperCallback(recyclerViewAdapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(recyclerView);
+
+
+
+         /*   for (CardItem cardItem : dayCard.getCardItems()) {
                 cardItem.buildView(this, cardContentLayout, (event)-> {
                     Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
                 });
-            }
+            }*/
 
         } else {
             cardTitle.setText("errors for everyone!");
@@ -136,9 +154,7 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void fabClick(View v) {
-        FloatingActionButton fab = (FloatingActionButton) v;
-
-        switch (fab.getId()) {
+        switch (v.getId()) {
             case R.id.addEvent:
                 addTask(R.drawable.ic_hollow_circle_16dp);
                 break;
@@ -181,7 +197,7 @@ public class EditCardActivity extends BaseActivity {
 
             removeView(addTaskView);
             addItemData(cardItem);
-            addCardItemView(cardItem);
+            addCardItemToView(cardItem);
 
         });
 
@@ -192,14 +208,17 @@ public class EditCardActivity extends BaseActivity {
         this.dayCard.addCardItems(cardItem);
     }
 
-    public void addCardItemView(CardItem cardItem) {
-        cardItem.buildView(this, cardContentLayout, null);
+    public void addCardItemToView(CardItem cardItem) {
+        //recyclerViewAdapter.notifyDataSetChanged();
+        recyclerViewAdapter.addCardItem(cardItem);
+
+        //cardItem.buildView(this, cardContentLayout, null);
     }
 
     public void removeView(View v) {
         cardContentLayout.removeView(v);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     @Override
@@ -213,6 +232,7 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void getImageIntent() {
+        mainFab.callOnClick();
         //OLD
 /*        Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -259,6 +279,7 @@ public class EditCardActivity extends BaseActivity {
     private void createFileInAppFolder(Uri imgUri) {
         CardImage cardImage = new CardImage(imgUri);
         uploadDriveImage(this, cardImage, imgUri); // Start Async uploading and adds DriveID when done
+        addCardItemToView(cardImage);
         dayCard.addCardItems(cardImage);
     }
 
