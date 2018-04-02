@@ -3,12 +3,10 @@ package fi.konstal.bullet_your_life.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,19 +16,15 @@ import android.widget.Toast;
 import com.google.android.gms.drive.DriveClient;
 
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.ViewPagerAdapter;
-import fi.konstal.bullet_your_life.data.CardDataHandler;
 import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.fragment.FragmentInterface;
 import fi.konstal.bullet_your_life.fragment.FutureLog;
 import fi.konstal.bullet_your_life.fragment.MonthlyLog;
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.CardTask;
 

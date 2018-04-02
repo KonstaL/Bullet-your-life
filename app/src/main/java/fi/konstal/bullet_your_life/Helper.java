@@ -2,15 +2,13 @@ package fi.konstal.bullet_your_life;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.data.CardDataHandler;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.data.CardRepository;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.task.CardTask;
 
 /**
@@ -61,8 +59,8 @@ public class Helper  {
         return Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
     }
 
-    public static void seedCardData(Context context, CardDataHandler cardDataHandler) {
-        List<DayCard> cardList = cardDataHandler.getDayCardList();
+    public static void seedCardData(Context context, CardRepository cardRepository) {
+        List<DayCard> cardList = cardRepository.getDayCardList();
         Date date = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(date);

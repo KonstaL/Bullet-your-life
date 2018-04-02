@@ -8,10 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 
-import java.io.Serializable;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.task.CardImage;
 import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.task.CardTask;

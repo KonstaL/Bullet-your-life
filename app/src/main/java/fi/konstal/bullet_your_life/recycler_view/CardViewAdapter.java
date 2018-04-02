@@ -9,13 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 

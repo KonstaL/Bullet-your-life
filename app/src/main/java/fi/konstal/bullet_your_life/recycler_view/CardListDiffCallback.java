@@ -11,6 +11,8 @@ import android.support.v7.util.DiffUtil;
 import java.io.Serializable;
 import java.util.List;
 
+import fi.konstal.bullet_your_life.data.DayCard;
+
 
 public class CardListDiffCallback extends DiffUtil.Callback {
     private List<DayCard> mOldList;

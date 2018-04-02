@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +28,10 @@ import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.activities.LogsActivity;
-import fi.konstal.bullet_your_life.data.CardDataHandler;
-import fi.konstal.bullet_your_life.recycler_view.CardListDiffCallback;
+import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerItemClickListener;
-import fi.konstal.bullet_your_life.recycler_view.RecyclerViewClickListener;
-import fi.konstal.bullet_your_life.task.CardImage;
-import fi.konstal.bullet_your_life.task.CardItem;
 
 public class WeeklyLog extends Fragment implements FragmentInterface {
     private static final String TAG = "WeeklyLog";
@@ -47,7 +40,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
     private RecyclerView recyclerView;
     private CardViewAdapter cardAdapter;
-    private CardDataHandler cardDataHandler;
+    private CardRepository cardRepository;
     private List<DayCard> cardList;
 
     private FragmentInterface fragmentInterface;
@@ -66,9 +59,9 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        cardDataHandler = new CardDataHandler(getContext());
-        Helper.seedCardData(getContext(), cardDataHandler);
-        cardList = cardDataHandler.getDayCardList();
+        cardRepository = new CardRepository(getContext());
+        Helper.seedCardData(getContext(), cardRepository);
+        cardList = cardRepository.getDayCardList();
         ((LogsActivity)getActivity()).setCardList(cardList);
 
     }
@@ -202,8 +195,8 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         fragmentInterface.onCardClicked(card);
     }
 
-    public CardDataHandler getCardDataHandler() {
-        return cardDataHandler;
+    public CardRepository getCardRepository() {
+        return cardRepository;
     }
 
 }
