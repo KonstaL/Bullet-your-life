@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -108,6 +109,10 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+
+        final Typeface tf = Typeface.createFromAsset(getContext().getAssets(),  "raleway_regular.ttf");
+        mCollapsingToolbarLayout.setCollapsedTitleTypeface(tf);
+        mCollapsingToolbarLayout.setExpandedTitleTypeface(tf);
 
         AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
         Drawable drawable = toolbar.getMenu().getItem(0).getIcon();
