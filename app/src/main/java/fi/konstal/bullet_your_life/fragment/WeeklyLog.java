@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.App;
+import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
@@ -39,6 +40,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     RecyclerView recyclerView;
     @Inject
     CardRepository cardRepository;
+
     private CardViewAdapter cardAdapter;
     private FragmentInterface fragmentInterface;
     private EditCardInterface editCardInterface;
@@ -60,14 +62,15 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //cardRepository = new CardRepository(getContext());
+        Log.i(TAG, "ON CREATE");
+
 
         //Setup Dagger2
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
 
-   /*     if (cardRepository.getSize() < 7) {
-            Helper.seedCardData(getContext(), cardRepository);
-        }*/
+
+        //Helper.seedCardData(getContext(), cardRepository);
+
 
     }
 
@@ -77,6 +80,9 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_weekly_log, container, false);
         ButterKnife.bind(this, v); // bind ButterKnife to this fragment
+
+        Log.i(TAG, "ON CREATEVIEW");
+
         return v;
     }
 
@@ -84,6 +90,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.i(TAG, "ON ATTACH");
         if (context instanceof FragmentInterface) {
             fragmentInterface = (FragmentInterface) context;
             editCardInterface = (EditCardInterface) context;
@@ -95,6 +102,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
     @Override
     public void onDetach() {
+        Log.i(TAG, "ON DETACH");
         super.onDetach();
         fragmentInterface = null;
     }
@@ -102,17 +110,18 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-
+        Log.i(TAG, "ON ACTIVITY CREATED");
 
         viewModel = ViewModelProviders.of(this).get(WeeklyLogViewModel.class);
         viewModel.init(cardRepository);
         viewModel.getDayCards().observe(this, cardList -> {
-            Log.i("test", "observern sisällä==============================================");
+            Log.i(TAG, "OBSERVER");
             if (cardList == null) {
                 Log.i(TAG, "arvo on null");
             } else {
+                Log.i(TAG, "OBSERVER DATA RECEIVED");
 
-                if (cardAdapter == null) {
+                if (recyclerView.getAdapter() == null) {
                     cardAdapter = new CardViewAdapter(getContext());
                     recyclerView.setAdapter(cardAdapter);
                     cardAdapter.setCardList(cardList);
@@ -120,8 +129,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
                     cardAdapter.updateCardList(cardList);
                 }
-
-
             }
         });
 
@@ -226,4 +233,11 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         return cardRepository;
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        viewModel.getDayCards().removeObservers(this);
+    }
 }
