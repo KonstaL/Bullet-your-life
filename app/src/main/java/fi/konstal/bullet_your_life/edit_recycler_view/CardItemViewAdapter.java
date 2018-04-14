@@ -23,9 +23,9 @@ import java.util.List;
 
 import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.task.CardImage;
+
 import fi.konstal.bullet_your_life.task.CardItem;
-import fi.konstal.bullet_your_life.task.CardTask;
+
 
 
 /**
@@ -59,8 +59,8 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(!holder.isInitialized) {
-            if(cardItemList.get(position) instanceof CardImage) {
-                CardImage cardImage = (CardImage) cardItemList.get(position);
+            if(cardItemList.get(position).getType() == CardItem.CARD_IMAGE) {
+                CardItem cardImage =  cardItemList.get(position);
 
                 final float scale = context.getResources().getDisplayMetrics().density;
 
@@ -84,7 +84,7 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
                 }
             } else {
 
-                CardTask cardTask = (CardTask) cardItemList.get(position);
+                CardItem cardTask = cardItemList.get(position);
                 holder.taskText.setText(cardTask.getText());
                 holder.imageView.setImageDrawable(context.getResources().getDrawable(cardTask.getTaskIconRef()));
 
@@ -100,7 +100,7 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
             onBindViewHolder(holder, position);
         } else {
             Bundle o = (Bundle) payloads.get(0);
-            CardTask cardItem = (CardTask) cardItemList.get(position);
+            CardItem cardItem =  cardItemList.get(position);
             for (String key : o.keySet()) {
                 if (key.equals("card_task_text")) {
                     cardItem.setText((String) o.get(key));
@@ -122,7 +122,11 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         newList.add(cardItem);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardItemListDiffCallback(cardItemList, newList));
         diffResult.dispatchUpdatesTo(this);
+    }
 
+    public void updateList(List<CardItem> newList) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardItemListDiffCallback(cardItemList, newList));
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

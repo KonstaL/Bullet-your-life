@@ -19,6 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.ViewPagerAdapter;
+
+import fi.konstal.bullet_your_life.dagger.component.DaggerAppComponent;
+import fi.konstal.bullet_your_life.dagger.module.AppModule;
+import fi.konstal.bullet_your_life.dagger.module.RoomModule;
 import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.fragment.FragmentInterface;
 import fi.konstal.bullet_your_life.fragment.FutureLog;
@@ -26,7 +30,8 @@ import fi.konstal.bullet_your_life.fragment.MonthlyLog;
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.task.CardTask;
+import fi.konstal.bullet_your_life.task.CardItem;
+
 
 public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
 
@@ -54,6 +59,12 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         isAuthenticated = prefs.getBoolean("is_auth", false);
         Toast.makeText(this, "is auth: " + isAuthenticated , Toast.LENGTH_SHORT).show();
 
+        //initialize Dagger2
+        DaggerAppComponent.builder()
+                .appModule(new AppModule(getApplication()))
+                .roomModule(new RoomModule(getApplication()))
+                .build()
+                .inject(this);
 
         ViewPager pager = findViewById(R.id.viewpager);
 
@@ -116,8 +127,9 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
 
     @Override
-    public void addTaskToCard(int cardIndex, CardTask... cardTask) {
-        cardList.get(cardIndex).getCardItems().addAll(Arrays.asList(cardTask));
+    public void addItemToCard(int cardIndex, CardItem... cardItems) {
+        throw new RuntimeException("shitdog, chekkaas tää");
+        //cardList.get(cardIndex).getCardItems().addAll(Arrays.asList(cardItems));
     }
 
     @Override

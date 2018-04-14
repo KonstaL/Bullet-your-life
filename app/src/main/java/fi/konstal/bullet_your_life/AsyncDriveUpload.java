@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutionException;
 
-import fi.konstal.bullet_your_life.task.CardImage;
+
 import fi.konstal.bullet_your_life.task.CardItem;
 
 /**

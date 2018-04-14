@@ -3,13 +3,15 @@ package fi.konstal.bullet_your_life;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
-import fi.konstal.bullet_your_life.task.CardTask;
+import fi.konstal.bullet_your_life.task.CardItem;
+
 
 /**
  * Created by e4klehti on 22.3.2018.
@@ -60,7 +62,8 @@ public class Helper  {
     }
 
     public static void seedCardData(Context context, CardRepository cardRepository) {
-        List<DayCard> cardList = cardRepository.getDayCardList();
+
+        DayCard[] dayCards = new DayCard[7];
         Date date = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -68,15 +71,15 @@ public class Helper  {
         // add 7 days of cards and examples
         for(int i = 0; i < 7; i++) {
             date = c.getTime();
-            cardList.add(
+            dayCards[i] = (
                 new DayCard(
                     Helper.weekdayString(context, date),
                     date,
-                    new CardTask(
+                    new CardItem(
                         context.getString(R.string.example_task),
                         R.drawable.ic_task_12dp
                     ),
-                    new CardTask(
+                    new CardItem(
                         context.getString(R.string.example_event),
                         R.drawable.ic_hollow_circle_16dp
                     )
@@ -86,5 +89,7 @@ public class Helper  {
             //move to the next day
             c.add(Calendar.DATE, 1);
         }
+
+        cardRepository.insertDayCards(dayCards);
     }
 }

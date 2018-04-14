@@ -7,6 +7,7 @@ package fi.konstal.bullet_your_life.recycler_view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,11 +36,13 @@ public class CardListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+        Log.i("test", "are items the same");
         return mNewList.get(newItemPosition).getId() == mOldList.get(oldItemPosition).getId();
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+        Log.i("test", "are contents the same");
         DayCard oldCard = mOldList.get(oldItemPosition);
         DayCard newCard = mNewList.get(newItemPosition);
 

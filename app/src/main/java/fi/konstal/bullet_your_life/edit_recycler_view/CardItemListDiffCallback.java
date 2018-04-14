@@ -10,9 +10,9 @@ import android.support.v7.util.DiffUtil;
 
 import java.util.List;
 
-import fi.konstal.bullet_your_life.task.CardImage;
+
 import fi.konstal.bullet_your_life.task.CardItem;
-import fi.konstal.bullet_your_life.task.CardTask;
+
 
 
 public class CardItemListDiffCallback extends DiffUtil.Callback {
@@ -42,12 +42,12 @@ public class CardItemListDiffCallback extends DiffUtil.Callback {
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         //since images are not editable (CardImage) skip checking them
-        if(mOldList.get(oldItemPosition) instanceof CardImage) {
+        if(mOldList.get(oldItemPosition).getType() == CardItem.CARD_IMAGE) {
             return true;
         }
 
-        CardTask oldCard = (CardTask) mOldList.get(oldItemPosition);
-        CardTask newCard = (CardTask) mNewList.get(newItemPosition);
+        CardItem oldCard =  mOldList.get(oldItemPosition);
+        CardItem newCard =  mNewList.get(newItemPosition);
         return oldCard.getText().equals(newCard.getText());
     }
 
@@ -55,10 +55,10 @@ public class CardItemListDiffCallback extends DiffUtil.Callback {
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
         //only text can change, so only include that
-        CardTask newCard = (CardTask) mNewList.get(newItemPosition);
+        CardItem newItem =  mNewList.get(newItemPosition);
 
         Bundle diffBundle = new Bundle();
-        diffBundle.putSerializable("card_task_text", newCard.getText());
+        diffBundle.putSerializable("card_task_text", newItem.getText());
 
 
         if (diffBundle.size() == 0) return null;

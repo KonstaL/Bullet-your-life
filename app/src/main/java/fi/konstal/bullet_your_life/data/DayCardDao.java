@@ -2,6 +2,8 @@ package fi.konstal.bullet_your_life.data;
 
 
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -17,9 +19,13 @@ import java.util.List;
 
 public interface DayCardDao {
     @Query("SELECT * FROM DayCard")
-    List<DayCard> getAll();
-    //test this later
-    //LiveData<List<DayCard>> getAll()
+    LiveData<List<DayCard>> getAll();
+
+    @Query("SELECT * FROM DayCard WHERE id == :id")
+    LiveData<DayCard> getById(int id);
+
+    @Query("SELECT COUNT(*) FROM DayCard")
+    int getSize();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertDayCards(DayCard... dayCards);
