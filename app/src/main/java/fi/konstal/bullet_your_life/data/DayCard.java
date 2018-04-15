@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import fi.konstal.bullet_your_life.task.CardItem;
 
@@ -47,7 +48,7 @@ public class DayCard implements Serializable {
     public DayCard(String title, Date date, CardItem... cardItems) {
         this.title = title;
         this.date = date;
-        this.cardItems = new ArrayList<>();
+        this.cardItems = new CopyOnWriteArrayList<>();
         this.cardItems.addAll(Arrays.asList(cardItems));
         id = idCounter++;
 
@@ -58,7 +59,7 @@ public class DayCard implements Serializable {
     public DayCard(String title, String dateString, CardItem... cardItems) {
         this.title = title;
         this.dateString = dateString;
-        this.cardItems = new ArrayList<>();
+        this.cardItems = new CopyOnWriteArrayList<>();
         this.cardItems.addAll(Arrays.asList(cardItems));
         id = idCounter++;
     }

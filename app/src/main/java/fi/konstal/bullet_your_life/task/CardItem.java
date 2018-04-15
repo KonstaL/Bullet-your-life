@@ -15,10 +15,11 @@ import com.google.android.gms.drive.DriveId;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.UUID;
 
 import fi.konstal.bullet_your_life.DriveDownloadListener;
 import fi.konstal.bullet_your_life.DriveUploadListener;
-import fi.konstal.bullet_your_life.Helper;
+import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.BaseActivity;
 
@@ -32,14 +33,21 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     public static final int CARD_TASK = 1;
     public static final int CARD_IMAGE = 2;
 
-    //private String type; //for deserialization
+
     private static final String TAG = "CardItemGeneric";
 
+    //Determine type of view rendered
+    private int type;
 
-    private int type; //Determine type
+    //Used to determine if its the same item in diff calculations
+    private String id;
+
+    //For Text based item
     private String text;
     private boolean crossed;
     private int taskIconRef;
+
+    //For Image based item
     private String imageUriString;
     private String driveId;
     private transient Bitmap image;
@@ -51,18 +59,21 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
         this.text = text;
         this.crossed = false;
         this.taskIconRef = taskIconRef;
+        this.id = UUID.randomUUID().toString();
     }
 
     //Card image
     public CardItem(DriveId driveId) {
         this.type = CARD_IMAGE;
         this.driveId = driveId.encodeToString();
+        this.id = UUID.randomUUID().toString();
     }
     //Card image
     public CardItem(Uri imageUri) {
 
         this.type = CARD_IMAGE;
         setImageUri(imageUri);
+        this.id = UUID.randomUUID().toString();
     }
 
 
@@ -115,7 +126,16 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     }
 
     public Uri getImageUri() {
-        return Uri.parse(imageUriString);
+        if(imageUriString != null) return Uri.parse(imageUriString);
+        return null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setImageUri(Uri imageUri) {
@@ -187,6 +207,19 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     public void onUploadFailure(Exception e) {
         e.printStackTrace();
     }
+
+/*    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof CardItem)) return false;
+
+        CardItem c = (CardItem) o;
+
+        // Compare the data members and return accordingly
+        return Double.compare(re, c.re) == 0
+                && Double.compare(im, c.im) == 0;
+    }
+    }*/
 }
 
 

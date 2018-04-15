@@ -10,6 +10,7 @@ import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,6 +19,8 @@ import com.google.android.gms.drive.DriveClient;
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.ViewPagerAdapter;
 
 import fi.konstal.bullet_your_life.dagger.component.DaggerAppComponent;
@@ -44,6 +47,8 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     private WeeklyLog weeklyLogFragment;
     private MonthlyLog monthlyLogFragment;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +71,9 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
                 .build()
                 .inject(this);
 
+        // Initialize ButterKnife
+        ButterKnife.bind(this);
+
         ViewPager pager = findViewById(R.id.viewpager);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -84,6 +92,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         });
 
         setupViewPager(pager, navigation);
+
 
 
     }
@@ -137,9 +146,10 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         this.driveClient = super.getDriveClient();
     }
 
-
-    public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(this, v);
+/*
+    public void initPopUpMenu(int anchor) {
+        View anchorView = findViewById(anchor);
+        PopupMenu popup = new PopupMenu(this, anchorView);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_popup, popup.getMenu());
         popup.show();
@@ -162,7 +172,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
             return false;
         }));
-    }
+    }*/
 
     public void setCardList(List<DayCard> dayCards) {
         this.cardList = dayCards;

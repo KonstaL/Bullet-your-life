@@ -1,6 +1,7 @@
 package fi.konstal.bullet_your_life;
 
 import android.app.Application;
+import android.content.Context;
 
 
 import fi.konstal.bullet_your_life.dagger.component.AppComponent;
@@ -29,4 +30,5 @@ public class App extends Application {
     public AppComponent getAppComponent() {
         return appComponent;
     }
+
 }

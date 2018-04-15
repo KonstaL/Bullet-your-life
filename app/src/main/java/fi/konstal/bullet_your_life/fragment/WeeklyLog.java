@@ -24,13 +24,15 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.App;
-import fi.konstal.bullet_your_life.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
+import fi.konstal.bullet_your_life.activities.LogsActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerItemClickListener;
+import fi.konstal.bullet_your_life.util.Helper;
+import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
 public class WeeklyLog extends Fragment implements FragmentInterface {
@@ -68,8 +70,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         //Setup Dagger2
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
 
-
-        //Helper.seedCardData(getContext(), cardRepository);
+        Helper.seedCardData(getContext(), cardRepository);
 
 
     }
@@ -140,6 +141,8 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
+        View popupOpener = getActivity().findViewById(R.id.popup_open);
+        popupOpener.setOnClickListener(new PopUpHandler(getContext(), popupOpener));
         CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);

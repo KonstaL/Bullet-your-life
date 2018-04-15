@@ -52,7 +52,7 @@ public class CardRepository {
        });
     }
 
-    public void updateCards(DayCard... cards) {
+    public synchronized void updateCards(DayCard... cards) {
         executor.execute(()-> dayCardDao.updateDayCards(cards));
     }
 

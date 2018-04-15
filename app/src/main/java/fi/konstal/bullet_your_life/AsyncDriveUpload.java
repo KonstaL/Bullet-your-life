@@ -1,10 +1,7 @@
 package fi.konstal.bullet_your_life;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.drive.DriveContents;
@@ -12,37 +9,36 @@ import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ExecutionException;
-
 
 import fi.konstal.bullet_your_life.task.CardItem;
+import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 
 /**
  * Created by e4klehti on 30.3.2018.
  */
 
-public class AsyncDriveUpload  {
+public class AsyncDriveUpload {
     private static final String TAG = "AsyncDriveUpload";
 
-    private DriveUploadListener driveUploadListener;
+    private EditCardViewModel viewModel;
+    private CardItem cardItem;
     private Uri imgUri;
     private Context context;
     private DriveResourceClient driveResourceClient;
 
-    public  AsyncDriveUpload(Context context, Uri imgUri, DriveResourceClient driveResourceClient,
-                             DriveUploadListener driveUploadListener) {
+    public AsyncDriveUpload(Context context, EditCardViewModel viewModel, CardItem cardItem,
+                            Uri imgUri, DriveResourceClient driveResourceClient) {
         this.context = context;
         this.imgUri = imgUri;
-        this.driveUploadListener = driveUploadListener;
+        this.cardItem = cardItem;
+        this.viewModel = viewModel;
         this.driveResourceClient = driveResourceClient;
     }
-
 
 
     // TODO CLEAN THIS THREADING AND OPTIMIZE CPU USAGE
@@ -56,42 +52,38 @@ public class AsyncDriveUpload  {
         Log.i(TAG, "context = " + context);
         Tasks.whenAll(appFolderTask, createContentsTask) //when both tasks are ready
                 .continueWithTask(task -> {
-                    new Thread(()-> {
+                    /*new Thread(()-> {*/
 
 
-                        DriveFolder parent = appFolderTask.getResult();
-                        DriveContents contents = createContentsTask.getResult();
+                    DriveFolder parent = appFolderTask.getResult();
+                    DriveContents contents = createContentsTask.getResult();
 
 
-                        try (OutputStream os = contents.getOutputStream();
-                             InputStream is = context.getContentResolver().openInputStream(imgUri)) {
+                    try (OutputStream os = contents.getOutputStream();
+                         InputStream is = context.getContentResolver().openInputStream(imgUri)) {
 
-                            byte[] buffer = new byte[4096];
-                            int n;
-                            Log.i(TAG, "inside upload " + Thread.currentThread());
+                        byte[] buffer = new byte[4096];
+                        int n;
+                        Log.i(TAG, "inside upload " + Thread.currentThread());
 
-                            while ((n = is.read(buffer)) > 0) {
-                                os.write(buffer, 0, n);
-                            }
-
-
-
-
-                            MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                                    .setTitle("uploaded image")
-                                    .setMimeType("image/jpeg")
-                                    .build();
-
-                            uploadDone(driveResourceClient.createFile(parent, changeSet, contents));
-
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getMessage());
+                        while ((n = is.read(buffer)) > 0) {
+                            os.write(buffer, 0, n);
                         }
-                    }).start();
+
+
+                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                                .setTitle("uploaded image")
+                                .setMimeType("image/jpeg")
+                                .build();
+
+                        uploadDone(driveResourceClient.createFile(parent, changeSet, contents));
+
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                   /* }).start();*/
                     return null;
                 });
-
-
 
 
         Log.i(TAG, "end of upload");
@@ -100,11 +92,24 @@ public class AsyncDriveUpload  {
 
     public void uploadDone(Task<DriveFile> createdFileTask) {
         Tasks.whenAll(createdFileTask)
-            .continueWith((createdFile)-> {
-                driveUploadListener.onUploadSuccess(createdFileTask.getResult().getDriveId());
-                Log.i(TAG, "driveID created: " + createdFileTask.getResult().getDriveId().toString());
+                .continueWith((createdFile) -> {
+                    Log.i(TAG, "upload done sisällä");
+                    Log.i(TAG, cardItem.toString());
 
-                return null;
-        });
+                    try {
+                        //Log.i(TAG, createdFile.getResult().toString());
+                        cardItem.setDriveId(createdFileTask.getResult().getDriveId());
+                        Log.i(TAG, "driveID created: " + cardItem.getDriveId());
+                    } catch (Exception e) {
+                        Log.i(TAG, "HITTO SE KAATU");
+                        Log.i(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
+
+
+                    viewModel.updateCardItems(cardItem);
+
+                    return null;
+                });
     }
 }

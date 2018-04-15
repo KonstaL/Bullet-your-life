@@ -97,11 +97,10 @@ public class EditCardActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
         viewModel.init(cardRepository, id);
         viewModel.getDayCard().observe(this, dayCard -> {
-            Log.i("test", "observern sisällä==============================================");
+            Log.i(TAG, "editdaycard daycard from obs: " + dayCard.getCardItems());
             if (dayCard == null) {
                 Log.i(TAG, "dayCard on null");
             } else {
-                Log.i(TAG, "arvo on " + dayCard.toString());
 
                 TextView cardTitle = findViewById(R.id.title);
                 TextView cardDate = findViewById(R.id.card_date);
@@ -110,8 +109,8 @@ public class EditCardActivity extends BaseActivity {
                 cardDate.setText(dayCard.getDateString());
 
 
-                if(recyclerViewAdapter == null) {
-                    recyclerViewAdapter = new CardItemViewAdapter(this, null, dayCard.getCardItems());
+                if(recyclerView.getAdapter() == null) {
+                    recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, dayCard.getCardItems());
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
                     recyclerView.setLayoutManager(mLayoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -337,9 +336,11 @@ public class EditCardActivity extends BaseActivity {
 
     private void createFileInAppFolder(Uri imgUri) {
         CardItem cardImage = new CardItem(imgUri);
-        uploadDriveImage(this, cardImage, imgUri); // Start Async uploading and adds DriveID when done
+        uploadDriveImage(this, viewModel, cardImage, imgUri); // Start Async uploading and adds DriveID when done
         //addCardItemToView(cardImage);
-        dayCard.addCardItems(cardImage);
+
+        //dayCard.addCardItems(cardImage);
+        addItemData(cardImage);
     }
 
 
