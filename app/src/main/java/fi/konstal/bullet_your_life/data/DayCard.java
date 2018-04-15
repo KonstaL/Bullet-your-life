@@ -1,8 +1,9 @@
-package fi.konstal.bullet_your_life.recycler_view;
+package fi.konstal.bullet_your_life.data;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -12,10 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import fi.konstal.bullet_your_life.data.DataConverter;
 import fi.konstal.bullet_your_life.task.CardItem;
-import fi.konstal.bullet_your_life.task.CardTask;
 
 
 /**
@@ -23,7 +23,7 @@ import fi.konstal.bullet_your_life.task.CardTask;
  */
 
 
-@Entity(tableName = "DayCard")
+@Entity(tableName = "DayCard", indices = {@Index(value = {"dateString", "title"})})
 public class DayCard implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
@@ -35,7 +35,7 @@ public class DayCard implements Serializable {
     @ColumnInfo(name = "title")
     private String title;
 
-    @Ignore
+    @TypeConverters(DateConverter.class)
     private Date date;
 
     @ColumnInfo(name = "dateString")
@@ -48,7 +48,7 @@ public class DayCard implements Serializable {
     public DayCard(String title, Date date, CardItem... cardItems) {
         this.title = title;
         this.date = date;
-        this.cardItems = new ArrayList<>();
+        this.cardItems = new CopyOnWriteArrayList<>();
         this.cardItems.addAll(Arrays.asList(cardItems));
         id = idCounter++;
 
@@ -59,13 +59,14 @@ public class DayCard implements Serializable {
     public DayCard(String title, String dateString, CardItem... cardItems) {
         this.title = title;
         this.dateString = dateString;
-        this.cardItems = new ArrayList<>();
+        this.cardItems = new CopyOnWriteArrayList<>();
         this.cardItems.addAll(Arrays.asList(cardItems));
         id = idCounter++;
     }
 
     // Empty constructor for database actions
-    public DayCard() {}
+    public DayCard() {
+    }
 
     public int getId() {
         return id;
@@ -98,6 +99,7 @@ public class DayCard implements Serializable {
     public void setCardItems(List<CardItem> cardItems) {
         this.cardItems = cardItems;
     }
+
     public void addCardItems(CardItem... cardItems) {
         this.cardItems.addAll(Arrays.asList(cardItems));
     }
@@ -112,9 +114,9 @@ public class DayCard implements Serializable {
 
     public DayCard replicate() {
 
-        CardItem[] newArray =  new CardItem[cardItems.size()];
+        CardItem[] newArray = new CardItem[cardItems.size()];
 
-        for (int i = 0; i < cardItems.size() ; i++) {
+        for (int i = 0; i < cardItems.size(); i++) {
             newArray[i] = cardItems.get(i).replicate();
         }
 

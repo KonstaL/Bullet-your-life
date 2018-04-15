@@ -1,15 +1,15 @@
 package fi.konstal.bullet_your_life.activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,35 +40,41 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 
-
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.data.CardRepository;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.edit_recycler_view.CardItemViewAdapter;
 import fi.konstal.bullet_your_life.edit_recycler_view.SimpleItemTouchHelperCallback;
-import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
-import fi.konstal.bullet_your_life.task.CardImage;
 import fi.konstal.bullet_your_life.task.CardItem;
-import fi.konstal.bullet_your_life.task.CardTask;
+import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
+
 
 public class EditCardActivity extends BaseActivity {
     private static final String TAG = "EditCardActivity";
-
+    private final static int RESULT_LOAD_IMG = 10;
+    private EditCardViewModel viewModel;
     private DayCard dayCard;
-    private int index;
-    private CustomLinearLayout cardContentLayout;
-    private RecyclerView recyclerView;
+    private int id;
+
+    @BindView(R.id.card_content_layout)
+    CustomLinearLayout cardContentLayout;
+
+    @BindView(R.id.card_item_recycler_view)
+    RecyclerView recyclerView;
+
     private CardItemViewAdapter recyclerViewAdapter;
-
     private DriveClient driveClient;
-
     private List<FloatingActionButton> fabs;
     private FloatingActionButton mainFab;
 
-
-    private final static int RESULT_LOAD_IMG = 10;
+    @Inject
+    CardRepository cardRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,23 +83,75 @@ public class EditCardActivity extends BaseActivity {
 //        getSupportActionBar().hide();
         setContentView(R.layout.activity_edit_card);
 
+        //Setup Dagger2
+        ((App) getApplication()).getAppComponent().inject(this);
+
+        //Setup ButterKnife
+        ButterKnife.bind(this); // bind ButterKnife to this fragment
+
         this.fabs = new ArrayList<>();
-        this.dayCard = (DayCard) getIntent().getSerializableExtra("dayCard");
-        this.index = getIntent().getIntExtra("index", -1);
+        //his.dayCard = (DayCard) getIntent().getSerializableExtra("dayCard");
+        this.id = getIntent().getIntExtra("id", -1);
+
+
+        viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
+        viewModel.init(cardRepository, id);
+        viewModel.getDayCard().observe(this, dayCard -> {
+            Log.i(TAG, "editdaycard daycard from obs: " + dayCard.getCardItems());
+            if (dayCard == null) {
+                Log.i(TAG, "dayCard on null");
+            } else {
+
+                TextView cardTitle = findViewById(R.id.title);
+                TextView cardDate = findViewById(R.id.card_date);
+
+                cardTitle.setText(dayCard.getTitle());
+                cardDate.setText(dayCard.getDateString());
+
+
+                if(recyclerView.getAdapter() == null) {
+                    recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, dayCard.getCardItems());
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+                    recyclerView.setLayoutManager(mLayoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.setAdapter(recyclerViewAdapter);
+
+                    //Enable drag and drop functionality
+                    ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(
+                                                                        recyclerViewAdapter);
+                    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+                    touchHelper.attachToRecyclerView(recyclerView);
+                } else {
+                    recyclerViewAdapter.updateList(dayCard.getCardItems());
+                }
+
+
+             /*   for (CardItem cardItem : dayCard.getCardItems()) {
+                    cardItem.buildView(this, cardContentLayout, (event)-> {
+                        Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
+                    });
+                }*/
+
+            }
+
+        });
+
+        //this.dayCard = cardRepository.getDayCard(id);
 
 
            /* Init card */
-        cardContentLayout = findViewById(R.id.card_content_layout);
-        recyclerView = findViewById(R.id.card_item_recycler_view);
 
-        TextView cardTitle = findViewById(R.id.title);
+
+
+
+        /*TextView cardTitle = findViewById(R.id.title);
         TextView cardDate = findViewById(R.id.card_date);
 
-        if(dayCard != null) {
+        if (dayCard != null) {
             cardTitle.setText(dayCard.getTitle());
             cardDate.setText(dayCard.getDateString());
 
-            recyclerViewAdapter= new CardItemViewAdapter(this, null, dayCard.getCardItems());
+            recyclerViewAdapter = new CardItemViewAdapter(this, null, dayCard.getCardItems());
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -106,16 +164,16 @@ public class EditCardActivity extends BaseActivity {
 
 
 
-         /*   for (CardItem cardItem : dayCard.getCardItems()) {
+            for (CardItem cardItem : dayCard.getCardItems()) {
                 cardItem.buildView(this, cardContentLayout, (event)-> {
                     Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
                 });
-            }*/
+            }
 
         } else {
             cardTitle.setText("errors for everyone!");
         }
-
+*/
 
 
         /*Init floating action button */
@@ -132,8 +190,8 @@ public class EditCardActivity extends BaseActivity {
         Animation mHideLayout = AnimationUtils.loadAnimation(this, R.anim.hide_layout);
 
 
-        mainFab.setOnClickListener((View view)-> {
-            if(fabs.get(0).getVisibility() == View.VISIBLE) {
+        mainFab.setOnClickListener((View view) -> {
+            if (fabs.get(0).getVisibility() == View.VISIBLE) {
                 dimming_layer.setBackgroundColor(getResources().getColor(R.color.transparent));
                 mainFab.startAnimation(mHideButton);
 
@@ -188,16 +246,16 @@ public class EditCardActivity extends BaseActivity {
         FloatingActionButton cancelFab = addTaskView.findViewById(R.id.cancel_fab);
         FloatingActionButton proceedFab = addTaskView.findViewById(R.id.proceed_fab);
 
-        cancelFab.setOnClickListener((event)-> {
+        cancelFab.setOnClickListener((event) -> {
             removeView(addTaskView);
         });
 
-        proceedFab.setOnClickListener((event)-> {
-            CardItem cardItem = new CardTask(textField.getText().toString(), drawableRef);
+        proceedFab.setOnClickListener((event) -> {
+            CardItem cardItem = new CardItem(textField.getText().toString(), drawableRef);
 
             removeView(addTaskView);
             addItemData(cardItem);
-            addCardItemToView(cardItem);
+            //addCardItemToView(cardItem);
 
         });
 
@@ -205,7 +263,7 @@ public class EditCardActivity extends BaseActivity {
     }
 
     public void addItemData(CardItem cardItem) {
-        this.dayCard.addCardItems(cardItem);
+        viewModel.addCardItems(cardItem);
     }
 
     public void addCardItemToView(CardItem cardItem) {
@@ -225,7 +283,7 @@ public class EditCardActivity extends BaseActivity {
     public void onBackPressed() {
         Intent data = new Intent();
         data.putExtra("DayCard", dayCard);
-        data.putExtra("index", index);
+        data.putExtra("id", id);
         setResult(RESULT_OK, data);
         finish();
         super.onBackPressed();
@@ -253,8 +311,8 @@ public class EditCardActivity extends BaseActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if( requestCode == RESULT_LOAD_IMG) {
-            if(resultCode == RESULT_OK) {
+        if (requestCode == RESULT_LOAD_IMG) {
+            if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "ImageIntent OK", Toast.LENGTH_SHORT).show();
 
                 List<Image> images = ImagePicker.getImages(data);
@@ -277,69 +335,71 @@ public class EditCardActivity extends BaseActivity {
     }
 
     private void createFileInAppFolder(Uri imgUri) {
-        CardImage cardImage = new CardImage(imgUri);
-        uploadDriveImage(this, cardImage, imgUri); // Start Async uploading and adds DriveID when done
-        addCardItemToView(cardImage);
-        dayCard.addCardItems(cardImage);
+        CardItem cardImage = new CardItem(imgUri);
+        uploadDriveImage(this, viewModel, cardImage, imgUri); // Start Async uploading and adds DriveID when done
+        //addCardItemToView(cardImage);
+
+        //dayCard.addCardItems(cardImage);
+        addItemData(cardImage);
     }
 
 
     public void temp() {
 
-            final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
+        final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
 
-            Tasks.whenAll(appFolderTask)
-                    .continueWith(new Continuation<Void, Task<MetadataBuffer>>() {
-                        @Override
-                        public Task<MetadataBuffer> then(@NonNull Task<Void> task) throws Exception {
-                            DriveFolder driveFolder = appFolderTask.getResult();
-
-
-                            return getDriveResourceClient().listChildren(driveFolder);
-                        }
-                    })
-                    .addOnSuccessListener(this, (Task<MetadataBuffer> metadataBufferTask) -> {
-                        Tasks.whenAll(metadataBufferTask)
-                                .continueWith((Task<Void> task) -> {
-                                    showMessage("for loopin edes");
-
-                                    MetadataBuffer metadataBuffer =  metadataBufferTask.getResult();
+        Tasks.whenAll(appFolderTask)
+                .continueWith(new Continuation<Void, Task<MetadataBuffer>>() {
+                    @Override
+                    public Task<MetadataBuffer> then(@NonNull Task<Void> task) throws Exception {
+                        DriveFolder driveFolder = appFolderTask.getResult();
 
 
-                                    DriveFile driveFile = metadataBuffer.get(6).getDriveId().asDriveFile();
-                                    Task<DriveContents> file = getDriveResourceClient().openFile(driveFile, DriveFile.MODE_READ_ONLY);
+                        return getDriveResourceClient().listChildren(driveFolder);
+                    }
+                })
+                .addOnSuccessListener(this, (Task<MetadataBuffer> metadataBufferTask) -> {
+                    Tasks.whenAll(metadataBufferTask)
+                            .continueWith((Task<Void> task) -> {
+                                showMessage("for loopin edes");
 
-                                    Tasks.whenAll(file)
-                                           .addOnSuccessListener((success) -> {
-                                               DriveContents imgFile = file.getResult();
+                                MetadataBuffer metadataBuffer = metadataBufferTask.getResult();
 
-                                               Bitmap img;
-                                               try(InputStream is = imgFile.getInputStream()) {
-                                                   img = BitmapFactory.decodeStream(is);
 
-                                                   View v = getLayoutInflater().inflate(R.layout.partial_card_item_image, null);
-                                                   ImageView imgView = v.findViewById(R.id.card_item_image);
-                                                   imgView.setImageBitmap(img);
-                                                   cardContentLayout.addView(v);
-                                               } catch (Exception e) {
-                                                    Log.d(TAG, e.toString());
-                                                   Toast.makeText(this, "Image adding failed", Toast.LENGTH_SHORT).show();
-                                               }
-                                           });
+                                DriveFile driveFile = metadataBuffer.get(6).getDriveId().asDriveFile();
+                                Task<DriveContents> file = getDriveResourceClient().openFile(driveFile, DriveFile.MODE_READ_ONLY);
 
-                                    metadataBuffer.release();
+                                Tasks.whenAll(file)
+                                        .addOnSuccessListener((success) -> {
+                                            DriveContents imgFile = file.getResult();
 
-                                    return metadataBuffer;
-                                });
+                                            Bitmap img;
+                                            try (InputStream is = imgFile.getInputStream()) {
+                                                img = BitmapFactory.decodeStream(is);
 
-                        // finish();
-                    })
-                    .addOnFailureListener(this, (exception) -> {
-                        Log.e(TAG, "Unable read metadata", exception);
-                        showMessage("error reading metadata");
-                        //finish();
+                                                View v = getLayoutInflater().inflate(R.layout.partial_card_item_image, null);
+                                                ImageView imgView = v.findViewById(R.id.card_item_image);
+                                                imgView.setImageBitmap(img);
+                                                cardContentLayout.addView(v);
+                                            } catch (Exception e) {
+                                                Log.d(TAG, e.toString());
+                                                Toast.makeText(this, "Image adding failed", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
 
-                    });
+                                metadataBuffer.release();
+
+                                return metadataBuffer;
+                            });
+
+                    // finish();
+                })
+                .addOnFailureListener(this, (exception) -> {
+                    Log.e(TAG, "Unable read metadata", exception);
+                    showMessage("error reading metadata");
+                    //finish();
+
+                });
     }
 
     @Override

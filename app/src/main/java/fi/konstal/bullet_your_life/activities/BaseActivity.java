@@ -30,6 +30,8 @@ import fi.konstal.bullet_your_life.AsyncDriveDownload;
 import fi.konstal.bullet_your_life.AsyncDriveUpload;
 import fi.konstal.bullet_your_life.DriveDownloadListener;
 import fi.konstal.bullet_your_life.DriveUploadListener;
+import fi.konstal.bullet_your_life.task.CardItem;
+import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive
@@ -131,8 +133,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         new AsyncDriveDownload(driveId, mDriveResourceClient, driveDownloadListener).execute();
     }
 
-    public void uploadDriveImage(Context context, DriveUploadListener driveUploadListener, Uri imgUri) {
-       new AsyncDriveUpload(context, imgUri, mDriveResourceClient, driveUploadListener).execute();
+    //TODO: Refactor EditCardViewModel to be more abstract
+    public void uploadDriveImage(Context context, EditCardViewModel viewModel, CardItem card,  Uri imgUri) {
+       new AsyncDriveUpload(context, viewModel, card, imgUri, mDriveResourceClient).execute();
     }
 
     /**

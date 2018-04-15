@@ -12,6 +12,7 @@ import java.util.List;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 
+
 public class DataConverter implements Serializable {
 
     @TypeConverter // note this annotation
@@ -20,9 +21,8 @@ public class DataConverter implements Serializable {
             return (null);
         }
         Gson gson = new Gson();
-        Type type = new TypeToken<List<CardItem>>() {
-        }.getType();
-        String json = gson.toJson(cardItemList, type);
+
+        String json = gson.toJson(cardItemList);
         return json;
     }
 
@@ -32,10 +32,10 @@ public class DataConverter implements Serializable {
             return (null);
         }
         Gson gson = new Gson();
-        Type type = new TypeToken<List<CardItem>>() {
-        }.getType();
-        List<CardItem> cardTaskList = gson.fromJson(itemListString, type);
+        Type type = new TypeToken<List<CardItem>>() {}.getType();
+        List<CardItem> cardTaskList =  gson.fromJson(itemListString, type);
         return cardTaskList;
     }
-
 }
+
+

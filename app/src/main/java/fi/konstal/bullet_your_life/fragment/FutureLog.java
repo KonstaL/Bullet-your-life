@@ -1,27 +1,19 @@
 package fi.konstal.bullet_your_life.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
 
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.data.DayCard;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FutureLog.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FutureLog#newInstance} factory method to
- * create an instance of this fragment.
- */
+
+
 public class FutureLog extends Fragment implements FragmentInterface{
     FragmentInterface fragmentInterface;
 

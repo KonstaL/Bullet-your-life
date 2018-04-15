@@ -3,36 +3,38 @@ package fi.konstal.bullet_your_life.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.drive.DriveClient;
 
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import fi.konstal.bullet_your_life.Helper;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.ViewPagerAdapter;
-import fi.konstal.bullet_your_life.data.CardDataHandler;
+
+import fi.konstal.bullet_your_life.dagger.component.DaggerAppComponent;
+import fi.konstal.bullet_your_life.dagger.module.AppModule;
+import fi.konstal.bullet_your_life.dagger.module.RoomModule;
 import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.fragment.FragmentInterface;
 import fi.konstal.bullet_your_life.fragment.FutureLog;
 import fi.konstal.bullet_your_life.fragment.MonthlyLog;
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.R;
-import fi.konstal.bullet_your_life.task.CardTask;
+import fi.konstal.bullet_your_life.task.CardItem;
+
 
 public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
 
@@ -44,6 +46,8 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     private FutureLog futureLogFragment;
     private WeeklyLog weeklyLogFragment;
     private MonthlyLog monthlyLogFragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,15 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         isAuthenticated = prefs.getBoolean("is_auth", false);
         Toast.makeText(this, "is auth: " + isAuthenticated , Toast.LENGTH_SHORT).show();
 
+        //initialize Dagger2
+        DaggerAppComponent.builder()
+                .appModule(new AppModule(getApplication()))
+                .roomModule(new RoomModule(getApplication()))
+                .build()
+                .inject(this);
+
+        // Initialize ButterKnife
+        ButterKnife.bind(this);
 
         ViewPager pager = findViewById(R.id.viewpager);
 
@@ -79,6 +92,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         });
 
         setupViewPager(pager, navigation);
+
 
 
     }
@@ -122,8 +136,9 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
 
     @Override
-    public void addTaskToCard(int cardIndex, CardTask... cardTask) {
-        cardList.get(cardIndex).getCardItems().addAll(Arrays.asList(cardTask));
+    public void addItemToCard(int cardIndex, CardItem... cardItems) {
+        throw new RuntimeException("shitdog, chekkaas tää");
+        //cardList.get(cardIndex).getCardItems().addAll(Arrays.asList(cardItems));
     }
 
     @Override
@@ -131,9 +146,10 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         this.driveClient = super.getDriveClient();
     }
 
-
-    public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(this, v);
+/*
+    public void initPopUpMenu(int anchor) {
+        View anchorView = findViewById(anchor);
+        PopupMenu popup = new PopupMenu(this, anchorView);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_popup, popup.getMenu());
         popup.show();
@@ -156,7 +172,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
             return false;
         }));
-    }
+    }*/
 
     public void setCardList(List<DayCard> dayCards) {
         this.cardList = dayCards;

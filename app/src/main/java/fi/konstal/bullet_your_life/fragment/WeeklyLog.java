@@ -1,6 +1,6 @@
 package fi.konstal.bullet_your_life.fragment;
 
-import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,41 +18,40 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import javax.inject.Inject;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import fi.konstal.bullet_your_life.Helper;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.activities.LogsActivity;
-import fi.konstal.bullet_your_life.data.CardDataHandler;
-import fi.konstal.bullet_your_life.recycler_view.CardListDiffCallback;
+import fi.konstal.bullet_your_life.data.CardRepository;
+import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
-import fi.konstal.bullet_your_life.recycler_view.DayCard;
 import fi.konstal.bullet_your_life.recycler_view.RecyclerItemClickListener;
-import fi.konstal.bullet_your_life.recycler_view.RecyclerViewClickListener;
-import fi.konstal.bullet_your_life.task.CardImage;
-import fi.konstal.bullet_your_life.task.CardItem;
+import fi.konstal.bullet_your_life.util.Helper;
+import fi.konstal.bullet_your_life.util.PopUpHandler;
+import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
 public class WeeklyLog extends Fragment implements FragmentInterface {
-    private static final String TAG = "WeeklyLog";
-
     public final static int MODIFY_CARD = 10;
+    private static final String TAG = "WeeklyLog";
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @Inject
+    CardRepository cardRepository;
 
-    private RecyclerView recyclerView;
     private CardViewAdapter cardAdapter;
-    private CardDataHandler cardDataHandler;
-    private List<DayCard> cardList;
-
     private FragmentInterface fragmentInterface;
     private EditCardInterface editCardInterface;
 
+    private WeeklyLogViewModel viewModel;
 
-    public WeeklyLog() {}
+
+    public WeeklyLog() {
+    }
 
     public static WeeklyLog newInstance() {
         WeeklyLog fragment = new WeeklyLog();
@@ -62,14 +59,19 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        cardDataHandler = new CardDataHandler(getContext());
-        Helper.seedCardData(getContext(), cardDataHandler);
-        cardList = cardDataHandler.getDayCardList();
-        ((LogsActivity)getActivity()).setCardList(cardList);
+        Log.i(TAG, "ON CREATE");
+
+
+        //Setup Dagger2
+        ((App) getActivity().getApplication()).getAppComponent().inject(this);
+
+        Helper.seedCardData(getContext(), cardRepository);
+
 
     }
 
@@ -77,14 +79,19 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_weekly_log, container, false);
-    }
+        View v = inflater.inflate(R.layout.fragment_weekly_log, container, false);
+        ButterKnife.bind(this, v); // bind ButterKnife to this fragment
 
+        Log.i(TAG, "ON CREATEVIEW");
+
+        return v;
+    }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.i(TAG, "ON ATTACH");
         if (context instanceof FragmentInterface) {
             fragmentInterface = (FragmentInterface) context;
             editCardInterface = (EditCardInterface) context;
@@ -96,6 +103,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
     @Override
     public void onDetach() {
+        Log.i(TAG, "ON DETACH");
         super.onDetach();
         fragmentInterface = null;
     }
@@ -103,14 +111,43 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
+        Log.i(TAG, "ON ACTIVITY CREATED");
+
+        viewModel = ViewModelProviders.of(this).get(WeeklyLogViewModel.class);
+        viewModel.init(cardRepository);
+        viewModel.getDayCards().observe(this, cardList -> {
+            Log.i(TAG, "OBSERVER");
+            if (cardList == null) {
+                Log.i(TAG, "arvo on null");
+            } else {
+                Log.i(TAG, "OBSERVER DATA RECEIVED");
+
+                if (recyclerView.getAdapter() == null) {
+                    cardAdapter = new CardViewAdapter(getContext());
+                    recyclerView.setAdapter(cardAdapter);
+                    cardAdapter.setCardList(cardList);
+                } else {
+
+                    cardAdapter.updateCardList(cardList);
+                }
+            }
+        });
+
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
+        View popupOpener = getActivity().findViewById(R.id.popup_open);
+        popupOpener.setOnClickListener(new PopUpHandler(getContext(), popupOpener));
         CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
-        final Typeface tf = Typeface.createFromAsset(getContext().getAssets(),  "raleway_regular.ttf");
+        final Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "raleway_regular.ttf");
         mCollapsingToolbarLayout.setCollapsedTitleTypeface(tf);
         mCollapsingToolbarLayout.setExpandedTitleTypeface(tf);
 
@@ -119,7 +156,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow;
             int scrollRange = -1;
-
 
 
             @Override
@@ -139,30 +175,24 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
             }
         });
 
-        recyclerView =  getView().findViewById(R.id.recycler_view);
-        //recyclerView.setNestedScrollingEnabled(false);
-        cardAdapter= new CardViewAdapter(getContext(), null, cardList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(cardAdapter);
-
 
         recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
+                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
 
-                        DayCard myTest = cardList.get(position);
+                        //DayCard myTest = cardList.get(position);
 
                         Log.d("fuck", editCardInterface.toString());
-                        Intent intent = new Intent(getContext() , EditCardActivity.class);
-                        intent.putExtra("dayCard", myTest);
-                        intent.putExtra("index", position);
+                        Intent intent = new Intent(getContext(), EditCardActivity.class);
+                        //intent.putExtra("dayCard", myTest);
+                        intent.putExtra("id", cardAdapter.getCardList().get(position).getId());
 
                         startActivityForResult(intent, MODIFY_CARD);
                     }
 
-                    @Override public void onLongItemClick(View view, int position) {
+                    @Override
+                    public void onLongItemClick(View view, int position) {
                         // do whatever
                     }
                 })
@@ -172,7 +202,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MODIFY_CARD) {
+        /*if (requestCode == MODIFY_CARD) {
             if (resultCode == Activity.RESULT_OK) {
                 int index = data.getIntExtra("index", -1);
                 DayCard modifiedCard = (DayCard) data.getSerializableExtra("DayCard");
@@ -193,7 +223,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
             } else {
                 Toast.makeText(getContext(), "MOFIFY CARD NOT OK", Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
     }
 
 
@@ -202,8 +232,15 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         fragmentInterface.onCardClicked(card);
     }
 
-    public CardDataHandler getCardDataHandler() {
-        return cardDataHandler;
+    public CardRepository getCardRepository() {
+        return cardRepository;
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        viewModel.getDayCards().removeObservers(this);
+    }
 }
