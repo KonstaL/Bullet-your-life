@@ -26,6 +26,10 @@ public class NotesViewModel extends ViewModel {
         }
     }
 
+    public void deleteCard(int position) {
+        cardRepository.removeCard(noteCards.getValue().get(position));
+    }
+
     public LiveData<List<NoteCard>> getNoteCards() {
         return noteCards;
     }

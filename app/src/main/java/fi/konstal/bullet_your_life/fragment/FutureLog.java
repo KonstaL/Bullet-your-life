@@ -14,23 +14,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.data.NoteCard;
-import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.notes_recycler_view.NoteCardViewAdapter;
 import fi.konstal.bullet_your_life.view_models.NotesViewModel;
@@ -41,24 +43,15 @@ public class FutureLog extends Fragment implements FragmentInterface {
     FragmentInterface fragmentInterface;
     NoteCardViewAdapter adapter;
     NotesViewModel viewModel;
-
+    private Unbinder unbinder; //ButterKnife lifecycle stuff
     @Inject
     CardRepository cardRepository;
 
     @BindView(R.id.notecards_recycler_view)
     RecyclerView recyclerView;
-    public FutureLog() {
-        // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FutureLog.
-     */
+    public FutureLog() {}
+
     // TODO: Rename and change types and number of parameters
     public static FutureLog newInstance(String param1, String param2) {
         FutureLog fragment = new FutureLog();
@@ -139,9 +132,21 @@ public class FutureLog extends Fragment implements FragmentInterface {
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-                        PopupMenu popupMenu = new PopupMenu(getContext(), view);
-                        popupMenu.getMenuInflater().inflate(R.menu.collapsing_toolbar_items, popupMenu.getMenu());
-                        popupMenu.show();
+                        /*PopupMenu popupMenu = new PopupMenu(getContext(), view, Gravity.CENTER);*/
+
+
+                        View v = getActivity().getLayoutInflater().inflate(R.layout.popup_window_notecards, null, false);
+                        v.findViewById(R.id.popup_icon_delete).setOnClickListener((e)-> {
+                            viewModel.deleteCard(position);
+                        });
+
+                        PopupWindow pw = new PopupWindow(v, LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT, false);
+                        pw.setOutsideTouchable(true);
+                        pw.setTouchable(true);
+
+                        pw.showAsDropDown(view, 400, -70);
+
                     }
                 })
         );
@@ -205,6 +210,10 @@ public class FutureLog extends Fragment implements FragmentInterface {
 
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
     @Override
     public void onCardClicked(DayCard card) {

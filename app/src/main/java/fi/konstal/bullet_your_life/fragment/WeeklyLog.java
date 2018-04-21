@@ -30,6 +30,7 @@ import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
+import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
@@ -67,6 +68,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
 
         //Setup Dagger2
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
+
 
         //Helper.seedCardData(getContext(), cardRepository);
 

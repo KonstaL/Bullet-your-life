@@ -64,10 +64,14 @@ public class CardRepository {
         }
     }
 
-    public void removeData(DayCard... cards) {
-        executor.execute(() -> {
-            dayCardDao.deleteDayCards(cards);
-        });
+    public void removeCard(Card card) {
+        if(card instanceof DayCard) {
+            executor.execute(()-> dayCardDao.deleteDayCards((DayCard) card));
+        } else if(card instanceof NoteCard) {
+            executor.execute(()-> noteCardDao.deleteNoteCards((NoteCard)card));
+        } else {
+            throw new RuntimeException("Card type has not been setup");
+        }
     }
 
     public int getSize() {
