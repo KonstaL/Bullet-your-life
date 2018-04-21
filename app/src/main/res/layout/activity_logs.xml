@@ -42,7 +42,7 @@
         app:itemIconTint="@color/nav_item_tint"
         app:itemTextColor="@color/nav_item_tint"
         app:menu="@menu/menu_bottom_items"
-        android:onClick="tempTest"/>
+        />
 
 
 </LinearLayout>

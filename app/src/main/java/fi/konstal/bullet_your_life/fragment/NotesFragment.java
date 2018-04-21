@@ -212,8 +212,8 @@ public class NotesFragment extends Fragment implements FragmentInterface {
 
          */
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar1);
-        toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
-        View popupOpener = getActivity().findViewById(R.id.popup_open);
+        toolbar.inflateMenu(R.menu.collapsing_toolbar_items1);
+        View popupOpener = getActivity().findViewById(R.id.popup_open1);
         popupOpener.setOnClickListener(new PopUpHandler(getContext(), popupOpener));
         CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout1);
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);

@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_weekly"
-        android:icon="@drawable/ic_today_black_24dp"
-        android:title="weekly"/>
+        android:icon="@drawable/ic_calendar_week_black"
+        android:title="@string/menu_bottom_weekly"/>
     <item
         android:id="@+id/menu_monthly"
-        android:icon="@drawable/ic_today_black_24dp"
-        android:title="Montly"/>
+        android:icon="@drawable/ic_calendar_month_black"
+        android:title="@string/menu_bottom_monthly"/>
     <item
-        android:id="@+id/menu_future"
-        android:icon="@drawable/ic_today_black_24dp"
-        android:title="future"/>
+        android:id="@+id/menu_notes"
+        android:icon="@drawable/ic_note_black"
+        android:title="@string/menu_bottom_notes"/>
 </menu>

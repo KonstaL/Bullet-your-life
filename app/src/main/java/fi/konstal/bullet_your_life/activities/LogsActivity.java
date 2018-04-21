@@ -46,7 +46,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weekly_logs);
+        setContentView(R.layout.activity_logs);
 
         SharedPreferences prefs = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         // If the the app is has not been started before
@@ -79,7 +79,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
                 case R.id.menu_monthly:
                     pager.setCurrentItem(1);
                     break;
-                case R.id.menu_future:
+                case R.id.menu_notes:
                     pager.setCurrentItem(3);
             }
             return true;
