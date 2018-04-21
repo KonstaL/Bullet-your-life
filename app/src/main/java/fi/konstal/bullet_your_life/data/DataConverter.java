@@ -17,13 +17,15 @@ public class DataConverter implements Serializable {
 
     @TypeConverter // note this annotation
     public String fromTaskList(List<CardItem> cardItemList) {
-        if (cardItemList == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
+        synchronized (DataConverter.class) {
+            if (cardItemList == null) {
+                return (null);
+            }
+            Gson gson = new Gson();
 
-        String json = gson.toJson(cardItemList);
-        return json;
+            String json = gson.toJson(cardItemList);
+            return json;
+        }
     }
 
     @TypeConverter // note this annotation

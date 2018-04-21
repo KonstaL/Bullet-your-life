@@ -34,18 +34,18 @@ public class CardRepository {
        this.executor = executor;
     }
 
-    public LiveData<List<DayCard>> getDayCardList() {
+    public synchronized LiveData<List<DayCard>> getDayCardList() {
         //executor.execute(() -> {
         //});
             return dayCardDao.getAll();
     }
 
-    public LiveData<DayCard> getDayCard(int id) {
+    public synchronized LiveData<DayCard> getDayCard(int id) {
         return dayCardDao.getById(id);
     }
 
 
-    public void insertDayCards(DayCard... cards) {
+    public synchronized void insertDayCards(DayCard... cards) {
 
        executor.execute(() -> {
            dayCardDao.insertDayCards(cards);
