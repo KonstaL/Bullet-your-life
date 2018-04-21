@@ -54,8 +54,14 @@ public class CardRepository {
        });
     }
 
-    public synchronized void updateCards(DayCard... cards) {
-        executor.execute(()-> dayCardDao.updateDayCards(cards));
+    public synchronized void updateCard(Card card) {
+        if(card instanceof DayCard) {
+            executor.execute(()-> dayCardDao.updateDayCards((DayCard) card));
+        } else if(card instanceof NoteCard) {
+            executor.execute(()-> noteCardDao.updateNoteCards((NoteCard)card));
+        } else {
+            throw new RuntimeException("Card type has not been setup");
+        }
     }
 
     public void removeData(DayCard... cards) {
@@ -66,6 +72,29 @@ public class CardRepository {
 
     public int getSize() {
         return dayCardDao.getSize();
+    }
+
+    public LiveData<List<NoteCard>> getNoteCards() {
+        return noteCardDao.getAll();
+    }
+
+    public LiveData<NoteCard> getNoteCard(int id) {
+        return noteCardDao.getById(id);
+    }
+
+    public void addNoteCards(NoteCard... noteCards) {
+        executor.execute(()-> noteCardDao.insertNoteCards(noteCards));
+    }
+
+    public LiveData getGeneric(int id, int type) {
+        if(type == Card.CARD_TYPE_DAYCARD) {
+
+            return dayCardDao.getById(id);
+        } else if(type == Card.CARD_TYPE_NOTECARD) {
+            return noteCardDao.getById(id);
+        } else {
+            throw new IllegalArgumentException("Illegal card type!");
+        }
     }
 
 

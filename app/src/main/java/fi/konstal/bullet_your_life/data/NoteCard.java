@@ -24,7 +24,7 @@ import fi.konstal.bullet_your_life.task.CardItem;
 
 
 @Entity(tableName = "NoteCard", indices = {@Index(value = {"id", "title"})})
-public class NoteCard implements Serializable {
+public class NoteCard implements Card, Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;

@@ -38,6 +38,18 @@ public class CardItemConverter implements Serializable {
         List<CardItem> cardTaskList =  gson.fromJson(itemListString, type);
         return cardTaskList;
     }
+
+    @TypeConverter
+    public Card fromDaycard(DayCard dayCard) {
+        Card temp = dayCard;
+        return temp;
+    }
+
+    @TypeConverter
+    public Card fromNoteCard(NoteCard noteCard) {
+        Card temp = noteCard;
+       return temp;
+    }
 }
 
 

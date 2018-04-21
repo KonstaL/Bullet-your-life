@@ -23,6 +23,8 @@ public interface DayCardDao {
     @Query("SELECT * FROM DayCard WHERE id == :id")
     LiveData<DayCard> getById(int id);
 
+
+
     @Query("SELECT COUNT(*) FROM DayCard")
     int getSize();
 

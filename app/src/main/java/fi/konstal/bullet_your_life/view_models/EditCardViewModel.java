@@ -6,8 +6,10 @@ import android.util.Log;
 
 import java.util.List;
 
+import fi.konstal.bullet_your_life.data.Card;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
+import fi.konstal.bullet_your_life.data.NoteCard;
 import fi.konstal.bullet_your_life.edit_recycler_view.CardItemHandler;
 import fi.konstal.bullet_your_life.task.CardItem;
 
@@ -17,54 +19,49 @@ import fi.konstal.bullet_your_life.task.CardItem;
 
 public class EditCardViewModel extends ViewModel implements CardItemHandler {
     private static final String TAG = "EditCardViewModel";
-    private LiveData<DayCard> dayCard;
+
+
+
+    private LiveData<Card> dayCard;
     private CardRepository cardRepo;
+    private int type;
 
     public EditCardViewModel() {
+
     }
 
 
-    public void init(CardRepository cardRepo, int id) {
+    public void init(CardRepository cardRepo, int cardType, int id) {
         if (dayCard == null) {
+            if(cardType != Card.CARD_TYPE_DAYCARD && cardType != Card.CARD_TYPE_NOTECARD){
+                throw new IllegalArgumentException("Illegal card value!");
+            }
+            this.type = cardType;
             this.cardRepo = cardRepo;
-            this.dayCard = cardRepo.getDayCard(id);
+            this.dayCard = cardRepo.getGeneric(id, cardType);
         }
     }
 
-    public LiveData<DayCard> getDayCard() {
+    public LiveData<Card> getCard() {
         return dayCard;
     }
 
     public void addCardItems(CardItem... cardItems) {
-        DayCard card = dayCard.getValue();
-        if (card != null) {
+        if(dayCard.getValue() instanceof DayCard) {
+            DayCard card = (DayCard) dayCard.getValue();
             card.addCardItems(cardItems);
-            cardRepo.updateCards(card);
+            cardRepo.updateCard(card);
+        } else if (dayCard.getValue() instanceof NoteCard) {
+            NoteCard card = (NoteCard) dayCard.getValue();
+            card.addCardItems(cardItems);
+            cardRepo.updateCard(card);
         }
     }
 
-    /*    public void updateCardItems(CardItem... cardItems) {
-            DayCard card = dayCard.getValue();
-            if(card!= null) {
-                List<CardItem> items = card.getCardItems();
-                for (CardItem cardItem : cardItems) {
-                    int i = items.indexOf(cardItem);
-                    if(i != -1) {
-                        items.remove(i);
-                        items.add(i, cardItem);
-                    }
-                    Log.i("EERROR", "listasta ei löytyny vastaavia Card Itemeitä");
-                    Log.i("EERROR", cardItem.toString());
-                    Log.i("EERROR", cardItem.getImageUri().toString());
-                }
-                cardRepo.updateCards(card);
-            } else {
-                Log.i("ERRROOOOR", "SUN KORTTIS ON NULL");
-            }
-        }*/
+
     public void updateCardItems(CardItem... cardItems) {
 
-        DayCard card = dayCard.getValue();
+        Card card = dayCard.getValue();
         if (card != null) {
             List<CardItem> items = card.getCardItems();
             for (int i = 0; i < items.size(); i++) {
@@ -80,7 +77,7 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
                         Log.i("EERROR", "listasta ei löytyny vastaavia Card Itemeitä");
                     }
                 }
-                cardRepo.updateCards(card);
+                cardRepo.updateCard(card);
 
             }
 
@@ -91,10 +88,10 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
 
     @Override
     public void deleteItem(CardItem cardItem) {
-        DayCard card = dayCard.getValue();
+        Card card = dayCard.getValue();
         if (card != null) {
             card.getCardItems().remove(cardItem);
-            cardRepo.updateCards(card);
+            cardRepo.updateCard(card);
         } else {
             throw new NullPointerException("Daycard not initialized!");
         }
@@ -103,13 +100,13 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
 
     @Override
     public void deleteItem(int i) {
-        DayCard card = dayCard.getValue();
+        Card card = dayCard.getValue();
         if (card != null) {
             Log.i(TAG, card.getCardItems().toString());
             Log.i(TAG, "index: " + i);
             card.getCardItems().remove(i);
             Log.i(TAG, card.getCardItems().toString());
-            cardRepo.updateCards(card);
+            cardRepo.updateCard(card);
         } else {
             throw new NullPointerException("Daycard not initialized!");
         }
@@ -117,10 +114,10 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
 
     @Override
     public void addItem(CardItem cardItem) {
-        DayCard card = dayCard.getValue();
+        Card card = dayCard.getValue();
         if (card != null) {
             card.getCardItems().add(cardItem);
-            cardRepo.updateCards(card);
+            cardRepo.updateCard(card);
         } else {
             throw new NullPointerException("Daycard not initialized!");
         }
@@ -128,7 +125,7 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
 
     @Override
     public void updateItem(CardItem cardItem) {
-        DayCard card = dayCard.getValue();
+        Card card = dayCard.getValue();
         if (card != null) {
 
             List<CardItem> items = card.getCardItems();
@@ -140,7 +137,7 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
                     Log.i(TAG, "Updated cardItem!");
                 }
             }
-            cardRepo.updateCards(card);
+            cardRepo.updateCard(card);
         } else {
             throw new NullPointerException("Daycard not initialized!");
         }

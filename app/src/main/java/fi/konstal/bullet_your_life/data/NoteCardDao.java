@@ -22,20 +22,20 @@ public interface NoteCardDao {
 
 
     @Query("SELECT * FROM NoteCard")
-    LiveData<List<DayCard>> getAll();
+    LiveData<List<NoteCard>> getAll();
 
     @Query("SELECT * FROM NoteCard WHERE id == :id")
-    LiveData<DayCard> getById(int id);
+    LiveData<NoteCard> getById(int id);
 
     @Query("SELECT COUNT(*) FROM NoteCard")
     int getSize();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertDayCards(NoteCard... noteCards);
+    void insertNoteCards(NoteCard... noteCards);
 
     @Update
-    void updateDayCards(NoteCard... noteCards);
+    void updateNoteCards(NoteCard... noteCards);
 
     @Delete
-    void deleteDayCards(NoteCard... noteCards);
+    void deleteNoteCards(NoteCard... noteCards);
 }

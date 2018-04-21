@@ -1,4 +1,4 @@
-package fi.konstal.bullet_your_life.recycler_view;
+package fi.konstal.bullet_your_life.daycard_recycler_view;
 
 import android.view.View;
 

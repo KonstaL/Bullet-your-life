@@ -46,11 +46,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
+import fi.konstal.bullet_your_life.data.Card;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
+import fi.konstal.bullet_your_life.data.NoteCard;
+import fi.konstal.bullet_your_life.daycard_recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.edit_recycler_view.CardItemViewAdapter;
 import fi.konstal.bullet_your_life.edit_recycler_view.SimpleItemTouchHelperCallback;
-import fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 
@@ -58,59 +60,58 @@ import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 public class EditCardActivity extends BaseActivity {
     private static final String TAG = "EditCardActivity";
     private final static int RESULT_LOAD_IMG = 10;
+    @BindView(R.id.card_content_layout)
+    CustomLinearLayout cardContentLayout;
+    @BindView(R.id.card_item_recycler_view)
+    RecyclerView recyclerView;
+    @Inject
+    CardRepository cardRepository;
     private EditCardViewModel viewModel;
     private DayCard dayCard;
     private int id;
-
-    @BindView(R.id.card_content_layout)
-    CustomLinearLayout cardContentLayout;
-
-    @BindView(R.id.card_item_recycler_view)
-    RecyclerView recyclerView;
-
     private CardItemViewAdapter recyclerViewAdapter;
     private DriveClient driveClient;
     private List<FloatingActionButton> fabs;
     private FloatingActionButton mainFab;
 
-    @Inject
-    CardRepository cardRepository;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-//        getSupportActionBar().hide();
         setContentView(R.layout.activity_edit_card);
 
-        //Setup Dagger2
-        ((App) getApplication()).getAppComponent().inject(this);
-
-        //Setup ButterKnife
+        ((App) getApplication()).getAppComponent().inject(this); //Setup Dagger2
         ButterKnife.bind(this); // bind ButterKnife to this fragment
 
         this.fabs = new ArrayList<>();
-        //his.dayCard = (DayCard) getIntent().getSerializableExtra("dayCard");
         this.id = getIntent().getIntExtra("id", -1);
+        String type = getIntent().getStringExtra("type");
 
 
         viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
-        viewModel.init(cardRepository, id);
-        viewModel.getDayCard().observe(this, dayCard -> {
-            Log.i(TAG, "editdaycard daycard from obs: " + dayCard.getCardItems());
-            if (dayCard == null) {
+
+        if (type.equals("DayCard")) {
+            viewModel.init(cardRepository, Card.CARD_TYPE_DAYCARD, id);
+        } else if (type.equals("NoteCard")) {
+            viewModel.init(cardRepository, Card.CARD_TYPE_NOTECARD, id);
+        } else {
+            throw new RuntimeException("Card type has not been setup");
+        }
+
+        viewModel.getCard().observe(this, card -> {
+            if (card == null) {
                 Log.i(TAG, "dayCard on null");
             } else {
+                if(card instanceof NoteCard) {
+                    TextView cardTitle = findViewById(R.id.title);
+                    cardTitle.setText(((NoteCard)card).getTitle());
+                }
+                if(card instanceof DayCard) {
+                    TextView cardDate = findViewById(R.id.card_date);
+                    cardDate.setText(((DayCard)card).getDateString());
+                }
 
-                TextView cardTitle = findViewById(R.id.title);
-                TextView cardDate = findViewById(R.id.card_date);
-
-                cardTitle.setText(dayCard.getTitle());
-                cardDate.setText(dayCard.getDateString());
-
-
-                if(recyclerView.getAdapter() == null) {
-                    recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, dayCard.getCardItems());
+                if (recyclerView.getAdapter() == null) {
+                    recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, card.getCardItems());
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
                     recyclerView.setLayoutManager(mLayoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -118,11 +119,11 @@ public class EditCardActivity extends BaseActivity {
 
                     //Enable drag and drop functionality
                     ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(
-                                                                        recyclerViewAdapter);
+                            recyclerViewAdapter);
                     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
                     touchHelper.attachToRecyclerView(recyclerView);
                 } else {
-                    recyclerViewAdapter.updateList(dayCard.getCardItems());
+                    recyclerViewAdapter.updateList(card.getCardItems());
                 }
 
 
@@ -136,7 +137,7 @@ public class EditCardActivity extends BaseActivity {
 
         });
 
-        //this.dayCard = cardRepository.getDayCard(id);
+        //this.dayCard = cardRepository.getCard(id);
 
 
            /* Init card */

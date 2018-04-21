@@ -26,12 +26,10 @@ import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
-import fi.konstal.bullet_your_life.activities.LogsActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
-import fi.konstal.bullet_your_life.recycler_view.CardViewAdapter;
-import fi.konstal.bullet_your_life.recycler_view.RecyclerItemClickListener;
-import fi.konstal.bullet_your_life.util.Helper;
+import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
+import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
@@ -78,12 +76,10 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_weekly_log, container, false);
         ButterKnife.bind(this, v); // bind ButterKnife to this fragment
-
         Log.i(TAG, "ON CREATEVIEW");
-
         return v;
     }
 
@@ -133,10 +129,25 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
             }
         });
 
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(getContext(), EditCardActivity.class);
+                        intent.putExtra("type", "DayCard");
+                        intent.putExtra("id", cardAdapter.getCardList().get(position).getId());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
 
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
@@ -176,27 +187,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         });
 
 
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
 
-                        //DayCard myTest = cardList.get(position);
-
-                        Log.d("fuck", editCardInterface.toString());
-                        Intent intent = new Intent(getContext(), EditCardActivity.class);
-                        //intent.putExtra("dayCard", myTest);
-                        intent.putExtra("id", cardAdapter.getCardList().get(position).getId());
-
-                        startActivityForResult(intent, MODIFY_CARD);
-                    }
-
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                })
-        );
     }
 
 

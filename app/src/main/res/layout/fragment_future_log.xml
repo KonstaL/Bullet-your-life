@@ -52,27 +52,17 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scroll"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/notecards_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:clipToPadding="false"
-        android:minHeight="1100dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.constraint.ConstraintLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-            tools:context="fi.konstal.bullet_your_life.fragment.FutureLog">
-
-
-
-
-        </android.support.constraint.ConstraintLayout>
-
-    </android.support.v4.widget.NestedScrollView>
+        android:paddingBottom="70dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
 
     <android.support.design.widget.FloatingActionButton
@@ -80,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
-        app:layout_anchor="@+id/scroll"
+        app:layout_anchor="@+id/notecards_recycler_view"
         app:layout_anchorGravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_plus_white_24dp" />
