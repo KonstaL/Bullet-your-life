@@ -30,13 +30,12 @@ import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
-import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
-public class WeeklyLog extends Fragment implements FragmentInterface {
+public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     public final static int MODIFY_CARD = 10;
-    private static final String TAG = "WeeklyLog";
+    private static final String TAG = "WeeklyLogFragment";
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @Inject
@@ -49,11 +48,11 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
     private WeeklyLogViewModel viewModel;
 
 
-    public WeeklyLog() {
+    public WeeklyLogFragment() {
     }
 
-    public static WeeklyLog newInstance() {
-        WeeklyLog fragment = new WeeklyLog();
+    public static WeeklyLogFragment newInstance() {
+        WeeklyLogFragment fragment = new WeeklyLogFragment();
 
         return fragment;
     }
@@ -170,7 +169,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
             boolean isShow;
             int scrollRange = -1;
 
-
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if (scrollRange == -1) {
@@ -187,9 +185,6 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
                 }
             }
         });
-
-
-
     }
 
 

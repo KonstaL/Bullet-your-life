@@ -5,10 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import fi.konstal.bullet_your_life.fragment.WeeklyLog;
 
 /**
  * Created by e4klehti on 23.3.2018.

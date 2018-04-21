@@ -4,7 +4,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,7 +18,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,26 +38,28 @@ import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.data.NoteCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.notes_recycler_view.NoteCardViewAdapter;
+import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.NotesViewModel;
 
 
-public class FutureLog extends Fragment implements FragmentInterface {
-    private static final String TAG = "FutureLog";
-    FragmentInterface fragmentInterface;
-    NoteCardViewAdapter adapter;
-    NotesViewModel viewModel;
+public class NotesFragment extends Fragment implements FragmentInterface {
+    private static final String TAG = "NotesFragment";
     private Unbinder unbinder; //ButterKnife lifecycle stuff
+    private FragmentInterface fragmentInterface;
+    private NoteCardViewAdapter adapter;
+    private NotesViewModel viewModel;
+
     @Inject
     CardRepository cardRepository;
 
     @BindView(R.id.notecards_recycler_view)
     RecyclerView recyclerView;
 
-    public FutureLog() {}
+    public NotesFragment() {}
 
     // TODO: Rename and change types and number of parameters
-    public static FutureLog newInstance(String param1, String param2) {
-        FutureLog fragment = new FutureLog();
+    public static NotesFragment newInstance(String param1, String param2) {
+        NotesFragment fragment = new NotesFragment();
         Bundle args = new Bundle();
 
         fragment.setArguments(args);
@@ -72,8 +77,8 @@ public class FutureLog extends Fragment implements FragmentInterface {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_future_log, container, false);
-        ButterKnife.bind(this, v); // bind ButterKnife to this fragment
+        View v = inflater.inflate(R.layout.fragment_notes, container, false);
+        unbinder = ButterKnife.bind(this, v); // bind ButterKnife to this fragment
         return v;
     }
 
@@ -151,14 +156,9 @@ public class FutureLog extends Fragment implements FragmentInterface {
                 })
         );
 
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
-        CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
-        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+
         FloatingActionButton fab = getActivity().findViewById(R.id.fab_add_notes);
         fab.setOnClickListener((e) -> {
-
 
             // 1. Instantiate an AlertDialog.Builder with its constructor
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -181,7 +181,6 @@ public class FutureLog extends Fragment implements FragmentInterface {
             AlertDialog dialog = builder.create();
             dialog.show();
 
-
          /*   Snackbar s = Snackbar.make(getView(), "hello", Snackbar.LENGTH_SHORT);
             ImageView v = getActivity().findViewById(R.id.imageView);
             ViewCompat.setTranslationZ(v, -1);
@@ -203,12 +202,52 @@ public class FutureLog extends Fragment implements FragmentInterface {
                     super.onShown(transientBottomBar);
                 }
             });
-
             s.show();*/
-
         });
 
+
+        /*
+            INIT TOOLBAR
+            This is almost exactly the same code as in futureLogsFragment, only ID's are changed
+
+         */
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar1);
+        toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
+        View popupOpener = getActivity().findViewById(R.id.popup_open);
+        popupOpener.setOnClickListener(new PopUpHandler(getContext(), popupOpener));
+        CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout1);
+        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+
+        final Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "raleway_regular.ttf");
+        mCollapsingToolbarLayout.setCollapsedTitleTypeface(tf);
+        mCollapsingToolbarLayout.setExpandedTitleTypeface(tf);
+
+        AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout1);
+        Drawable drawable = toolbar.getMenu().getItem(0).getIcon();
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    //collapse map
+                    isShow = true;
+                    drawable.setColorFilter(getResources().getColor(R.color.font_black), PorterDuff.Mode.SRC_ATOP);
+                } else if (isShow) {
+                    //expanded map
+                    isShow = false;
+                    drawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                }
+            }
+        });
     }
+
+
 
     @Override public void onDestroyView() {
         super.onDestroyView();

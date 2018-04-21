@@ -6,20 +6,14 @@ import android.content.SharedPreferences;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.drive.DriveClient;
 
-import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.ViewPagerAdapter;
 
@@ -28,9 +22,9 @@ import fi.konstal.bullet_your_life.dagger.module.AppModule;
 import fi.konstal.bullet_your_life.dagger.module.RoomModule;
 import fi.konstal.bullet_your_life.fragment.EditCardInterface;
 import fi.konstal.bullet_your_life.fragment.FragmentInterface;
-import fi.konstal.bullet_your_life.fragment.FutureLog;
-import fi.konstal.bullet_your_life.fragment.MonthlyLog;
-import fi.konstal.bullet_your_life.fragment.WeeklyLog;
+import fi.konstal.bullet_your_life.fragment.MonthlyLogFragment;
+import fi.konstal.bullet_your_life.fragment.NotesFragment;
+import fi.konstal.bullet_your_life.fragment.WeeklyLogFragment;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.CardItem;
@@ -43,9 +37,9 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
     private List<DayCard> cardList;
 
-    private FutureLog futureLogFragment;
-    private WeeklyLog weeklyLogFragment;
-    private MonthlyLog monthlyLogFragment;
+    private NotesFragment notesFragmentFragment;
+    private WeeklyLogFragment weeklyLogFragmentFragment;
+    private MonthlyLogFragment monthlyLogFragmentFragment;
 
 
 
@@ -110,12 +104,12 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
 
     private void setupViewPager(ViewPager viewPager, BottomNavigationView navigation) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        weeklyLogFragment = WeeklyLog.newInstance();
-        monthlyLogFragment = new MonthlyLog();
-        futureLogFragment = new FutureLog();
-        adapter.addFragment(weeklyLogFragment);
-        adapter.addFragment(monthlyLogFragment);
-        adapter.addFragment(futureLogFragment);
+        weeklyLogFragmentFragment = WeeklyLogFragment.newInstance();
+        monthlyLogFragmentFragment = new MonthlyLogFragment();
+        notesFragmentFragment = new NotesFragment();
+        adapter.addFragment(weeklyLogFragmentFragment);
+        adapter.addFragment(monthlyLogFragmentFragment);
+        adapter.addFragment(notesFragmentFragment);
 
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
