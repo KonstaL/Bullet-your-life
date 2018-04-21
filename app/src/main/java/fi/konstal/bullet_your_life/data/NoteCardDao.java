@@ -1,7 +1,5 @@
 package fi.konstal.bullet_your_life.data;
 
-
-
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -13,25 +11,31 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+/**
+ * Created by e4klehti on 21.4.2018.
+ */
+
+
 @Dao
 @TypeConverters({DateConverter.class, CardItemConverter.class})
+public interface NoteCardDao {
 
-public interface DayCardDao {
-    @Query("SELECT * FROM DayCard")
+
+    @Query("SELECT * FROM NoteCard")
     LiveData<List<DayCard>> getAll();
 
-    @Query("SELECT * FROM DayCard WHERE id == :id")
+    @Query("SELECT * FROM NoteCard WHERE id == :id")
     LiveData<DayCard> getById(int id);
 
-    @Query("SELECT COUNT(*) FROM DayCard")
+    @Query("SELECT COUNT(*) FROM NoteCard")
     int getSize();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertDayCards(DayCard... dayCards);
+    void insertDayCards(NoteCard... noteCards);
 
     @Update
-    void updateDayCards(DayCard... dayCards);
+    void updateDayCards(NoteCard... noteCards);
 
     @Delete
-    void deleteDayCards(DayCard... dayCards);
+    void deleteDayCards(NoteCard... noteCards);
 }

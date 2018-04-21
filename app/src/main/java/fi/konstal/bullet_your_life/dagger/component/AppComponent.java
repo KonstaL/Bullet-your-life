@@ -13,6 +13,7 @@ import fi.konstal.bullet_your_life.dagger.module.RoomModule;
 import fi.konstal.bullet_your_life.data.AppDatabase;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCardDao;
+import fi.konstal.bullet_your_life.data.NoteCardDao;
 import fi.konstal.bullet_your_life.fragment.FutureLog;
 import fi.konstal.bullet_your_life.fragment.MonthlyLog;
 import fi.konstal.bullet_your_life.fragment.WeeklyLog;
@@ -33,6 +34,8 @@ public interface AppComponent {
     void inject(MonthlyLog fragment);
 
     DayCardDao dayCardDao();
+
+    NoteCardDao noteCardDao();
 
     AppDatabase appDatabase();
 

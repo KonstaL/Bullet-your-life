@@ -24,12 +24,14 @@ public class CardRepository {
     public static final int DATA_DELETE = 204;
     public static final int DATA_UPDATE = 204;
 
+    private NoteCardDao noteCardDao;
     private DayCardDao dayCardDao;
     private Executor executor;
 
 
     @Inject
-    public CardRepository(DayCardDao dayCardDao, Executor executor) {
+    public CardRepository(NoteCardDao noteCardDao, DayCardDao dayCardDao, Executor executor) {
+        this.noteCardDao = noteCardDao;
        this.dayCardDao = dayCardDao;
        this.executor = executor;
     }

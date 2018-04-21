@@ -13,11 +13,11 @@ import fi.konstal.bullet_your_life.task.CardItem;
 
 
 
-public class DataConverter implements Serializable {
+public class CardItemConverter implements Serializable {
 
     @TypeConverter // note this annotation
     public String fromTaskList(List<CardItem> cardItemList) {
-        synchronized (DataConverter.class) {
+        synchronized (CardItemConverter.class) {
             if (cardItemList == null) {
                 return (null);
             }

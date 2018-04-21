@@ -70,7 +70,7 @@ public class WeeklyLog extends Fragment implements FragmentInterface {
         //Setup Dagger2
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
 
-        Helper.seedCardData(getContext(), cardRepository);
+        //Helper.seedCardData(getContext(), cardRepository);
 
 
     }

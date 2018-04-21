@@ -2,13 +2,25 @@ package fi.konstal.bullet_your_life.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import butterknife.BindView;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.data.DayCard;
 
@@ -16,6 +28,7 @@ import fi.konstal.bullet_your_life.data.DayCard;
 
 public class FutureLog extends Fragment implements FragmentInterface{
     FragmentInterface fragmentInterface;
+
 
     public FutureLog() {
         // Required empty public constructor
@@ -82,6 +95,36 @@ public class FutureLog extends Fragment implements FragmentInterface{
         CollapsingToolbarLayout mCollapsingToolbarLayout = getActivity().findViewById(R.id.collapsing_toolbar_layout);
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add_notes);
+        fab.setOnClickListener((e)-> {
+
+
+
+            Snackbar s = Snackbar.make(getView(), "hello", Snackbar.LENGTH_SHORT);
+            ImageView v = getActivity().findViewById(R.id.imageView);
+            ViewCompat.setTranslationZ(v, -1);
+            s.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+
+                    //regardless of the dismiss event, put imageview back to top
+                    ViewCompat.setTranslationZ(v, 10);
+                    Calendar c = Calendar.getInstance();
+                    Date date = new Date();
+                    c.setTime(date);
+                    Log.d("test", date.toString());
+                }
+
+                @Override
+                public void onShown(Snackbar transientBottomBar) {
+                    super.onShown(transientBottomBar);
+                }
+            });
+
+            s.show();
+
+        });
 
     }
 

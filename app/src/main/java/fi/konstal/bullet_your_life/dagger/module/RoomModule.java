@@ -14,6 +14,7 @@ import dagger.Provides;
 import fi.konstal.bullet_your_life.data.AppDatabase;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCardDao;
+import fi.konstal.bullet_your_life.data.NoteCardDao;
 
 /**
  * Created by e4klehti on 8.4.2018.
@@ -42,8 +43,14 @@ public class RoomModule {
 
     @Singleton
     @Provides
-    CardRepository cardRepository(DayCardDao dayCardDao, Executor executor) {
-        return new CardRepository(dayCardDao, executor);
+    NoteCardDao providesNoteCardDao(AppDatabase appDatabase) {
+        return appDatabase.getNoteCardDao();
+    }
+
+    @Singleton
+    @Provides
+    CardRepository cardRepository(NoteCardDao noteCardDao, DayCardDao dayCardDao, Executor executor) {
+        return new CardRepository(noteCardDao, dayCardDao, executor);
     }
 
     @Singleton
