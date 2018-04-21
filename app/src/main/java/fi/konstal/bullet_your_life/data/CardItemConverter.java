@@ -13,11 +13,11 @@ import fi.konstal.bullet_your_life.task.CardItem;
 
 
 
-public class DataConverter implements Serializable {
+public class CardItemConverter implements Serializable {
 
     @TypeConverter // note this annotation
     public String fromTaskList(List<CardItem> cardItemList) {
-        synchronized (DataConverter.class) {
+        synchronized (CardItemConverter.class) {
             if (cardItemList == null) {
                 return (null);
             }
@@ -37,6 +37,18 @@ public class DataConverter implements Serializable {
         Type type = new TypeToken<List<CardItem>>() {}.getType();
         List<CardItem> cardTaskList =  gson.fromJson(itemListString, type);
         return cardTaskList;
+    }
+
+    @TypeConverter
+    public Card fromDaycard(DayCard dayCard) {
+        Card temp = dayCard;
+        return temp;
+    }
+
+    @TypeConverter
+    public Card fromNoteCard(NoteCard noteCard) {
+        Card temp = noteCard;
+       return temp;
     }
 }
 

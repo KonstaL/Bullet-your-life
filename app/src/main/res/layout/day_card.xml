@@ -54,7 +54,7 @@
 
     </RelativeLayout>
 
-    <fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout
+    <fi.konstal.bullet_your_life.daycard_recycler_view.CustomLinearLayout
         android:id="@+id/card_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,6 +68,6 @@
         android:focusable="true"
         >
 
-    </fi.konstal.bullet_your_life.recycler_view.CustomLinearLayout>
+    </fi.konstal.bullet_your_life.daycard_recycler_view.CustomLinearLayout>
 
 </LinearLayout>

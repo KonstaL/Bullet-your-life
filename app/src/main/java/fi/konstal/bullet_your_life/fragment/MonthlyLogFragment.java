@@ -19,16 +19,16 @@ import fi.konstal.bullet_your_life.data.DayCard;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MonthlyLog.OnFragmentInteractionListener} interface
+ * {@link MonthlyLogFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MonthlyLog#newInstance} factory method to
+ * Use the {@link MonthlyLogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MonthlyLog extends Fragment implements FragmentInterface {
+public class MonthlyLogFragment extends Fragment implements FragmentInterface {
 
     private FragmentInterface fragmentInterface;
 
-    public MonthlyLog() {
+    public MonthlyLogFragment() {
         // Required empty public constructor
     }
 
@@ -38,11 +38,11 @@ public class MonthlyLog extends Fragment implements FragmentInterface {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MonthlyLog.
+     * @return A new instance of fragment MonthlyLogFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MonthlyLog newInstance(String param1, String param2) {
-        MonthlyLog fragment = new MonthlyLog();
+    public static MonthlyLogFragment newInstance(String param1, String param2) {
+        MonthlyLogFragment fragment = new MonthlyLogFragment();
         Bundle args = new Bundle();
 
 

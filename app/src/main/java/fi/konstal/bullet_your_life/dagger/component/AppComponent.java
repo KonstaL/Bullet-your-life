@@ -13,9 +13,10 @@ import fi.konstal.bullet_your_life.dagger.module.RoomModule;
 import fi.konstal.bullet_your_life.data.AppDatabase;
 import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCardDao;
-import fi.konstal.bullet_your_life.fragment.FutureLog;
-import fi.konstal.bullet_your_life.fragment.MonthlyLog;
-import fi.konstal.bullet_your_life.fragment.WeeklyLog;
+import fi.konstal.bullet_your_life.data.NoteCardDao;
+import fi.konstal.bullet_your_life.fragment.MonthlyLogFragment;
+import fi.konstal.bullet_your_life.fragment.NotesFragment;
+import fi.konstal.bullet_your_life.fragment.WeeklyLogFragment;
 
 /**
  * Created by e4klehti on 8.4.2018.
@@ -28,11 +29,13 @@ public interface AppComponent {
     void inject(LogsActivity activity);
     void inject(EditCardActivity activity);
     void inject(BaseActivity activity);
-    void inject(WeeklyLog fragment);
-    void inject(FutureLog fragment);
-    void inject(MonthlyLog fragment);
+    void inject(WeeklyLogFragment fragment);
+    void inject(NotesFragment fragment);
+    void inject(MonthlyLogFragment fragment);
 
     DayCardDao dayCardDao();
+
+    NoteCardDao noteCardDao();
 
     AppDatabase appDatabase();
 

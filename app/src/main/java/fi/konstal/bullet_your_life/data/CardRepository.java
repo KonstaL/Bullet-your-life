@@ -24,12 +24,14 @@ public class CardRepository {
     public static final int DATA_DELETE = 204;
     public static final int DATA_UPDATE = 204;
 
+    private NoteCardDao noteCardDao;
     private DayCardDao dayCardDao;
     private Executor executor;
 
 
     @Inject
-    public CardRepository(DayCardDao dayCardDao, Executor executor) {
+    public CardRepository(NoteCardDao noteCardDao, DayCardDao dayCardDao, Executor executor) {
+        this.noteCardDao = noteCardDao;
        this.dayCardDao = dayCardDao;
        this.executor = executor;
     }
@@ -52,18 +54,51 @@ public class CardRepository {
        });
     }
 
-    public synchronized void updateCards(DayCard... cards) {
-        executor.execute(()-> dayCardDao.updateDayCards(cards));
+    public synchronized void updateCard(Card card) {
+        if(card instanceof DayCard) {
+            executor.execute(()-> dayCardDao.updateDayCards((DayCard) card));
+        } else if(card instanceof NoteCard) {
+            executor.execute(()-> noteCardDao.updateNoteCards((NoteCard)card));
+        } else {
+            throw new RuntimeException("Card type has not been setup");
+        }
     }
 
-    public void removeData(DayCard... cards) {
-        executor.execute(() -> {
-            dayCardDao.deleteDayCards(cards);
-        });
+    public void removeCard(Card card) {
+        if(card instanceof DayCard) {
+            executor.execute(()-> dayCardDao.deleteDayCards((DayCard) card));
+        } else if(card instanceof NoteCard) {
+            executor.execute(()-> noteCardDao.deleteNoteCards((NoteCard)card));
+        } else {
+            throw new RuntimeException("Card type has not been setup");
+        }
     }
 
     public int getSize() {
         return dayCardDao.getSize();
+    }
+
+    public LiveData<List<NoteCard>> getNoteCards() {
+        return noteCardDao.getAll();
+    }
+
+    public LiveData<NoteCard> getNoteCard(int id) {
+        return noteCardDao.getById(id);
+    }
+
+    public void addNoteCards(NoteCard... noteCards) {
+        executor.execute(()-> noteCardDao.insertNoteCards(noteCards));
+    }
+
+    public LiveData getGeneric(int id, int type) {
+        if(type == Card.CARD_TYPE_DAYCARD) {
+
+            return dayCardDao.getById(id);
+        } else if(type == Card.CARD_TYPE_NOTECARD) {
+            return noteCardDao.getById(id);
+        } else {
+            throw new IllegalArgumentException("Illegal card type!");
+        }
     }
 
 
