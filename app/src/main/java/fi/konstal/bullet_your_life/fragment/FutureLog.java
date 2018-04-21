@@ -1,32 +1,24 @@
 package fi.konstal.bullet_your_life.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.widget.Toolbar;
-import android.widget.ImageView;
+import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
-import butterknife.BindView;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.data.DayCard;
 
 
-
-public class FutureLog extends Fragment implements FragmentInterface{
+public class FutureLog extends Fragment implements FragmentInterface {
     FragmentInterface fragmentInterface;
 
 
@@ -68,7 +60,6 @@ public class FutureLog extends Fragment implements FragmentInterface{
     }
 
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -96,11 +87,34 @@ public class FutureLog extends Fragment implements FragmentInterface{
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
         FloatingActionButton fab = getActivity().findViewById(R.id.fab_add_notes);
-        fab.setOnClickListener((e)-> {
+        fab.setOnClickListener((e) -> {
 
 
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-            Snackbar s = Snackbar.make(getView(), "hello", Snackbar.LENGTH_SHORT);
+            View dialogView = getLayoutInflater().inflate(R.layout.partial_notecard_dialog, null);
+            builder.setView(dialogView);
+
+            builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    TextView tv = dialogView.findViewById(R.id.NoteCard_new_title);
+                    Log.i("test", tv.getText().toString());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+
+// 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+
+         /*   Snackbar s = Snackbar.make(getView(), "hello", Snackbar.LENGTH_SHORT);
             ImageView v = getActivity().findViewById(R.id.imageView);
             ViewCompat.setTranslationZ(v, -1);
             s.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -122,7 +136,7 @@ public class FutureLog extends Fragment implements FragmentInterface{
                 }
             });
 
-            s.show();
+            s.show();*/
 
         });
 
