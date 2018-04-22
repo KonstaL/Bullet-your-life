@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
@@ -292,21 +293,15 @@ public class EditCardActivity extends BaseActivity {
 
     public void getImageIntent() {
         mainFab.callOnClick();
-        //OLD
-/*        Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        photoPickerIntent.setType("image*//*");
-    *//*    photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        photoPickerIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        photoPickerIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);*//*
-        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);*/
-
         ImagePicker.create(this)
-                .toolbarFolderTitle("Folder") // folder selection title
+                .returnMode(ReturnMode.CAMERA_ONLY)
+                .folderMode(true) // folder mode (false by default)
+                .toolbarFolderTitle("Pick a Folder") // folder selection title
                 .toolbarImageTitle("Tap to select") // image selection title
-                .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-                .limit(10) // max images can be selected (99 by default)
+                .toolbarArrowColor(Color.WHITE) // Toolbar 'up' arrow color
+                .limit(5) // max images can be selected (99 by default)
                 .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+                .enableLog(false)
                 .start(RESULT_LOAD_IMG); // start image picker activity with request code
     }
 
