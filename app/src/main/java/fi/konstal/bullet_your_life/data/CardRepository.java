@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
@@ -30,25 +31,38 @@ public class CardRepository {
 
 
     @Inject
-    public CardRepository(NoteCardDao noteCardDao, DayCardDao dayCardDao, Executor executor) {
+    //@Named("SingleThread")
+    public CardRepository(NoteCardDao noteCardDao,
+                          DayCardDao dayCardDao,
+                           Executor executor) {
         this.noteCardDao = noteCardDao;
        this.dayCardDao = dayCardDao;
        this.executor = executor;
     }
 
     public synchronized LiveData<List<DayCard>> getDayCardList() {
-        //executor.execute(() -> {
-        //});
             return dayCardDao.getAll();
+    }
+/*
+    public synchronized LiveData<List<DayCard>> getDayCardSize() {
+        return executor.execute(()-> dayCardDao.getSize());
+    }*/
+
+
+    public synchronized LiveData<List<DayCard>> getDayCardList(String dateString) {
+        return dayCardDao.getAll(dateString);
     }
 
     public synchronized LiveData<DayCard> getDayCard(int id) {
         return dayCardDao.getById(id);
     }
 
+    public LiveData<DayCard> getDayCard(String dateString) {
+        return dayCardDao.getByDateString(dateString);
+    }
+
 
     public synchronized void insertDayCards(DayCard... cards) {
-
        executor.execute(() -> {
            dayCardDao.insertDayCards(cards);
        });

@@ -1,6 +1,7 @@
 package fi.konstal.bullet_your_life.data;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import fi.konstal.bullet_your_life.task.CardItem;
 
@@ -15,7 +16,7 @@ public interface Card {
     int getId();
     void setId(int id);
 
-    List<CardItem> getCardItems();
-    void setCardItems(List<CardItem> cardItems);
+    CopyOnWriteArrayList<CardItem> getCardItems();
+    void setCardItems(CopyOnWriteArrayList<CardItem> cardItems);
     void addCardItems(CardItem... items);
 }

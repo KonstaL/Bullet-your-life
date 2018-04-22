@@ -9,12 +9,14 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="5dp">
+        android:layout_height="wrap_content"
+        >
 
         <TextView
             android:id="@+id/textView"
             style="@style/sectionHeader"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
             android:layout_width="186dp"
             android:layout_height="41dp"
             android:layout_alignParentStart="true"
@@ -30,7 +32,7 @@
             android:id="@+id/view"
             android:layout_width="130dp"
             android:layout_height="2dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="1dp"
             android:background="@drawable/section_header_underline"
             android:visibility="visible"
@@ -43,26 +45,40 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.applandeo.materialcalendarview.CalendarView
             android:id="@+id/calendarView"
             android:layout_width="0dp"
-            android:layout_height="400dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:headerColor="#FFFFFF"
             app:headerLabelColor="@color/font_black"
             app:previousButtonSrc="@drawable/circle"
+            app:type="one_day_picker"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-
-
-
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_temp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fafafa"
+            app:layout_constraintTop_toBottomOf="@+id/calendarView"
+            android:clipToPadding="false"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="70dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
 
     </android.support.constraint.ConstraintLayout>
+
 
 
 </ScrollView>

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +21,9 @@ import java.util.UUID;
 
 import fi.konstal.bullet_your_life.DriveDownloadListener;
 import fi.konstal.bullet_your_life.DriveUploadListener;
-import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.BaseActivity;
+import fi.konstal.bullet_your_life.util.Helper;
 
 
 /**
@@ -51,6 +53,7 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     private String imageUriString;
     private String driveId;
     private transient Bitmap image;
+    private transient ImageView imageView;
 
     //Card task
     public CardItem(String text, int taskIconRef) {
@@ -68,6 +71,7 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
         this.driveId = driveId.encodeToString();
         this.id = UUID.randomUUID().toString();
     }
+
     //Card image
     public CardItem(Uri imageUri) {
 
@@ -121,13 +125,26 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     }
 
     public void setImage(Bitmap image) {
-        //new Thread(()-> this.image = Helper.getResizedBitmap(image, Helper.SCALE_BY_HEIGHT, 300) ).start();
-        this.image = Helper.getResizedBitmap(image, Helper.SCALE_BY_HEIGHT, 300);
+        this.image = image;
+
+        if (imageView != null) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    // Code here will run in UI thread
+                    imageView.setImageBitmap(image);
+                }
+            });
+        }
     }
 
     public Uri getImageUri() {
-        if(imageUriString != null) return Uri.parse(imageUriString);
+        if (imageUriString != null) return Uri.parse(imageUriString);
         return null;
+    }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUriString = imageUri.toString();
     }
 
     public String getId() {
@@ -136,10 +153,6 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void setImageUri(Uri imageUri) {
-        this.imageUriString = imageUri.toString();
     }
 
     public int getType() {
@@ -167,21 +180,25 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
                     BaseActivity baseActivity = ((BaseActivity) context);
                     baseActivity.downloadDriveImage(getDriveId(), this);
                 } else {
-                    try {
-                        //Load image from URI
-                        setImage(BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri())));
-                    } catch (FileNotFoundException e) {
-                        //URI is invalid, remove it
-                        setImageUri(null);
-                        e.printStackTrace();
-                    }
+                    //Load image from URI
+                    Runnable r = (() -> {
+                        try {
+                            Bitmap img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri()));
+                            new ResizeImageTask(imageView).execute(img);
+                        } catch (FileNotFoundException e) {
+                            //URI is invalid, remove it
+                            setImageUri(null);
+                            e.printStackTrace();
+                        }
+                    });
+                    new Thread(r).start();
                 }
 
             }
 
             View v = LayoutInflater.from(context).inflate(R.layout.partial_card_item_image, null);
-            ImageView imgView = v.findViewById(R.id.card_item_image);
-            imgView.setImageBitmap(image);
+            imageView = v.findViewById(R.id.card_item_image);
+            imageView.setImageBitmap(image);
             parent.addView(v);
         }
     }
@@ -208,18 +225,23 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
         e.printStackTrace();
     }
 
-/*    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof CardItem)) return false;
 
-        CardItem c = (CardItem) o;
+    private class ResizeImageTask extends AsyncTask<Bitmap, Void, Bitmap> {
+        private ImageView imageView;
 
-        // Compare the data members and return accordingly
-        return Double.compare(re, c.re) == 0
-                && Double.compare(im, c.im) == 0;
+        public ResizeImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        protected Bitmap doInBackground(Bitmap... bitmaps) {
+            Bitmap scaledImg = Helper.getResizedBitmap(bitmaps[0], Helper.SCALE_BY_HEIGHT, 300);
+            return scaledImg;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
     }
-    }*/
 }
 
 

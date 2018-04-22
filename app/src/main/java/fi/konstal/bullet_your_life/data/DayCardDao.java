@@ -11,6 +11,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -20,9 +21,14 @@ public interface DayCardDao {
     @Query("SELECT * FROM DayCard")
     LiveData<List<DayCard>> getAll();
 
+    @Query("SELECT * FROM DayCard WHERE datestring == :dateString")
+    LiveData<List<DayCard>> getAll(String dateString);
+
     @Query("SELECT * FROM DayCard WHERE id == :id")
     LiveData<DayCard> getById(int id);
 
+    @Query("SELECT * FROM DayCard WHERE datestring == :dateString")
+    LiveData<DayCard> getByDateString(String dateString);
 
 
     @Query("SELECT COUNT(*) FROM DayCard")

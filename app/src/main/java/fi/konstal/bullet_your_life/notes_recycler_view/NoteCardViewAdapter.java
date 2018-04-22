@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.data.DayCard;
@@ -66,7 +67,7 @@ public class NoteCardViewAdapter extends RecyclerView.Adapter<NoteCardViewAdapte
             NoteCard card = cardsList.get(position);
             for (String key : o.keySet()) {
                 if (key.equals("card_item_list")) {
-                    card.setCardItems((List<CardItem>) o.get(key)); // TODO: maybe put this inside a try catch
+                    card.setCardItems((CopyOnWriteArrayList<CardItem>) o.get(key)); // TODO: maybe put this inside a try catch
                     holder.cll.removeAllViews();
                     for (CardItem item : card.getCardItems()) {
                         item.buildView(context, holder.cll, null);

@@ -36,7 +36,7 @@ public class CardListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        Log.i("test", "are items the same");
+        Log.i("test", "are items the same: "+  Boolean.toString(mNewList.get(newItemPosition).getId() == mOldList.get(oldItemPosition).getId()));
         return mNewList.get(newItemPosition).getId() == mOldList.get(oldItemPosition).getId();
     }
 
