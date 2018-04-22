@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.data.DayCard;
@@ -46,7 +47,8 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        if(!holder.isInitialized) {
+        holder.setCard(cardsList.get(position));
+       /* if(!holder.isInitialized) {
             DayCard dayCard = cardsList.get(position);
             holder.title.setText(dayCard.getTitle());
 
@@ -57,7 +59,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             }
             holder.date.setText(dayCard.getDateString());
             holder.isInitialized = true;
-        }
+        }*/
     }
 
     @Override
@@ -73,7 +75,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             DayCard card = cardsList.get(position);
             for (String key : o.keySet()) {
                 if (key.equals("card_item_list")) {
-                    card.setCardItems((List<CardItem>) o.get(key)); // TODO: maybe put this inside a try catch
+                    card.setCardItems((CopyOnWriteArrayList<CardItem>) o.get(key)); // TODO: maybe put this inside a try catch
                     holder.cll.removeAllViews();
                     for(CardItem item : card.getCardItems()) {
                         item.buildView(context, holder.cll, null);
@@ -102,7 +104,10 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
     public void updateCardList(List<DayCard> newList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardListDiffCallback(cardsList, newList));
+        cardsList.clear();
+        cardsList.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+
     }
 
 
@@ -137,6 +142,24 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             cll = view.findViewById(R.id.card_content_layout);
             title = view.findViewById(R.id.title);
             date = view.findViewById(R.id.card_date);
+        }
+
+        public void setCard(DayCard dayCard) {
+            //if(!holder.isInitialized) {
+
+                title.setText(dayCard.getTitle());
+                date.setText(dayCard.getDateString());
+
+                List<CardItem> cardItems = dayCard.getCardItems();
+
+                if(isInitialized) {
+                    cll.removeAllViews();
+                }
+                for (CardItem item : cardItems) {
+                    item.buildView(context, cll, null);
+                }
+                isInitialized = true;
+            //}
         }
 
        /* @Override

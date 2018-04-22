@@ -6,6 +6,7 @@ package fi.konstal.bullet_your_life.data;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
@@ -34,8 +35,9 @@ public class NoteCard implements Card, Serializable {
 
     @TypeConverters(CardItemConverter.class)
     @ColumnInfo(name = "cardItems")
-    private List<CardItem> cardItems;
+    private CopyOnWriteArrayList<CardItem> cardItems;
 
+    @Ignore
     public NoteCard(String title, CardItem... cardItems) {
         this.title = title;
 
@@ -43,7 +45,7 @@ public class NoteCard implements Card, Serializable {
         this.cardItems.addAll(Arrays.asList(cardItems));
     }
 
-
+    @Ignore
     public NoteCard(String title) {
         this.title = title;
         this.cardItems = new CopyOnWriteArrayList<>();
@@ -51,6 +53,7 @@ public class NoteCard implements Card, Serializable {
 
     // Empty constructor for database
     public NoteCard() {
+        this.cardItems = new CopyOnWriteArrayList<>();
     }
 
     public int getId() {
@@ -70,11 +73,11 @@ public class NoteCard implements Card, Serializable {
     }
 
 
-    public List<CardItem> getCardItems() {
+    public CopyOnWriteArrayList<CardItem> getCardItems() {
         return cardItems;
     }
 
-    public void setCardItems(List<CardItem> cardItems) {
+    public void setCardItems(CopyOnWriteArrayList<CardItem> cardItems) {
         this.cardItems = cardItems;
     }
 

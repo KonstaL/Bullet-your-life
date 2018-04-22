@@ -53,11 +53,18 @@ public class RoomModule {
         return new CardRepository(noteCardDao, dayCardDao, executor);
     }
 
-    @Singleton
+ /*   @Singleton
     @Provides
-    //@Named("MultiThread")
+    @Named("MultiThread")
     public Executor provideMultiThreadExecutor() {
         return Executors.newCachedThreadPool();
+    }
+*/
+    @Singleton
+    @Provides
+    //@Named("SingleThread")
+    public Executor provideSingleThreadExecutor() {
+        return Executors.newSingleThreadExecutor();
     }
 
 

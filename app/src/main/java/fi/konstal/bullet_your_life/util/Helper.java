@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,6 +41,16 @@ public class Helper  {
             case 7: return context.getString(R.string.sat);
             default: return "Error";
         }
+    }
+
+    public static String dateToString(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        return dateFormat.format(date);
+    }
+
+    public static String currentDateString() {
+        Date date = new Date();
+        return dateToString(date);
     }
 
 

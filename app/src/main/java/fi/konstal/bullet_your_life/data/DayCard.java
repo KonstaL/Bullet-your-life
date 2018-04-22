@@ -2,14 +2,17 @@ package fi.konstal.bullet_your_life.data;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.TypeConverters;
+import android.content.Context;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fi.konstal.bullet_your_life.task.CardItem;
+import fi.konstal.bullet_your_life.util.Helper;
 
 
 /**
@@ -28,6 +31,7 @@ public class DayCard extends NoteCard implements Serializable {
     private String dateString;
 
 
+    @Ignore
     public DayCard(String title, Date date, CardItem... cardItems) {
         super(title, cardItems);
         this.date = date;
@@ -35,13 +39,23 @@ public class DayCard extends NoteCard implements Serializable {
         this.dateString = formater.format(date);
     }
 
+    @Ignore
     public DayCard(String title, String dateString, CardItem... cardItems) {
         super(title, cardItems);
         this.dateString = dateString;
     }
 
+    @Ignore
+    public DayCard(Context context, Date date) {
+        super();
+        this.date = date;
+        this.dateString = Helper.dateToString(date);
+        setTitle(Helper.weekdayString(context, date));
+    }
+
     // Empty constructor for database actions
     public DayCard() {
+        super();
     }
 
 

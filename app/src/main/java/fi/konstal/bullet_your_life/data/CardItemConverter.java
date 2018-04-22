@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import fi.konstal.bullet_your_life.task.CardItem;
 
@@ -16,7 +17,7 @@ import fi.konstal.bullet_your_life.task.CardItem;
 public class CardItemConverter implements Serializable {
 
     @TypeConverter // note this annotation
-    public String fromTaskList(List<CardItem> cardItemList) {
+    public synchronized String fromTaskList(CopyOnWriteArrayList<CardItem> cardItemList) {
         synchronized (CardItemConverter.class) {
             if (cardItemList == null) {
                 return (null);
@@ -29,13 +30,13 @@ public class CardItemConverter implements Serializable {
     }
 
     @TypeConverter // note this annotation
-    public List<CardItem> toTaskList(String itemListString) {
+    public CopyOnWriteArrayList<CardItem> toTaskList(String itemListString) {
         if (itemListString == null) {
             return (null);
         }
         Gson gson = new Gson();
-        Type type = new TypeToken<List<CardItem>>() {}.getType();
-        List<CardItem> cardTaskList =  gson.fromJson(itemListString, type);
+        Type type = new TypeToken<CopyOnWriteArrayList<CardItem>>() {}.getType();
+        CopyOnWriteArrayList<CardItem> cardTaskList =  gson.fromJson(itemListString, type);
         return cardTaskList;
     }
 
