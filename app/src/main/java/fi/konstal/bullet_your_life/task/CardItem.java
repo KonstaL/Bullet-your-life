@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.drive.DriveId;
 
 import java.io.FileNotFoundException;
@@ -173,6 +174,10 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
 
             parent.addView(view);
         } else {
+            View v = LayoutInflater.from(context).inflate(R.layout.partial_card_item_image, null);
+            imageView = v.findViewById(R.id.card_item_image);
+            parent.addView(v);
+
             if (image == null) {
                 //if null, start downloading the image
                 if (getImageUri() == null) {
@@ -181,7 +186,11 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
                     baseActivity.downloadDriveImage(getDriveId(), this);
                 } else {
                     //Load image from URI
-                    Runnable r = (() -> {
+
+                    Glide.with(context)
+                            .load(getImageUri())
+                            .into(imageView);
+                    /*Runnable r = (() -> {
                         try {
                             Bitmap img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri()));
                             new ResizeImageTask(imageView).execute(img);
@@ -191,15 +200,14 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
                             e.printStackTrace();
                         }
                     });
-                    new Thread(r).start();
+                    new Thread(r).start();*/
                 }
 
+            } else {
+                imageView.setImageBitmap(image);
             }
 
-            View v = LayoutInflater.from(context).inflate(R.layout.partial_card_item_image, null);
-            imageView = v.findViewById(R.id.card_item_image);
-            imageView.setImageBitmap(image);
-            parent.addView(v);
+
         }
     }
 
