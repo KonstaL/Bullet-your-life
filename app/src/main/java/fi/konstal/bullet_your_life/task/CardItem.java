@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.drive.DriveId;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -186,23 +187,11 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
                     baseActivity.downloadDriveImage(getDriveId(), this);
                 } else {
                     //Load image from URI
-
                     Glide.with(context)
                             .load(getImageUri())
                             .into(imageView);
-                    /*Runnable r = (() -> {
-                        try {
-                            Bitmap img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri()));
-                            new ResizeImageTask(imageView).execute(img);
-                        } catch (FileNotFoundException e) {
-                            //URI is invalid, remove it
-                            setImageUri(null);
-                            e.printStackTrace();
-                        }
-                    });
-                    new Thread(r).start();*/
-                }
 
+                }
             } else {
                 imageView.setImageBitmap(image);
             }
@@ -213,7 +202,22 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
 
     @Override
     public void onDownloadSuccess(Bitmap data) {
+        Log.i(TAG, "File loaded from Drive");
         image = Helper.getResizedBitmap(data, Helper.SCALE_BY_HEIGHT, 300);
+
+        String filename = "systemFile";
+        FileOutputStream outputStream;
+
+ /*       try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(fileContents.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
+
+
     }
 
     @Override
@@ -225,30 +229,12 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     @Override
     public void onUploadSuccess(DriveId driveId) {
         setDriveId(driveId);
-        Log.i(TAG, "Drive ID: " + this.driveId + " has been successfully saved");
+        Log.i(TAG, "Image with Drive ID: " + this.driveId + " has been successfully uploaded!");
     }
 
     @Override
     public void onUploadFailure(Exception e) {
         e.printStackTrace();
-    }
-
-
-    private class ResizeImageTask extends AsyncTask<Bitmap, Void, Bitmap> {
-        private ImageView imageView;
-
-        public ResizeImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        protected Bitmap doInBackground(Bitmap... bitmaps) {
-            Bitmap scaledImg = Helper.getResizedBitmap(bitmaps[0], Helper.SCALE_BY_HEIGHT, 300);
-            return scaledImg;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
     }
 }
 
