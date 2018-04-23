@@ -16,13 +16,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.data.DayCard;
+import fi.konstal.bullet_your_life.fragment.MonthlyLogFragment;
+import fi.konstal.bullet_your_life.fragment.NotesFragment;
+import fi.konstal.bullet_your_life.fragment.WeeklyLogFragment;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 
-/**
- * Created by konka on 14.3.2018.
- */
 
+/**
+ * This adapter holds Views for each Card in {@link WeeklyLogFragment}
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @see WeeklyLogFragment
+ * @see MonthlyLogFragment
+ * @see NotesFragment
+ * @since 1.0
+ */
 public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyViewHolder> {
     private List<DayCard> cardsList;
     private Context context;
@@ -48,29 +58,14 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.setCard(cardsList.get(position));
-       /* if(!holder.isInitialized) {
-            DayCard dayCard = cardsList.get(position);
-            holder.title.setText(dayCard.getTitle());
-
-            List<CardItem> cardItems = dayCard.getCardItems();
-
-            for (CardItem item : cardItems) {
-                item.buildView(context, holder.cll, null);
-            }
-            holder.date.setText(dayCard.getDateString());
-            holder.isInitialized = true;
-        }*/
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position, List<Object> payloads) {
 
-
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
-            Log.i("onBindViewHolder", "payload ei ollu tyhjä");
-
             Bundle o = (Bundle) payloads.get(0);
             DayCard card = cardsList.get(position);
             for (String key : o.keySet()) {
@@ -110,7 +105,6 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
     }
 
-
     public void setCardList(List<DayCard> newList) {
         this.cardsList = newList;
         notifyDataSetChanged();
@@ -145,8 +139,6 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
         }
 
         public void setCard(DayCard dayCard) {
-            //if(!holder.isInitialized) {
-
                 title.setText(dayCard.getTitle());
                 date.setText(dayCard.getDateString());
 
@@ -159,13 +151,8 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
                     item.buildView(context, cll, null);
                 }
                 isInitialized = true;
-            //}
-        }
 
-       /* @Override
-        public void onClick(View view) {
-            rvListener.onClick(view, getAdapterPosition());
-        }*/
+        }
     }
 }
 
