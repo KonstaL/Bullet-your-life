@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -133,6 +134,10 @@ public class NotesFragment extends Fragment {
 
                         pw.showAsDropDown(view, 400, -70);
 
+
+                        Vibrator vi = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                        vi.vibrate(50);
+
                     }
                 })
         );
@@ -158,12 +163,8 @@ public class NotesFragment extends Fragment {
             dialog.show();
         });
 
-
-        /*
-            INIT TOOLBAR
-            This is almost exactly the same code as in futureLogsFragment, only ID's are changed
-
-         */
+        /*  INIT TOOLBAR
+            This is almost exactly the same code as in futureLogsFragment, only ID's are changed*/
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar1);
         toolbar.inflateMenu(R.menu.collapsing_toolbar_items1);
         View popupOpener = getActivity().findViewById(R.id.popup_open1);
@@ -199,8 +200,6 @@ public class NotesFragment extends Fragment {
             }
         });
     }
-
-
 
     @Override public void onDestroyView() {
         super.onDestroyView();

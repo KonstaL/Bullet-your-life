@@ -46,6 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private DriveClient mDriveClient;
     private static DriveResourceClient mDriveResourceClient;
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -77,8 +78,25 @@ public abstract class BaseActivity extends AppCompatActivity {
                             .build();
 
             GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, signInOptions);
+
             startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
         }
+    }
+
+    public void signOut() {
+        //For some reason, these are required
+        GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(Drive.SCOPE_FILE)
+                        .requestScopes(Drive.SCOPE_APPFOLDER)
+                        .build();
+
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, signInOptions);
+        Task<Void> task = googleSignInClient.signOut();
+        task.addOnSuccessListener((e)->
+                Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener((e)->
+                        Toast.makeText(this, "Signout failed", Toast.LENGTH_SHORT).show());
     }
 
 

@@ -32,8 +32,6 @@ public class LogsActivity extends BaseActivity  {
     private Boolean isAuthenticated;
     private DriveClient driveClient;
 
-    private List<DayCard> cardList;
-
     private NotesFragment notesFragmentFragment;
     private WeeklyLogFragment weeklyLogFragmentFragment;
     private MonthlyLogFragment monthlyLogFragmentFragment;
@@ -118,7 +116,4 @@ public class LogsActivity extends BaseActivity  {
         this.driveClient = super.getDriveClient();
     }
 
-    public void setCardList(List<DayCard> dayCards) {
-        this.cardList = dayCards;
-    }
 }

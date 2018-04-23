@@ -82,11 +82,6 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
         this.id = UUID.randomUUID().toString();
     }
 
-
-    /*   protected CardItem() {
-           id = idCounter++;
-       }
-   */
     public String getText() {
         return text;
     }

@@ -18,15 +18,11 @@ public class MonthlyLogViewModel extends ViewModel {
     private LiveData<List<DayCard>> dayCards;
     private MutableLiveData<String> dateString;
 
-    private CardRepository cardRepository;
-
     public MonthlyLogViewModel() {
         this.dateString = new MutableLiveData<>();
     }
 
-    //TODO: get cards by matching google id?
     public void init(CardRepository cardRepository, String dateString) {
-        this.cardRepository = cardRepository;
         if (this.dayCards == null) {
             updateDate(dateString);
             dayCards = Transformations.switchMap(this.dateString, cardRepository::getDayCardList);

@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 class DateConverter {
-
     static DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 
     @TypeConverter
@@ -26,7 +25,6 @@ class DateConverter {
         }
         return null;
     }
-
 
     @TypeConverter
     public static String toTimestamp(Date date) {

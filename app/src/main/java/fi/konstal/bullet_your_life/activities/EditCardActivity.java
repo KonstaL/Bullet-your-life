@@ -103,7 +103,6 @@ public class EditCardActivity extends BaseActivity {
         }
     }
 
-
     public void addTask(int drawableRef) {
         mainFab.callOnClick();
         View addTaskView = getLayoutInflater().inflate(R.layout.add_task, null);

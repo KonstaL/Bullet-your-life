@@ -90,7 +90,6 @@ public class WeeklyLogFragment extends Fragment {
                         Helper.addMissingDays(cardList, cardRepository);
                     }
                 } else {
-
                     cardAdapter.updateCardList(cardList);
                 }
             }
