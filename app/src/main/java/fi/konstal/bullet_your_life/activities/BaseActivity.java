@@ -19,9 +19,7 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.OpenFileActivityOptions;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,35 +27,61 @@ import java.util.List;
 import fi.konstal.bullet_your_life.AsyncDriveDownload;
 import fi.konstal.bullet_your_life.AsyncDriveUpload;
 import fi.konstal.bullet_your_life.DriveDownloadListener;
-import fi.konstal.bullet_your_life.DriveUploadListener;
 import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive
  * services.
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    private static final String TAG = "BaseActivity";
-
+    /**
+     * Value for activity result
+     */
     protected static final int REQUEST_CODE_SIGN_IN = 400;
+
+    /**
+     * Value for activity result
+     */
     protected static final int REQUEST_CODE_OPEN_ITEM = 401;
 
-    private DriveClient mDriveClient;
-    private static DriveResourceClient mDriveResourceClient;
-    private TaskCompletionSource<DriveId> mOpenItemTaskSource;
+    /**
+     * TAG for logging
+     */
+    private static final String TAG = "BaseActivity";
 
+    /**
+     * Drive Resource client, which handles all drive related files
+     */
+    private static DriveResourceClient mDriveResourceClient;
+
+    /**
+     * Drive client which handles drive authentication
+     */
+    private DriveClient mDriveClient;
+
+    /**
+     * Gets preferences whether the user has already been authenticated
+     */
+    private SharedPreferences preferences;
+
+    /**
+     * Checks whether user is auhenticated, and if he is, starts background login
+     */
     @Override
     protected void onStart() {
         super.onStart();
 
-        SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         // If user is authenticated, start background sign in process
-        if(sharedpreferences.getBoolean("is_auth", false)) {
+        if (preferences.getBoolean("is_auth", false)) {
             signIn();
         }
     }
-
 
     /**
      * Starts the sign-in process and initializes the Drive client.
@@ -83,6 +107,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Removes Drive authentication
+     */
     public void signOut() {
         //For some reason, these are required
         GoogleSignInOptions signInOptions =
@@ -93,13 +120,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, signInOptions);
         Task<Void> task = googleSignInClient.signOut();
-        task.addOnSuccessListener((e)->
+        task.addOnSuccessListener((e) ->
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener((e)->
-                        Toast.makeText(this, "Signout failed", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener((e) ->
+                        Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show());
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -120,15 +149,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                     showMessage("Google sign in failed");
                 }
                 break;
-            case REQUEST_CODE_OPEN_ITEM:
-                if (resultCode == RESULT_OK) {
-                    DriveId driveId = data.getParcelableExtra(
-                            OpenFileActivityOptions.EXTRA_RESPONSE_DRIVE_ID);
-                    mOpenItemTaskSource.setResult(driveId);
-                } else {
-                    mOpenItemTaskSource.setException(new RuntimeException("Unable to open file"));
-                }
-                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -144,13 +164,35 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Dowloads an image from Google drive if user is authenticated
+     *
+     * @param driveId               The ID of the file to be downloaded
+     * @param driveDownloadListener Callback function to execute after download is complete
+     */
     public void downloadDriveImage(DriveId driveId, DriveDownloadListener<Bitmap> driveDownloadListener) {
-        new AsyncDriveDownload(driveId, mDriveResourceClient, driveDownloadListener).execute();
+        if (preferences.getBoolean("is_auth", false)) {
+            new AsyncDriveDownload(driveId, mDriveResourceClient, driveDownloadListener).execute();
+        } else {
+            showMessage("Please login to download images from drive");
+        }
     }
 
-    //TODO: Refactor EditCardViewModel to be more abstract
-    public void uploadDriveImage(Context context, EditCardViewModel viewModel, CardItem card,  Uri imgUri) {
-       new AsyncDriveUpload(context, viewModel, card, imgUri, mDriveResourceClient).execute();
+
+    /**
+     * Uploads image to google drive
+     *
+     * @param context Context for getting upload streams from {@link Uri}
+     * @param viewModel Updates {@link fi.konstal.bullet_your_life.data.CardRepository}
+     * @param cardItem where the DriveID is put after upload
+     * @param imgUri URI of the image to upload
+     */
+    public void uploadDriveImage(Context context, EditCardViewModel viewModel, CardItem cardItem, Uri imgUri) {
+        if (preferences.getBoolean("is_auth", false)) {
+            new AsyncDriveUpload(context, viewModel, cardItem, imgUri, mDriveResourceClient).execute();
+        } else {
+            showMessage("Please login to upload images to drive");
+        }
     }
 
     /**
@@ -165,11 +207,12 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected abstract void onDriveClientReady();
 
+    /**
+     * Returns the driveclient
+     *
+     * @return the driveclient
+     */
     protected DriveClient getDriveClient() {
         return mDriveClient;
-    }
-
-    public DriveResourceClient getDriveResourceClient() {
-        return mDriveResourceClient;
     }
 }

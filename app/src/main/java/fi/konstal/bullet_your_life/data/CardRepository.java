@@ -17,21 +17,29 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+/**
+ * Acts as a gateway for all application data
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 @Singleton
 public class CardRepository {
-
-    public static final int DATA_GET = 200;
-    public static final int DATA_INSERT = 201;
-    public static final int DATA_DELETE = 204;
-    public static final int DATA_UPDATE = 204;
 
     private NoteCardDao noteCardDao;
     private DayCardDao dayCardDao;
     private Executor executor;
 
 
+    /**
+     * Constructs the CardRepository singleton
+     *
+     * @param noteCardDao DAO for {@link NoteCard}
+     * @param dayCardDao DAO for {@link DayCard}
+     * @param executor for multithread exexution
+     */
     @Inject
-    //@Named("SingleThread")
     public CardRepository(NoteCardDao noteCardDao,
                           DayCardDao dayCardDao,
                            Executor executor) {
@@ -40,10 +48,19 @@ public class CardRepository {
        this.executor = executor;
     }
 
+    /**
+     * Gets all DayCards
+     *
+     * @return LiveData List of all DayCards
+     */
     public synchronized LiveData<List<DayCard>> getDayCardList() {
             return dayCardDao.getAll();
     }
 
+    /**
+     * Returns next weeks DayCards
+     * @return DayCards for the next week
+     */
     public synchronized LiveData<List<DayCard>> getDayCardListNextWeek() {
         return dayCardDao.getNextWeek();
     }
@@ -113,55 +130,4 @@ public class CardRepository {
             throw new IllegalArgumentException("Illegal card type!");
         }
     }
-
-
-
-  /*  private static class AsyncDatabaseHandler extends AsyncTask<String, Integer, Integer> {
-
-        //DayCards to use in the SQL queries
-        DayCard[] dayCards;
-        AppDatabase db;
-
-        public AsyncDatabaseHandler(AppDatabase db, DayCard... dayCards) {
-            this.dayCards = dayCards;
-            this.db = db;
-        }
-
-        @Override
-        protected Integer doInBackground(String... actions) {
-            int actionCode = 0;
-            for (int i = 0; i < actions.length; i++) {
-                switch (actions[i]) {
-                    case "get":
-                        dayCards.clear();
-                        dayCards.addAll(db.dayCardDao().getAll());
-                        actionCode = DATA_GET;
-                        break;
-
-                    case "insert":
-                        db.dayCardDao().insertDayCards(dayCards);
-                        actionCode = DATA_INSERT;
-                        break;
-
-                    case "delete":
-                        db.dayCardDao().deleteDayCards(currentDayCards);
-                        actionCode = DATA_DELETE;
-                        break;
-
-                    case "update":
-                        db.dayCardDao().updateDayCards(currentDayCards);
-                        actionCode = DATA_UPDATE;
-                        break;
-                }
-            }
-            return actionCode;
-        }
-
-        @Override
-        protected void onPostExecute(Integer code) {
-            Intent i = new Intent("appointment_handler");
-            i.putExtra("action", code);
-            //lBroadcast.sendBroadcast(i);
-        }
-    }*/
 }

@@ -3,6 +3,7 @@ package fi.konstal.bullet_your_life.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
-import com.google.android.gms.drive.DriveClient;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,34 +46,77 @@ import fi.konstal.bullet_your_life.edit_recycler_view.SimpleItemTouchHelperCallb
 import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 
-
+/**
+ * Activity for editing Cards
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 public class EditCardActivity extends BaseActivity {
+    /**
+     * Used for logging
+     */
     private static final String TAG = "EditCardActivity";
+
+    /**
+     * Used for image picker activity result
+     */
     private final static int RESULT_LOAD_IMG = 10;
 
+    /**
+     * Single cards layout which holds {@link CardItem}
+     */
     @BindView(R.id.card_content_layout)
     CustomLinearLayout cardContentLayout;
 
+    /**
+     * Holds reference to activitys {@link RecyclerView}
+     */
     @BindView(R.id.card_item_recycler_view)
     RecyclerView recyclerView;
 
+    /**
+     * Holds reference to activitys {@link FloatingActionButton}
+     */
     @BindView(R.id.main_fab)
     FloatingActionButton mainFab;
 
+    /**
+     * Holds a list of sub-{@link FloatingActionButton}
+     */
     @BindViews({R.id.addTodo,
             R.id.addPicture,
             R.id.addEvent,
             R.id.addText})
     List<FloatingActionButton> fabs;
 
+    /**
+     * Holds a reference to {@link CardRepository}
+     */
     @Inject
     CardRepository cardRepository;
 
+    /**
+     * Holds a reference to {@link EditCardViewModel}
+     */
     private EditCardViewModel viewModel;
+
+    /**
+     * Holds a reference to {@link CardItemViewAdapter}
+     */
     private CardItemViewAdapter recyclerViewAdapter;
-    private DriveClient driveClient;
+
+    /**
+     * Determines if the card has been initialized, used in initViewModel
+     *
+     * @see EditCardActivity#initViewModel()
+     */
     private boolean initialized = false;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +129,11 @@ public class EditCardActivity extends BaseActivity {
         initAnimation();
     }
 
+    /**
+     * Handles floating actionbutton clicks
+     *
+     * @param v originating {@link FloatingActionButton}
+     */
     public void fabClick(View v) {
         switch (v.getId()) {
             case R.id.addEvent:
@@ -103,6 +151,11 @@ public class EditCardActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Adds a task adding view to parent
+     *
+     * @param drawableRef Bullet type (event, task, memo etc..)
+     */
     public void addTask(int drawableRef) {
         mainFab.callOnClick();
         View addTaskView = getLayoutInflater().inflate(R.layout.add_task, null);
@@ -129,18 +182,30 @@ public class EditCardActivity extends BaseActivity {
         cardContentLayout.addView(addTaskView);
     }
 
+    /**
+     * Adds item to the {@link EditCardViewModel}, and through that, to the {@link CardRepository}
+     *
+     * @param cardItem The card to be added
+     */
     public void addItemToDb(CardItem cardItem) {
         viewModel.addCardItems(cardItem);
     }
 
 
+    /**
+     * Removes a add task view when cancel is pressed
+     *
+     * @param v The view to be removed
+     */
     public void removeView(View v) {
         cardContentLayout.removeView(v);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-
+    /**
+     * Starts {@link ImagePicker}
+     */
     public void getImageIntent() {
         mainFab.callOnClick();
         ImagePicker.create(this)
@@ -155,6 +220,9 @@ public class EditCardActivity extends BaseActivity {
                 .start(RESULT_LOAD_IMG);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_LOAD_IMG) {
@@ -169,12 +237,26 @@ public class EditCardActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Starts uploading the picture to Drive if user is authenticated
+     * and saves image to the current card
+     *
+     * @param imgUri {@link Uri} of the card to add
+     */
     private void createFileInAppFolder(Uri imgUri) {
         CardItem cardImage = new CardItem(imgUri);
-        uploadDriveImage(this, viewModel, cardImage, imgUri); // Start Async uploading and adds DriveID when done
+        // Quick and dirty fix
+        SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
+        if (sharedpreferences.getBoolean("is_auth", false)) {
+            uploadDriveImage(this, viewModel, cardImage, imgUri); // Start Async uploading and adds DriveID when done
+        }
         addItemToDb(cardImage);
     }
 
+    /**
+     * Initializes the Activitys ViewModel
+     * @see  EditCardViewModel
+     */
     public void initViewModel() {
         //Determines the type of Viewmodel to use
         int id = getIntent().getIntExtra("id", -1);
@@ -215,6 +297,9 @@ public class EditCardActivity extends BaseActivity {
 
     }
 
+    /**
+     * Initializes this activitys {@link RecyclerView}
+     */
     public void initRecyclerView() {
         recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, new ArrayList<>());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -229,6 +314,9 @@ public class EditCardActivity extends BaseActivity {
         touchHelper.attachToRecyclerView(recyclerView);
     }
 
+    /**
+     * Loads and initializes the activity's animations
+     */
     public void initAnimation() {
         /*Init floating action button animations and listeners */
         ImageView dimming_layer = findViewById(R.id.dimming_layer);
@@ -259,9 +347,11 @@ public class EditCardActivity extends BaseActivity {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onDriveClientReady() {
-        Log.i(TAG, "has received driveClient");
-        this.driveClient = getDriveClient();
+        //do nothing
     }
 }

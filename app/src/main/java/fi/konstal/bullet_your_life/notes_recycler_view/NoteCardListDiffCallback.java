@@ -51,14 +51,26 @@ public class NoteCardListDiffCallback extends DiffUtil.Callback {
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        NoteCard newCard = mNewList.get(newItemPosition);
-        NoteCard oldCard = mOldList.get(oldItemPosition);
+        NoteCard newCard = null;
+        NoteCard oldCard = null;
+
+        try {
+            newCard = mNewList.get(newItemPosition);
+            oldCard = mOldList.get(oldItemPosition);
+        } catch (IndexOutOfBoundsException e) {
+            // do nothing
+        }
+
         Bundle diffBundle = new Bundle();
 
-        if (newCard.getCardItems().size() != oldCard.getCardItems().size()) {
+        if (newCard != null &&
+                oldCard == null ||
+                newCard.getCardItems().size() != oldCard.getCardItems().size()) {
             diffBundle.putSerializable("card_item_list", (Serializable) newCard.getCardItems());
         }
-        if (!newCard.getTitle().equals(oldCard.getTitle())) {
+        if (newCard != null &&
+                oldCard == null ||
+                !newCard.getTitle().equals(oldCard.getTitle())) {
             diffBundle.putString("card_title", newCard.getTitle());
         }
         if (diffBundle.size() == 0) return null;

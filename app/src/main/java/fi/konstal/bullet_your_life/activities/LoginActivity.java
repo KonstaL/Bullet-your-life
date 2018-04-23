@@ -14,6 +14,9 @@ import com.google.android.gms.common.SignInButton;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,25 +31,34 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         sib.setOnClickListener(this);
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     protected void onDriveClientReady() {
         SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putBoolean("login_done", true);
         editor.putBoolean("is_auth", true);
-        editor.commit();
+        editor.apply();
         finish();
     }
 
+    /**
+     * Starts the main program without authentication and drive support
+     */
     public void startMainActivityNoAuth() {
         SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putBoolean("login_done", true);
         editor.putBoolean("is_auth", false);
-        editor.commit();
+        editor.apply();
         finish();
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
