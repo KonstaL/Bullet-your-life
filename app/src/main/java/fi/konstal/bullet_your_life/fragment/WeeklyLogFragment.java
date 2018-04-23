@@ -30,6 +30,7 @@ import fi.konstal.bullet_your_life.data.CardRepository;
 import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
+import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
@@ -48,12 +49,10 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     private WeeklyLogViewModel viewModel;
 
 
-    public WeeklyLogFragment() {
-    }
+    public WeeklyLogFragment() {}
 
     public static WeeklyLogFragment newInstance() {
         WeeklyLogFragment fragment = new WeeklyLogFragment();
-
         return fragment;
     }
 
@@ -62,15 +61,10 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i(TAG, "ON CREATE");
-
-
         //Setup Dagger2
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
 
-
         //Helper.seedCardData(getContext(), cardRepository);
-
 
     }
 
@@ -123,6 +117,11 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
                     cardAdapter = new CardViewAdapter(getContext());
                     recyclerView.setAdapter(cardAdapter);
                     cardAdapter.setCardList(cardList);
+
+                    // If there isn's a full weeks worth of cards, create them
+                    if(cardList.size() < 7) {
+                        Helper.addMissingDays(cardList, cardRepository);
+                    }
                 } else {
 
                     cardAdapter.updateCardList(cardList);

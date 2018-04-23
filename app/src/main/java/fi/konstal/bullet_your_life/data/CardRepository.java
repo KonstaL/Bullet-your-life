@@ -43,11 +43,10 @@ public class CardRepository {
     public synchronized LiveData<List<DayCard>> getDayCardList() {
             return dayCardDao.getAll();
     }
-/*
-    public synchronized LiveData<List<DayCard>> getDayCardSize() {
-        return executor.execute(()-> dayCardDao.getSize());
-    }*/
 
+    public synchronized LiveData<List<DayCard>> getDayCardListNextWeek() {
+        return dayCardDao.getNextWeek();
+    }
 
     public synchronized LiveData<List<DayCard>> getDayCardList(String dateString) {
         return dayCardDao.getAll(dateString);

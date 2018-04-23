@@ -6,17 +6,33 @@ package fi.konstal.bullet_your_life.data;
 
 import android.arch.persistence.room.TypeConverter;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 class DateConverter {
 
-    @TypeConverter
-    public static Date toDate(Long timestamp) {
-        return timestamp == null ? null : new Date(timestamp);
-    }
+    static DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 
     @TypeConverter
-    public static Long toTimestamp(Date date) {
-        return date == null ? null : date.getTime();
+    public static Date toDate(String value) {
+        if (value != null) {
+            try {
+                return df.parse(value);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    @TypeConverter
+    public static String toTimestamp(Date date) {
+        if(date != null) {
+            return df.format(date);
+        }
+        return null;
     }
 }

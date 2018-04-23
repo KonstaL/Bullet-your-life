@@ -24,7 +24,7 @@ public class WeeklyLogViewModel extends ViewModel {
     public void init(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
         if (this.dayCards == null) {
-            dayCards = cardRepository.getDayCardList();
+            dayCards = cardRepository.getDayCardListNextWeek();
         }
     }
 

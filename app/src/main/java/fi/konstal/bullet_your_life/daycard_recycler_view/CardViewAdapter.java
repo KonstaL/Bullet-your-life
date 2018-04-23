@@ -64,7 +64,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position, List<Object> payloads) {
-        Log.i("onBindViewHolder", "TÄÄLÄ");
+
 
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);

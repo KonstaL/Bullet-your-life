@@ -30,6 +30,8 @@ public interface DayCardDao {
     @Query("SELECT * FROM DayCard WHERE datestring == :dateString")
     LiveData<DayCard> getByDateString(String dateString);
 
+    @Query("SELECT * FROM DayCard WHERE date >= (SELECT DATETIME('now', '+7 day')) ORDER BY date ASC")
+    LiveData<List<DayCard>> getNextWeek();
 
     @Query("SELECT COUNT(*) FROM DayCard")
     int getSize();

@@ -46,11 +46,11 @@ public class DayCard extends NoteCard implements Serializable {
     }
 
     @Ignore
-    public DayCard(Context context, Date date) {
+    public DayCard(Date date) {
         super();
         this.date = date;
         this.dateString = Helper.dateToString(date);
-        setTitle(Helper.weekdayString(context, date));
+        setTitle(Helper.weekdayString(date));
     }
 
     // Empty constructor for database actions

@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -41,7 +40,6 @@ import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.view_models.MonthlyLogViewModel;
-import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
 
 public class MonthlyLogFragment extends Fragment implements FragmentInterface {
@@ -103,21 +101,8 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-
-        calendarView.setOnDayClickListener((eventDay) -> {
-            Calendar clickedDayCalendar = eventDay.getCalendar();
-            Date date = clickedDayCalendar.getTime();
-            viewModel.updateDate(Helper.dateToString(date));
-        });
-
-        Calendar calendar = Calendar.getInstance();
-        Log.i("hello", calendar.getTime().toString());
-
-        try {
-            calendarView.setDate(calendar);
-        } catch (OutOfDateRangeException e) {
-            e.printStackTrace();
-        }
+        setupCalendar();
+        setupRecyclerView();
 
         viewModel = ViewModelProviders.of(this).get(MonthlyLogViewModel.class);
         viewModel.init(cardRepo, Helper.currentDateString());
@@ -128,36 +113,14 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
                     recyclerView.setAdapter(adapter);
                     adapter.setCardList(cardList);
                 } else {
-                    if(cardList.size() == 0) {
-                        DayCard dayCard = new DayCard( getContext(),  calendarView.getFirstSelectedDate().getTime());
+                    if (cardList.size() == 0) {
+                        DayCard dayCard = new DayCard(calendarView.getFirstSelectedDate().getTime());
                         cardRepo.insertDayCards(dayCard);
                     }
                     adapter.updateCardList(cardList);
                 }
             }
         });
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(getContext(), EditCardActivity.class);
-                        intent.putExtra("type", "DayCard");
-                        intent.putExtra("id", adapter.getCardList().get(position).getId());
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                })
-        );
-
-
     }
 
     @Override
@@ -188,6 +151,49 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
                     }
                 }));
 
+    }
+
+    public void setupCalendar() {
+        //Try to set initially selected date
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendarView.setDate(calendar);
+        } catch (OutOfDateRangeException e) {
+            e.printStackTrace();
+        }
+
+        calendarView.setOnDayClickListener((event) -> {
+            Calendar currentMonth = calendarView.getCurrentPageDate();
+            Calendar clickedDay = event.getCalendar();
+
+            //If the clicked day is in the currently viewed month
+            if (currentMonth.get(Calendar.MONTH) == clickedDay.get(Calendar.MONTH)) {
+                Date date = clickedDay.getTime();
+                viewModel.updateDate(Helper.dateToString(date));
+            }
+        });
+    }
+
+    public void setupRecyclerView() {
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(getContext(), EditCardActivity.class);
+                        intent.putExtra("type", "DayCard");
+                        intent.putExtra("id", adapter.getCardList().get(position).getId());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
     }
 
     public void styleCalendar(View fragmentView) {
