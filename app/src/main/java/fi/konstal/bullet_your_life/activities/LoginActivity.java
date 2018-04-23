@@ -32,8 +32,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void onDriveClientReady() {
         SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putBoolean("login_done", true);
         editor.putBoolean("is_auth", true);
-        editor.putBoolean("init_done", true);
         editor.commit();
         finish();
     }
@@ -41,8 +41,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void startMainActivityNoAuth() {
         SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putBoolean("login_done", true);
         editor.putBoolean("is_auth", false);
-        editor.putBoolean("init_done", true);
         editor.commit();
         finish();
     }

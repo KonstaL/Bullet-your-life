@@ -56,7 +56,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         }
 
         isAuthenticated = prefs.getBoolean("is_auth", false);
-        Toast.makeText(this, "is auth: " + isAuthenticated , Toast.LENGTH_SHORT).show();
+
 
         //initialize Dagger2
         DaggerAppComponent.builder()

@@ -207,17 +207,6 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
 
         String filename = "systemFile";
         FileOutputStream outputStream;
-
- /*       try {
-            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(fileContents.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-
-
     }
 
     @Override

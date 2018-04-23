@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private DriveClient mDriveClient;
     private static DriveResourceClient mDriveResourceClient;
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
-
+/*
     @Override
     protected void onStart() {
         super.onStart();
@@ -57,8 +57,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(sharedpreferences.getBoolean("is_auth", false)) {
             signIn();
         }
-    }
-
+    }*/
 
 
     /**
