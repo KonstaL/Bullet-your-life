@@ -35,7 +35,6 @@ import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
-import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.data.NoteCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.notes_recycler_view.NoteCardViewAdapter;
@@ -155,7 +154,7 @@ public class NotesFragment extends Fragment {
             builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     TextView tv = dialogView.findViewById(R.id.NoteCard_new_title);
-                    cardRepository.addNoteCards(new NoteCard(tv.getText().toString()));
+                    cardRepository.insertNoteCards(new NoteCard(tv.getText().toString()));
                 }
             });
 

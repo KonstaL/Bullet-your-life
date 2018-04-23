@@ -11,6 +11,9 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import fi.konstal.bullet_your_life.data.converter.CardItemConverter;
+import fi.konstal.bullet_your_life.data.converter.DateConverter;
+
 /**
  * Created by e4klehti on 21.4.2018.
  */

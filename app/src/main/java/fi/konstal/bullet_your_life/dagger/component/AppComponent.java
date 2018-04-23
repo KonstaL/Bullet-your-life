@@ -18,10 +18,15 @@ import fi.konstal.bullet_your_life.fragment.MonthlyLogFragment;
 import fi.konstal.bullet_your_life.fragment.NotesFragment;
 import fi.konstal.bullet_your_life.fragment.WeeklyLogFragment;
 
-/**
- * Created by e4klehti on 8.4.2018.
- */
 
+/**
+ * Interface which determines which Framents/Activities can use @Inject
+ * and what Object it provides
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 @Singleton
 @Component(dependencies = {}, modules = {AppModule.class, RoomModule.class})
 public interface AppComponent {

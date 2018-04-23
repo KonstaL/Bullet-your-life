@@ -13,9 +13,9 @@ import android.arch.persistence.room.TypeConverters;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import fi.konstal.bullet_your_life.data.converter.CardItemConverter;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 

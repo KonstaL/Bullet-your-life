@@ -1,21 +1,26 @@
 package fi.konstal.bullet_your_life.activities;
 
-import fi.konstal.bullet_your_life.R;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
 
+import fi.konstal.bullet_your_life.R;
 
+/**
+ * The Login activity where user authenticates
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +37,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     protected void onDriveClientReady() {
@@ -57,7 +62,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void onClick(View v) {
