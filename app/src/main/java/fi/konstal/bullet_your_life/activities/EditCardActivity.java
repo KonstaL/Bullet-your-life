@@ -74,6 +74,7 @@ public class EditCardActivity extends BaseActivity {
     private DriveClient driveClient;
     private List<FloatingActionButton> fabs;
     private FloatingActionButton mainFab;
+    private boolean initialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +89,9 @@ public class EditCardActivity extends BaseActivity {
         String type = getIntent().getStringExtra("type");
 
 
-        viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
 
+
+        viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
         if (type.equals("DayCard")) {
             viewModel.init(cardRepository, Card.CARD_TYPE_DAYCARD, id);
         } else if (type.equals("NoteCard")) {
@@ -98,35 +100,37 @@ public class EditCardActivity extends BaseActivity {
             throw new RuntimeException("Card type has not been setup");
         }
 
+
+
+        recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, new ArrayList<>());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+        //Enable drag and drop functionality
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(
+                recyclerViewAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
+
         viewModel.getCard().observe(this, card -> {
             if (card == null) {
                 Log.i(TAG, "dayCard on null");
             } else {
-                if(card instanceof NoteCard) {
-                    TextView cardTitle = findViewById(R.id.title);
-                    cardTitle.setText(((NoteCard)card).getTitle());
-                }
-                if(card instanceof DayCard) {
-                    TextView cardDate = findViewById(R.id.card_date);
-                    cardDate.setText(((DayCard)card).getDateString());
+                if (!initialized) {
+                    if (card instanceof NoteCard) {
+                        TextView cardTitle = findViewById(R.id.title);
+                        cardTitle.setText(((NoteCard) card).getTitle());
+                    }
+                    if (card instanceof DayCard) {
+                        TextView cardDate = findViewById(R.id.card_date);
+                        cardDate.setText(((DayCard) card).getDateString());
+                    }
+                    initialized = true;
                 }
 
-                if (recyclerView.getAdapter() == null) {
-                    recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, card.getCardItems());
-                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-                    recyclerView.setLayoutManager(mLayoutManager);
-                    recyclerView.setItemAnimator(new DefaultItemAnimator());
-                    recyclerView.setAdapter(recyclerViewAdapter);
-
-                    //Enable drag and drop functionality
-                    ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(
-                            recyclerViewAdapter);
-                    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-                    touchHelper.attachToRecyclerView(recyclerView);
-                } else {
                     recyclerViewAdapter.updateList(card.getCardItems());
-                }
-
 
              /*   for (CardItem cardItem : dayCard.getCardItems()) {
                     cardItem.buildView(this, cardContentLayout, (event)-> {

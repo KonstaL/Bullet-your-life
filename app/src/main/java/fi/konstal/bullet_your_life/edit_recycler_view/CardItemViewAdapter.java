@@ -128,7 +128,6 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardItemListDiffCallback(cardItemList, newList));
         cardItemList.clear();
         cardItemList.addAll(newList);
-
         diffResult.dispatchUpdatesTo(this);
     }
 
@@ -155,9 +154,7 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
 
     @Override
     public void onItemDismiss(int position) {
-        Log.i("joo", "dismisssssssss");
         cardItemHandler.deleteItem(position);
-  /*      cardItemList.remove(position); */
         notifyItemRemoved(position);
     }
 
