@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.Toast;
 
 import com.google.android.gms.drive.DriveClient;
 
@@ -20,8 +19,6 @@ import fi.konstal.bullet_your_life.ViewPagerAdapter;
 import fi.konstal.bullet_your_life.dagger.component.DaggerAppComponent;
 import fi.konstal.bullet_your_life.dagger.module.AppModule;
 import fi.konstal.bullet_your_life.dagger.module.RoomModule;
-import fi.konstal.bullet_your_life.fragment.EditCardInterface;
-import fi.konstal.bullet_your_life.fragment.FragmentInterface;
 import fi.konstal.bullet_your_life.fragment.MonthlyLogFragment;
 import fi.konstal.bullet_your_life.fragment.NotesFragment;
 import fi.konstal.bullet_your_life.fragment.WeeklyLogFragment;
@@ -30,7 +27,7 @@ import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 
-public class LogsActivity extends BaseActivity implements FragmentInterface, EditCardInterface  {
+public class LogsActivity extends BaseActivity  {
 
     private Boolean isAuthenticated;
     private DriveClient driveClient;
@@ -40,7 +37,6 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
     private NotesFragment notesFragmentFragment;
     private WeeklyLogFragment weeklyLogFragmentFragment;
     private MonthlyLogFragment monthlyLogFragmentFragment;
-
 
 
     @Override
@@ -84,11 +80,7 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
             }
             return true;
         });
-
         setupViewPager(pager, navigation);
-
-
-
     }
 
     @Override
@@ -121,56 +113,12 @@ public class LogsActivity extends BaseActivity implements FragmentInterface, Edi
         });
     }
 
-
-    @Override
-    public void onCardClicked(DayCard card) {
-        Log.d("cardClick", card.toString());
-    }
-
-
-
-    @Override
-    public void addItemToCard(int cardIndex, CardItem... cardItems) {
-        throw new RuntimeException("shitdog, chekkaas tää");
-        //cardList.get(cardIndex).getCardItems().addAll(Arrays.asList(cardItems));
-    }
-
     @Override
     protected void onDriveClientReady() {
         this.driveClient = super.getDriveClient();
     }
 
-/*
-    public void initPopUpMenu(int anchor) {
-        View anchorView = findViewById(anchor);
-        PopupMenu popup = new PopupMenu(this, anchorView);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_popup, popup.getMenu());
-        popup.show();
-        popup.setOnMenuItemClickListener((item -> {
-            SharedPreferences preferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-
-            switch (item.getItemId()) {
-                case R.id.popup_logout:
-                    editor.putBoolean("init_done", false);
-                    editor.commit();
-                    break;
-                case R.id.popup_login:
-
-                    editor.putBoolean("init_done", false);
-                    editor.putBoolean("is_auth", false);
-                    editor.commit();
-                    break;
-            }
-
-            return false;
-        }));
-    }*/
-
     public void setCardList(List<DayCard> dayCards) {
         this.cardList = dayCards;
     }
-
-
 }

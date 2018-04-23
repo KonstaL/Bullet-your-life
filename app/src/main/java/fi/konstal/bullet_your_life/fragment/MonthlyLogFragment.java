@@ -42,17 +42,20 @@ import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.view_models.MonthlyLogViewModel;
 
 
-public class MonthlyLogFragment extends Fragment implements FragmentInterface {
+public class MonthlyLogFragment extends Fragment {
     private static final String TAG = "MonthlyLogFragment";
+
     @BindView(R.id.calendarView)
     CalendarView calendarView;
+
     @BindView(R.id.recycler_view_temp)
     RecyclerView recyclerView;
+
     @Inject
     CardRepository cardRepo;
+
     private MonthlyLogViewModel viewModel;
     private CardViewAdapter adapter;
-    private FragmentInterface fragmentInterface;
     private Unbinder unbinder;
 
     public MonthlyLogFragment() {
@@ -86,18 +89,6 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
         return fragmentView;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof FragmentInterface) {
-            fragmentInterface = (FragmentInterface) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
@@ -123,16 +114,7 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
         });
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentInterface = null;
-    }
 
-    @Override
-    public void onCardClicked(DayCard card) {
-        fragmentInterface.onCardClicked(card);
-    }
 
     @Override
     public void onDestroyView() {

@@ -72,8 +72,6 @@ public class EditCardActivity extends BaseActivity {
     private EditCardViewModel viewModel;
     private CardItemViewAdapter recyclerViewAdapter;
     private DriveClient driveClient;
-
-
     private boolean initialized = false;
 
     @Override
@@ -84,69 +82,8 @@ public class EditCardActivity extends BaseActivity {
         ((App) getApplication()).getAppComponent().inject(this); //Setup Dagger2
         ButterKnife.bind(this); // bind ButterKnife to this fragment
 
-
-        int id = getIntent().getIntExtra("id", -1);
-        String type = getIntent().getStringExtra("type");
-
-        viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
-        if (type.equals("DayCard")) {
-            viewModel.init(cardRepository, Card.CARD_TYPE_DAYCARD, id);
-        } else if (type.equals("NoteCard")) {
-            viewModel.init(cardRepository, Card.CARD_TYPE_NOTECARD, id);
-        } else {
-            throw new RuntimeException("Card type has not been setup");
-        }
-
-        initRecyclerView();
-
-        viewModel.getCard().observe(this, card -> {
-            if (card == null) {
-                Log.i(TAG, "dayCard on null");
-            } else {
-                if (!initialized) {
-                    if (card instanceof NoteCard) {
-                        TextView cardTitle = findViewById(R.id.title);
-                        cardTitle.setText(((NoteCard) card).getTitle());
-                    }
-                    if (card instanceof DayCard) {
-                        TextView cardDate = findViewById(R.id.card_date);
-                        cardDate.setText(((DayCard) card).getDateString());
-                    }
-                    initialized = true;
-                }
-
-                recyclerViewAdapter.updateList(card.getCardItems());
-            }
-        });
-
-
-        /*Init floating action button animations and listeners */
-        ImageView dimming_layer = findViewById(R.id.dimming_layer);
-
-        Animation mShowButton = AnimationUtils.loadAnimation(this, R.anim.fab_show);
-        Animation mHideButton = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
-        Animation mShowLayout = AnimationUtils.loadAnimation(this, R.anim.show_layout);
-        Animation mHideLayout = AnimationUtils.loadAnimation(this, R.anim.hide_layout);
-
-        mainFab.setOnClickListener((View view) -> {
-            if (fabs.get(0).getVisibility() == View.VISIBLE) {
-                dimming_layer.setBackgroundColor(getResources().getColor(R.color.transparent));
-                mainFab.startAnimation(mHideButton);
-
-                for (FloatingActionButton fab : fabs) {
-                    fab.setVisibility(View.GONE);
-                    fab.startAnimation(mHideLayout);
-                }
-            } else {
-                dimming_layer.setBackgroundColor(getResources().getColor(R.color.login_image_overlay));
-                mainFab.startAnimation(mShowButton);
-
-                for (FloatingActionButton fab : fabs) {
-                    fab.setVisibility(View.VISIBLE);
-                    fab.startAnimation(mShowLayout);
-                }
-            }
-        });
+        initViewModel();
+        initAnimation();
     }
 
     public void fabClick(View v) {
@@ -180,15 +117,11 @@ public class EditCardActivity extends BaseActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
-
-        FloatingActionButton cancelFab = addTaskView.findViewById(R.id.cancel_fab);
-        FloatingActionButton proceedFab = addTaskView.findViewById(R.id.proceed_fab);
-
-        cancelFab.setOnClickListener((event) -> {
+        addTaskView.findViewById(R.id.cancel_fab).setOnClickListener((event) -> {
             removeView(addTaskView);
         });
 
-        proceedFab.setOnClickListener((event) -> {
+        addTaskView.findViewById(R.id.proceed_fab).setOnClickListener((event) -> {
             CardItem cardItem = new CardItem(textField.getText().toString(), drawableRef);
             removeView(addTaskView);
             addItemToDb(cardItem);
@@ -213,14 +146,14 @@ public class EditCardActivity extends BaseActivity {
         mainFab.callOnClick();
         ImagePicker.create(this)
                 .returnMode(ReturnMode.CAMERA_ONLY)
-                .folderMode(true) // folder mode (false by default)
-                .toolbarFolderTitle("Pick a Folder") // folder selection title
-                .toolbarImageTitle("Tap to select") // image selection title
-                .toolbarArrowColor(Color.WHITE) // Toolbar 'up' arrow color
-                .limit(5) // max images can be selected (99 by default)
-                .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+                .folderMode(true)
+                .toolbarFolderTitle("Pick a Folder")
+                .toolbarImageTitle("Tap to select")
+                .toolbarArrowColor(Color.WHITE)
+                .limit(5)
+                .imageDirectory("Camera")
                 .enableLog(false)
-                .start(RESULT_LOAD_IMG); // start image picker activity with request code
+                .start(RESULT_LOAD_IMG);
     }
 
     @Override
@@ -243,6 +176,46 @@ public class EditCardActivity extends BaseActivity {
         addItemToDb(cardImage);
     }
 
+    public void initViewModel() {
+        //Determines the type of Viewmodel to use
+        int id = getIntent().getIntExtra("id", -1);
+        String type = getIntent().getStringExtra("type");
+        viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
+        if (type.equals("DayCard")) {
+            viewModel.init(cardRepository, Card.CARD_TYPE_DAYCARD, id);
+        } else if (type.equals("NoteCard")) {
+            viewModel.init(cardRepository, Card.CARD_TYPE_NOTECARD, id);
+        } else {
+            throw new RuntimeException("Card type has not been setup");
+        }
+
+        /*
+        * RecyclerView needs to be configured before data is received, but after viewmodel is
+        * initialized
+        * */
+        initRecyclerView();
+
+        viewModel.getCard().observe(this, card -> {
+            if (card == null) {
+                Log.i(TAG, "dayCard on null");
+            } else {
+                if (!initialized) {
+                    if (card instanceof NoteCard) {
+                        TextView cardTitle = findViewById(R.id.title);
+                        cardTitle.setText(((NoteCard) card).getTitle());
+                    }
+                    if (card instanceof DayCard) {
+                        TextView cardDate = findViewById(R.id.card_date);
+                        cardDate.setText(((DayCard) card).getDateString());
+                    }
+                    initialized = true;
+                }
+                recyclerViewAdapter.updateList(card.getCardItems());
+            }
+        });
+
+    }
+
     public void initRecyclerView() {
         recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, new ArrayList<>());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -255,6 +228,36 @@ public class EditCardActivity extends BaseActivity {
                 recyclerViewAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    public void initAnimation() {
+        /*Init floating action button animations and listeners */
+        ImageView dimming_layer = findViewById(R.id.dimming_layer);
+
+        Animation mShowButton = AnimationUtils.loadAnimation(this, R.anim.fab_show);
+        Animation mHideButton = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
+        Animation mShowLayout = AnimationUtils.loadAnimation(this, R.anim.show_layout);
+        Animation mHideLayout = AnimationUtils.loadAnimation(this, R.anim.hide_layout);
+
+        mainFab.setOnClickListener((View view) -> {
+            if (fabs.get(0).getVisibility() == View.VISIBLE) {
+                dimming_layer.setBackgroundColor(getResources().getColor(R.color.transparent));
+                mainFab.startAnimation(mHideButton);
+
+                for (FloatingActionButton fab : fabs) {
+                    fab.setVisibility(View.GONE);
+                    fab.startAnimation(mHideLayout);
+                }
+            } else {
+                dimming_layer.setBackgroundColor(getResources().getColor(R.color.login_image_overlay));
+                mainFab.startAnimation(mShowButton);
+
+                for (FloatingActionButton fab : fabs) {
+                    fab.setVisibility(View.VISIBLE);
+                    fab.startAnimation(mShowLayout);
+                }
+            }
+        });
     }
 
     @Override

@@ -42,10 +42,9 @@ import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.NotesViewModel;
 
 
-public class NotesFragment extends Fragment implements FragmentInterface {
+public class NotesFragment extends Fragment {
     private static final String TAG = "NotesFragment";
     private Unbinder unbinder; //ButterKnife lifecycle stuff
-    private FragmentInterface fragmentInterface;
     private NoteCardViewAdapter adapter;
     private NotesViewModel viewModel;
 
@@ -80,24 +79,6 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         View v = inflater.inflate(R.layout.fragment_notes, container, false);
         unbinder = ButterKnife.bind(this, v); // bind ButterKnife to this fragment
         return v;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof FragmentInterface) {
-            fragmentInterface = (FragmentInterface) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentInterface = null;
     }
 
     @Override
@@ -173,32 +154,8 @@ public class NotesFragment extends Fragment implements FragmentInterface {
                 }
             });
 
-
             AlertDialog dialog = builder.create();
             dialog.show();
-
-         /*   Snackbar s = Snackbar.make(getView(), "hello", Snackbar.LENGTH_SHORT);
-            ImageView v = getActivity().findViewById(R.id.imageView);
-            ViewCompat.setTranslationZ(v, -1);
-            s.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                @Override
-                public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
-
-                    //regardless of the dismiss event, put imageview back to top
-                    ViewCompat.setTranslationZ(v, 10);
-                    Calendar c = Calendar.getInstance();
-                    Date date = new Date();
-                    c.setTime(date);
-                    Log.d("test", date.toString());
-                }
-
-                @Override
-                public void onShown(Snackbar transientBottomBar) {
-                    super.onShown(transientBottomBar);
-                }
-            });
-            s.show();*/
         });
 
 
@@ -249,10 +206,4 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         super.onDestroyView();
         unbinder.unbind();
     }
-
-    @Override
-    public void onCardClicked(DayCard card) {
-        fragmentInterface.onCardClicked(card);
-    }
-
 }
