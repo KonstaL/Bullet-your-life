@@ -46,18 +46,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     private DriveClient mDriveClient;
     private static DriveResourceClient mDriveResourceClient;
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
-/*
     @Override
     protected void onStart() {
         super.onStart();
 
         SharedPreferences sharedpreferences = getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
-
-        // If user is authenticated, start sign in process
+        // If user is authenticated, start background sign in process
         if(sharedpreferences.getBoolean("is_auth", false)) {
             signIn();
         }
-    }*/
+    }
 
 
     /**

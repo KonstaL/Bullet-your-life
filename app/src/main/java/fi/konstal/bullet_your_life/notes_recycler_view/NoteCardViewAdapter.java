@@ -88,6 +88,8 @@ public class NoteCardViewAdapter extends RecyclerView.Adapter<NoteCardViewAdapte
 
     public void updateCardList(List<NoteCard> newList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new NoteCardListDiffCallback(cardsList, newList));
+        cardsList.clear();
+        cardsList.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
     }
 

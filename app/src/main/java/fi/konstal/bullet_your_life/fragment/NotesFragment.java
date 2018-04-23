@@ -172,11 +172,7 @@ public class NotesFragment extends Fragment implements FragmentInterface {
                     cardRepository.addNoteCards(new NoteCard(tv.getText().toString()));
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User cancelled the dialog
-                }
-            });
+
 
             AlertDialog dialog = builder.create();
             dialog.show();

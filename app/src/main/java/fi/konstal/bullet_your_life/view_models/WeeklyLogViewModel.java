@@ -31,6 +31,4 @@ public class WeeklyLogViewModel extends ViewModel {
   public LiveData<List<DayCard>> getDayCards() {
       return dayCards;
   }
-
-
 }

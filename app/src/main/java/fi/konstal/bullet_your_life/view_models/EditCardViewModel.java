@@ -20,16 +20,11 @@ import fi.konstal.bullet_your_life.task.CardItem;
 public class EditCardViewModel extends ViewModel implements CardItemHandler {
     private static final String TAG = "EditCardViewModel";
 
-
-
     private LiveData<Card> dayCard;
     private CardRepository cardRepo;
     private int type;
 
-    public EditCardViewModel() {
-
-    }
-
+    public EditCardViewModel() {}
 
     public void init(CardRepository cardRepo, int cardType, int id) {
         if (dayCard == null) {
