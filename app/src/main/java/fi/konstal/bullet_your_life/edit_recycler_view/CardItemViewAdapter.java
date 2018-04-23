@@ -37,6 +37,9 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         this.cardItemHandler = cardItemHandler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -46,47 +49,20 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         CardItem item = cardItemList.get(position);
-        // temp fix for stacked views. I forgot that RecyclerView recycles ViewHolders..
+
         holder.frameLayout.removeAllViews();
         item.buildView(context, holder.frameLayout, null);
-
-        /*if (!holder.isInitialized) {
-            if (cardItemList.get(position).getType() == CardItem.CARD_IMAGE) {
-                CardItem cardImage = cardItemList.get(position);
-
-                final float scale = context.getResources().getDisplayMetrics().density;
-
-                holder.imageView.getLayoutParams().height = (int) (250 * scale + 0.5f);
-                holder.imageView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-                holder.layout.removeView(holder.taskText);
-                try {
-                    //TODO do this properly
-                    InputStream is = context.getContentResolver().openInputStream(cardImage.getImageUri());
-
-                    holder.imageView.setImageBitmap(
-                            Helper.getResizedBitmap(
-                                    BitmapFactory.decodeStream(is),
-                                    Helper.SCALE_BY_HEIGHT,
-                                    300
-                            )
-                    );
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            } else {
-
-                CardItem cardTask = cardItemList.get(position);
-                holder.taskText.setText(cardTask.getText());
-                holder.imageView.setImageDrawable(context.getResources().getDrawable(cardTask.getTaskIconRef()));
-
-            }
-        }*/
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
 
@@ -105,6 +81,9 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getItemCount() {
         return cardItemList.size();
@@ -126,12 +105,18 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         diffResult.dispatchUpdatesTo(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getItemId(int position) {
         return position;
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
@@ -147,6 +132,9 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onItemDismiss(int position) {
         cardItemHandler.deleteItem(position);
@@ -154,30 +142,13 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     }
 
 
-    //public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     public class ViewHolder extends RecyclerView.ViewHolder {
-        /*public boolean isInitialized;
-        public TextView taskText;*/
         public FrameLayout frameLayout;
-       /* public ImageView imageView;*/
-        //private RecyclerViewClickListener rvListener;
 
-        //public ViewHolder(View view, RecyclerViewClickListener listener) {
         public ViewHolder(View view) {
             super(view);
-            //isInitialized = false;
             frameLayout = view.findViewById(R.id.empty_framelayout);
-
-
-
-
-            //rvListener = listener;
         }
-
-       /* @Override
-        public void onClick(View view) {
-            rvListener.onClick(view, getAdapterPosition());
-        }*/
     }
 }
 

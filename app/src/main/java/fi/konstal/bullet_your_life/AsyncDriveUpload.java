@@ -81,32 +81,19 @@ public class AsyncDriveUpload {
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
-                   /* }).start();*/
                     return null;
                 });
-
-
-        Log.i(TAG, "end of upload");
-
     }
 
     public void uploadDone(Task<DriveFile> createdFileTask) {
         Tasks.whenAll(createdFileTask)
                 .continueWith((createdFile) -> {
-                    Log.i(TAG, "upload done sisällä");
-                    Log.i(TAG, cardItem.toString());
 
                     try {
-                        //Log.i(TAG, createdFile.getResult().toString());
                         cardItem.setDriveId(createdFileTask.getResult().getDriveId());
-                        Log.i(TAG, "driveID created: " + cardItem.getDriveId());
                     } catch (Exception e) {
-                        Log.i(TAG, "HITTO SE KAATU");
-                        Log.i(TAG, e.getMessage());
                         e.printStackTrace();
                     }
-
-
                     viewModel.updateCardItems(cardItem);
 
                     return null;
