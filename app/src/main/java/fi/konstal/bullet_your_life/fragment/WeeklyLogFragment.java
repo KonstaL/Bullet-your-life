@@ -37,25 +37,26 @@ import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     public final static int MODIFY_CARD = 10;
     private static final String TAG = "WeeklyLogFragment";
+
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+
     @Inject
     CardRepository cardRepository;
 
     private CardViewAdapter cardAdapter;
     private FragmentInterface fragmentInterface;
     private EditCardInterface editCardInterface;
-
     private WeeklyLogViewModel viewModel;
 
 
-    public WeeklyLogFragment() {}
+    public WeeklyLogFragment() {
+    }
 
     public static WeeklyLogFragment newInstance() {
         WeeklyLogFragment fragment = new WeeklyLogFragment();
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,9 +64,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
 
         //Setup Dagger2
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
-
-        //Helper.seedCardData(getContext(), cardRepository);
-
     }
 
     @Override
@@ -74,7 +72,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
 
         View v = inflater.inflate(R.layout.fragment_weekly_log, container, false);
         ButterKnife.bind(this, v); // bind ButterKnife to this fragment
-        Log.i(TAG, "ON CREATEVIEW");
         return v;
     }
 
@@ -82,7 +79,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.i(TAG, "ON ATTACH");
         if (context instanceof FragmentInterface) {
             fragmentInterface = (FragmentInterface) context;
             editCardInterface = (EditCardInterface) context;
@@ -94,7 +90,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void onDetach() {
-        Log.i(TAG, "ON DETACH");
         super.onDetach();
         fragmentInterface = null;
     }
@@ -102,7 +97,7 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        Log.i(TAG, "ON ACTIVITY CREATED");
+
 
         viewModel = ViewModelProviders.of(this).get(WeeklyLogViewModel.class);
         viewModel.init(cardRepository);
@@ -119,7 +114,7 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
                     cardAdapter.setCardList(cardList);
 
                     // If there isn's a full weeks worth of cards, create them
-                    if(cardList.size() < 7) {
+                    if (cardList.size() < 7) {
                         Helper.addMissingDays(cardList, cardRepository);
                     }
                 } else {
@@ -148,7 +143,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
                     }
                 })
         );
-
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.collapsing_toolbar_items);
@@ -186,34 +180,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
         });
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        /*if (requestCode == MODIFY_CARD) {
-            if (resultCode == Activity.RESULT_OK) {
-                int index = data.getIntExtra("index", -1);
-                DayCard modifiedCard = (DayCard) data.getSerializableExtra("DayCard");
-
-                // TODO: modify this so that there is no need for new lists and cloning
-                ArrayList<DayCard> newList = new ArrayList<>();
-
-                //Copy the array and replace the target card so with the modified
-                for (int i = 0; i < cardList.size(); i++) {
-                    if(i == index) newList.add(modifiedCard);
-                    else newList.add(cardList.get(i));
-                }
-
-                //Compares differences and update only modified DayCards/DayCard fields
-                cardAdapter.updateCardList(newList);
-
-                Toast.makeText(getContext(), "data received from edit intent", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), "MOFIFY CARD NOT OK", Toast.LENGTH_SHORT).show();
-            }
-        }*/
-    }
-
-
     @Override
     public void onCardClicked(DayCard card) {
         fragmentInterface.onCardClicked(card);
@@ -222,7 +188,6 @@ public class WeeklyLogFragment extends Fragment implements FragmentInterface {
     public CardRepository getCardRepository() {
         return cardRepository;
     }
-
 
     @Override
     public void onDestroyView() {

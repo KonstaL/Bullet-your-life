@@ -3,12 +3,9 @@ package fi.konstal.bullet_your_life.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,28 +19,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.MetadataBuffer;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
@@ -61,19 +50,30 @@ import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 public class EditCardActivity extends BaseActivity {
     private static final String TAG = "EditCardActivity";
     private final static int RESULT_LOAD_IMG = 10;
+
     @BindView(R.id.card_content_layout)
     CustomLinearLayout cardContentLayout;
+
     @BindView(R.id.card_item_recycler_view)
     RecyclerView recyclerView;
+
+    @BindView(R.id.main_fab)
+    FloatingActionButton mainFab;
+
+    @BindViews({R.id.addTodo,
+            R.id.addPicture,
+            R.id.addEvent,
+            R.id.addText})
+    List<FloatingActionButton> fabs;
+
     @Inject
     CardRepository cardRepository;
+
     private EditCardViewModel viewModel;
-    private DayCard dayCard;
-    private int id;
     private CardItemViewAdapter recyclerViewAdapter;
     private DriveClient driveClient;
-    private List<FloatingActionButton> fabs;
-    private FloatingActionButton mainFab;
+
+
     private boolean initialized = false;
 
     @Override
@@ -84,12 +84,9 @@ public class EditCardActivity extends BaseActivity {
         ((App) getApplication()).getAppComponent().inject(this); //Setup Dagger2
         ButterKnife.bind(this); // bind ButterKnife to this fragment
 
-        this.fabs = new ArrayList<>();
-        this.id = getIntent().getIntExtra("id", -1);
+
+        int id = getIntent().getIntExtra("id", -1);
         String type = getIntent().getStringExtra("type");
-
-
-
 
         viewModel = ViewModelProviders.of(this).get(EditCardViewModel.class);
         if (type.equals("DayCard")) {
@@ -100,19 +97,7 @@ public class EditCardActivity extends BaseActivity {
             throw new RuntimeException("Card type has not been setup");
         }
 
-
-
-        recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, new ArrayList<>());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(recyclerViewAdapter);
-
-        //Enable drag and drop functionality
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(
-                recyclerViewAdapter);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(recyclerView);
+        initRecyclerView();
 
         viewModel.getCard().observe(this, card -> {
             if (card == null) {
@@ -130,71 +115,18 @@ public class EditCardActivity extends BaseActivity {
                     initialized = true;
                 }
 
-                    recyclerViewAdapter.updateList(card.getCardItems());
-
-             /*   for (CardItem cardItem : dayCard.getCardItems()) {
-                    cardItem.buildView(this, cardContentLayout, (event)-> {
-                        Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
-                    });
-                }*/
-
+                recyclerViewAdapter.updateList(card.getCardItems());
             }
-
         });
 
-        //this.dayCard = cardRepository.getCard(id);
 
-
-           /* Init card */
-
-
-
-
-        /*TextView cardTitle = findViewById(R.id.title);
-        TextView cardDate = findViewById(R.id.card_date);
-
-        if (dayCard != null) {
-            cardTitle.setText(dayCard.getTitle());
-            cardDate.setText(dayCard.getDateString());
-
-            recyclerViewAdapter = new CardItemViewAdapter(this, null, dayCard.getCardItems());
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(recyclerViewAdapter);
-
-            ItemTouchHelper.Callback callback =
-                    new SimpleItemTouchHelperCallback(recyclerViewAdapter);
-            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-            touchHelper.attachToRecyclerView(recyclerView);
-
-
-
-            for (CardItem cardItem : dayCard.getCardItems()) {
-                cardItem.buildView(this, cardContentLayout, (event)-> {
-                    Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
-                });
-            }
-
-        } else {
-            cardTitle.setText("errors for everyone!");
-        }
-*/
-
-
-        /*Init floating action button */
-        mainFab = findViewById(R.id.main_fab);
+        /*Init floating action button animations and listeners */
         ImageView dimming_layer = findViewById(R.id.dimming_layer);
-        fabs.add((FloatingActionButton) findViewById(R.id.addTodo));
-        fabs.add((FloatingActionButton) findViewById(R.id.addPicture));
-        fabs.add((FloatingActionButton) findViewById(R.id.addEvent));
-        fabs.add((FloatingActionButton) findViewById(R.id.addText));
 
         Animation mShowButton = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         Animation mHideButton = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
         Animation mShowLayout = AnimationUtils.loadAnimation(this, R.anim.show_layout);
         Animation mHideLayout = AnimationUtils.loadAnimation(this, R.anim.hide_layout);
-
 
         mainFab.setOnClickListener((View view) -> {
             if (fabs.get(0).getVisibility() == View.VISIBLE) {
@@ -258,26 +190,17 @@ public class EditCardActivity extends BaseActivity {
 
         proceedFab.setOnClickListener((event) -> {
             CardItem cardItem = new CardItem(textField.getText().toString(), drawableRef);
-
             removeView(addTaskView);
-            addItemData(cardItem);
-            //addCardItemToView(cardItem);
-
+            addItemToDb(cardItem);
         });
 
         cardContentLayout.addView(addTaskView);
     }
 
-    public void addItemData(CardItem cardItem) {
+    public void addItemToDb(CardItem cardItem) {
         viewModel.addCardItems(cardItem);
     }
 
-    public void addCardItemToView(CardItem cardItem) {
-        //recyclerViewAdapter.notifyDataSetChanged();
-        recyclerViewAdapter.addCardItem(cardItem);
-
-        //cardItem.buildView(this, cardContentLayout, null);
-    }
 
     public void removeView(View v) {
         cardContentLayout.removeView(v);
@@ -285,15 +208,6 @@ public class EditCardActivity extends BaseActivity {
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent data = new Intent();
-        data.putExtra("DayCard", dayCard);
-        data.putExtra("id", id);
-        setResult(RESULT_OK, data);
-        finish();
-        super.onBackPressed();
-    }
 
     public void getImageIntent() {
         mainFab.callOnClick();
@@ -313,23 +227,12 @@ public class EditCardActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "ImageIntent OK", Toast.LENGTH_SHORT).show();
-
                 List<Image> images = ImagePicker.getImages(data);
 
                 for (Image image : images) {
                     Uri imageUri = Uri.fromFile(new File(image.getPath()));
                     createFileInAppFolder(imageUri);
                 }
-
-
-                //OLD
-                //final int flags = data.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                /*Uri imageUri = data.getData();
-
-                getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                createFileInAppFolder(imageUri);*/
             }
         }
     }
@@ -337,69 +240,21 @@ public class EditCardActivity extends BaseActivity {
     private void createFileInAppFolder(Uri imgUri) {
         CardItem cardImage = new CardItem(imgUri);
         uploadDriveImage(this, viewModel, cardImage, imgUri); // Start Async uploading and adds DriveID when done
-        //addCardItemToView(cardImage);
-
-        //dayCard.addCardItems(cardImage);
-        addItemData(cardImage);
+        addItemToDb(cardImage);
     }
 
+    public void initRecyclerView() {
+        recyclerViewAdapter = new CardItemViewAdapter(this, viewModel, null, new ArrayList<>());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
 
-    public void temp() {
-
-        final Task<DriveFolder> appFolderTask = getDriveResourceClient().getAppFolder();
-
-        Tasks.whenAll(appFolderTask)
-                .continueWith(new Continuation<Void, Task<MetadataBuffer>>() {
-                    @Override
-                    public Task<MetadataBuffer> then(@NonNull Task<Void> task) throws Exception {
-                        DriveFolder driveFolder = appFolderTask.getResult();
-
-
-                        return getDriveResourceClient().listChildren(driveFolder);
-                    }
-                })
-                .addOnSuccessListener(this, (Task<MetadataBuffer> metadataBufferTask) -> {
-                    Tasks.whenAll(metadataBufferTask)
-                            .continueWith((Task<Void> task) -> {
-                                showMessage("for loopin edes");
-
-                                MetadataBuffer metadataBuffer = metadataBufferTask.getResult();
-
-
-                                DriveFile driveFile = metadataBuffer.get(6).getDriveId().asDriveFile();
-                                Task<DriveContents> file = getDriveResourceClient().openFile(driveFile, DriveFile.MODE_READ_ONLY);
-
-                                Tasks.whenAll(file)
-                                        .addOnSuccessListener((success) -> {
-                                            DriveContents imgFile = file.getResult();
-
-                                            Bitmap img;
-                                            try (InputStream is = imgFile.getInputStream()) {
-                                                img = BitmapFactory.decodeStream(is);
-
-                                                View v = getLayoutInflater().inflate(R.layout.partial_card_item_image, null);
-                                                ImageView imgView = v.findViewById(R.id.card_item_image);
-                                                imgView.setImageBitmap(img);
-                                                cardContentLayout.addView(v);
-                                            } catch (Exception e) {
-                                                Log.d(TAG, e.toString());
-                                                Toast.makeText(this, "Image adding failed", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-
-                                metadataBuffer.release();
-
-                                return metadataBuffer;
-                            });
-
-                    // finish();
-                })
-                .addOnFailureListener(this, (exception) -> {
-                    Log.e(TAG, "Unable read metadata", exception);
-                    showMessage("error reading metadata");
-                    //finish();
-
-                });
+        //Enable drag and drop functionality
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(
+                recyclerViewAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -407,5 +262,4 @@ public class EditCardActivity extends BaseActivity {
         Log.i(TAG, "has received driveClient");
         this.driveClient = getDriveClient();
     }
-
 }
