@@ -37,4 +37,7 @@ obj/
 .externalNativeBuild
 
 # to secure signingkeys
-gradle.properties
+/keystore.properties
+keystore.properties
+./keystore.properties
+
