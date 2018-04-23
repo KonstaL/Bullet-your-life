@@ -37,7 +37,6 @@ obj/
 .externalNativeBuild
 
 # to secure signingkeys
-/keystore.properties
 keystore.properties
-./keystore.properties
+
 
