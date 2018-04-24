@@ -1,7 +1,6 @@
 package fi.konstal.bullet_your_life.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +12,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +40,14 @@ import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.view_models.MonthlyLogViewModel;
 
 
+/**
+ * Fragment that displays a monthly view of the DayCards
+ *
+ * @author Konsta Lehtinen
+ * @author KontaL
+ * @version 1.0
+ * @since 1.0
+ */
 public class MonthlyLogFragment extends Fragment {
     private static final String TAG = "MonthlyLogFragment";
 
@@ -69,6 +75,9 @@ public class MonthlyLogFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +85,9 @@ public class MonthlyLogFragment extends Fragment {
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -116,25 +128,19 @@ public class MonthlyLogFragment extends Fragment {
 
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
 
-    public void addCard(Date date) {
-        cardRepo.getDayCard(Helper.dateToString(date))
-                .observe(this, (dayCard -> {
-                    if (dayCard != null) {
-                        //Render card
-                        Log.i("test", dayCard.toString());
-                    } else {
-                        //Render empty card
-                    }
-                }));
 
-    }
-
+    /**
+     * Setups the {@link CalendarView}
+     */
     public void setupCalendar() {
         //Try to set initially selected date
         try {
@@ -156,6 +162,9 @@ public class MonthlyLogFragment extends Fragment {
         });
     }
 
+    /**
+     * Setups the fragments recyclerView
+     */
     public void setupRecyclerView() {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -178,6 +187,10 @@ public class MonthlyLogFragment extends Fragment {
         );
     }
 
+    /**
+     * Styles this fragments {@link CalendarView}
+     * @param fragmentView the fragments root view where the calendar is
+     */
     public void styleCalendar(View fragmentView) {
         //Customize calendar
         ConstraintLayout parent = fragmentView.findViewById(R.id.calendarHeader);

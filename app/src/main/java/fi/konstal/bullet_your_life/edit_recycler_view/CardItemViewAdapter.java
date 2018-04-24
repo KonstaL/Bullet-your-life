@@ -10,18 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.task.CardItem;
 
-
 /**
- * Created by konka on 14.3.2018.
+ * This class handles the recyclerview and card item adapting
+ *
+ * @author Konsta Lehtinen
+ * @author KonstaL
+ * @version 1.0
+ * @since 1.0
  */
-
 public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapter.ViewHolder>
         implements ItemTouchHelperAdapter {
 
@@ -69,7 +71,7 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
         if (payloads == null || payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
-        Log.i("onBindViewHolder", "payload vastaanotettu");
+            Log.i("onBindViewHolder", "payload vastaanotettu");
             Bundle o = (Bundle) payloads.get(0);
             CardItem cardItem = cardItemList.get(position);
             for (String key : o.keySet()) {
@@ -90,14 +92,11 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     }
 
 
-    public void addCardItem(CardItem cardItem) {
-        List<CardItem> newList = new ArrayList<>();
-        newList.addAll(cardItemList);
-        newList.add(cardItem);
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardItemListDiffCallback(cardItemList, newList));
-        diffResult.dispatchUpdatesTo(this);
-    }
-
+    /**
+     * Update the changed values in the adapter using {@link CardItemListDiffCallback}
+     *
+     * @param newList The new list, which were gonna compare to the old one
+     */
     public void updateList(List<CardItem> newList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new CardItemListDiffCallback(cardItemList, newList));
         cardItemList.clear();
@@ -142,6 +141,9 @@ public class CardItemViewAdapter extends RecyclerView.Adapter<CardItemViewAdapte
     }
 
 
+    /**
+     * The ViewHolder class for {@link CardItemViewAdapter}
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public FrameLayout frameLayout;
 

@@ -42,19 +42,26 @@ import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.NotesViewModel;
 
 
+/**
+ * Fragment that displays all applications NoteCards
+ *
+ * @author Konsta Lehtinen
+ * @author KontaL
+ * @version 1.0
+ * @since 1.0
+ */
 public class NotesFragment extends Fragment {
     private static final String TAG = "NotesFragment";
+    @Inject
+    CardRepository cardRepository;
+    @BindView(R.id.notecards_recycler_view)
+    RecyclerView recyclerView;
     private Unbinder unbinder; //ButterKnife lifecycle stuff
     private NoteCardViewAdapter adapter;
     private NotesViewModel viewModel;
 
-    @Inject
-    CardRepository cardRepository;
-
-    @BindView(R.id.notecards_recycler_view)
-    RecyclerView recyclerView;
-
-    public NotesFragment() {}
+    public NotesFragment() {
+    }
 
     // TODO: Rename and change types and number of parameters
     public static NotesFragment newInstance(String param1, String param2) {
@@ -65,6 +72,9 @@ public class NotesFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +83,9 @@ public class NotesFragment extends Fragment {
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +94,9 @@ public class NotesFragment extends Fragment {
         return v;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
@@ -90,8 +106,6 @@ public class NotesFragment extends Fragment {
         viewModel.getNoteCards().observe(this, cardList -> {
 
             if (cardList != null) {
-                Log.i(TAG, "OBSERVER DATA RECEIVED");
-
                 if (recyclerView.getAdapter() == null) {
                     adapter = new NoteCardViewAdapter(getContext());
                     recyclerView.setAdapter(adapter);
@@ -118,11 +132,8 @@ public class NotesFragment extends Fragment {
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-                        /*PopupMenu popupMenu = new PopupMenu(getContext(), view, Gravity.CENTER);*/
-
-
                         View v = getActivity().getLayoutInflater().inflate(R.layout.popup_window_notecards, null, false);
-                        v.findViewById(R.id.popup_icon_delete).setOnClickListener((e)-> {
+                        v.findViewById(R.id.popup_icon_delete).setOnClickListener((e) -> {
                             viewModel.deleteCard(position);
                         });
 
@@ -136,7 +147,6 @@ public class NotesFragment extends Fragment {
 
                         Vibrator vi = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
                         vi.vibrate(50);
-
                     }
                 })
         );
@@ -200,7 +210,11 @@ public class NotesFragment extends Fragment {
         });
     }
 
-    @Override public void onDestroyView() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }

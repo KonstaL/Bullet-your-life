@@ -6,10 +6,21 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-
+/**
+ * This is a helper class designed to enhance the default Clicklistener.
+ * Helps to enable Drag n drop functionality
+ *
+ * @author Konsta Lehtinen
+ * @author KonstaL
+ * @version 1.0
+ * @since 1.0
+ */
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
     private OnItemClickListener mListener;
 
+    /**
+     * A helper interface designed to emulate View.onClickListener
+     */
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
 
@@ -18,6 +29,13 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     GestureDetector mGestureDetector;
 
+    /**
+     * The constructor
+     *
+     * @param context Needed in making Gesture detector
+     * @param recyclerView The recycler view that gets the click listener
+     * @param listener The defualt clicklistener
+     */
     public RecyclerItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
         mListener = listener;
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
@@ -35,8 +53,11 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
             }
         });
     }
-
-    @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+    /**
+     * {@inheritDoc}x
+     */
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
             mListener.onItemClick(childView, view.getChildAdapterPosition(childView));
@@ -45,8 +66,15 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         return false;
     }
 
-    @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onRequestDisallowInterceptTouchEvent (boolean disallowIntercept){}
 }
