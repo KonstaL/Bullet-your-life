@@ -1,8 +1,5 @@
 package fi.konstal.bullet_your_life.data;
 
-/**
- * Created by e4klehti on 21.4.2018.
- */
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -13,17 +10,14 @@ import android.arch.persistence.room.TypeConverters;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import fi.konstal.bullet_your_life.data.converter.CardItemConverter;
 import fi.konstal.bullet_your_life.task.CardItem;
 
-
 /**
- * Created by konka on 14.3.2018.
+ * Class that holds all NoteCard Related data
  */
-
-
 @Entity(tableName = "NoteCard", indices = {@Index(value = {"id", "title"})})
 public class NoteCard implements Card, Serializable {
 
@@ -37,6 +31,11 @@ public class NoteCard implements Card, Serializable {
     @ColumnInfo(name = "cardItems")
     private CopyOnWriteArrayList<CardItem> cardItems;
 
+    /**
+     *
+     * @param title
+     * @param cardItems
+     */
     @Ignore
     public NoteCard(String title, CardItem... cardItems) {
         this.title = title;
@@ -45,47 +44,85 @@ public class NoteCard implements Card, Serializable {
         this.cardItems.addAll(Arrays.asList(cardItems));
     }
 
+    /**
+     *
+     * @param title
+     */
     @Ignore
     public NoteCard(String title) {
         this.title = title;
         this.cardItems = new CopyOnWriteArrayList<>();
     }
 
-    // Empty constructor for database
+    /**
+     *   Empty constructor for database
+     */
     public NoteCard() {
         this.cardItems = new CopyOnWriteArrayList<>();
     }
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     *
+     * @param title
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-
+    /**
+     *
+     * @return
+     */
     public CopyOnWriteArrayList<CardItem> getCardItems() {
         return cardItems;
     }
 
+    /**
+     *
+     * @param cardItems the card items
+     */
     public void setCardItems(CopyOnWriteArrayList<CardItem> cardItems) {
         this.cardItems = cardItems;
     }
 
+    /**
+     *
+     * @param cardItems
+     */
     public void addCardItems(CardItem... cardItems) {
         this.cardItems.addAll(Arrays.asList(cardItems));
     }
 
 
+    /**
+     * Replicates the Card
+     *
+     * @return replicated Card
+     */
     public NoteCard replicate() {
         CardItem[] newArray = new CardItem[cardItems.size()];
 

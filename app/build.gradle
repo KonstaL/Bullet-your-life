@@ -1,12 +1,17 @@
 apply plugin: 'com.android.application'
 
+// Load keystore
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     signingConfigs {
         Release {
-            keyAlias 'mybulletkey'
-            keyPassword 'polaris657'
-            storeFile file('C:/Users/e4klehti/Dropbox/Vain AMK-jutut/JussinJutut/Bullet-Your-Life/releaseKey.jks')
-            storePassword 'polaris657'
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
         }
     }
     compileSdkVersion 27
@@ -40,7 +45,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    // support librarys
+    // support libraries
     implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support:recyclerview-v7:27.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -51,7 +56,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:12.0.1'
     implementation 'com.google.android.gms:play-services-drive:12.0.1'
 
-    // Room library ORM library
+    // Room  ORM library
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
     implementation 'android.arch.persistence.room:runtime:1.0.0'
 
@@ -66,8 +71,6 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:2.11"
     implementation "com.google.dagger:dagger:2.11"
     implementation 'com.google.dagger:dagger-android-support:2.11'
-
-
 
     compileOnly "org.glassfish:javax.annotation:10.0-b28"
 

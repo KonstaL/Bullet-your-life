@@ -1,10 +1,8 @@
 package fi.konstal.bullet_your_life.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -14,7 +12,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,20 +38,30 @@ import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.view_models.MonthlyLogViewModel;
-import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
 
-public class MonthlyLogFragment extends Fragment implements FragmentInterface {
+/**
+ * Fragment that displays a monthly view of the DayCards
+ *
+ * @author Konsta Lehtinen
+ * @author KontaL
+ * @version 1.0
+ * @since 1.0
+ */
+public class MonthlyLogFragment extends Fragment {
     private static final String TAG = "MonthlyLogFragment";
+
     @BindView(R.id.calendarView)
     CalendarView calendarView;
+
     @BindView(R.id.recycler_view_temp)
     RecyclerView recyclerView;
+
     @Inject
     CardRepository cardRepo;
+
     private MonthlyLogViewModel viewModel;
     private CardViewAdapter adapter;
-    private FragmentInterface fragmentInterface;
     private Unbinder unbinder;
 
     public MonthlyLogFragment() {
@@ -68,6 +75,9 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
         return fragment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +85,9 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,36 +101,11 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
         return fragmentView;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof FragmentInterface) {
-            fragmentInterface = (FragmentInterface) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-
-        calendarView.setOnDayClickListener((eventDay) -> {
-            Calendar clickedDayCalendar = eventDay.getCalendar();
-            Date date = clickedDayCalendar.getTime();
-            viewModel.updateDate(Helper.dateToString(date));
-        });
-
-        Calendar calendar = Calendar.getInstance();
-        Log.i("hello", calendar.getTime().toString());
-
-        try {
-            calendarView.setDate(calendar);
-        } catch (OutOfDateRangeException e) {
-            e.printStackTrace();
-        }
+        setupCalendar();
+        setupRecyclerView();
 
         viewModel = ViewModelProviders.of(this).get(MonthlyLogViewModel.class);
         viewModel.init(cardRepo, Helper.currentDateString());
@@ -128,15 +116,56 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
                     recyclerView.setAdapter(adapter);
                     adapter.setCardList(cardList);
                 } else {
-                    if(cardList.size() == 0) {
-                        DayCard dayCard = new DayCard( getContext(),  calendarView.getFirstSelectedDate().getTime());
+                    if (cardList.size() == 0) {
+                        DayCard dayCard = new DayCard(calendarView.getFirstSelectedDate().getTime());
                         cardRepo.insertDayCards(dayCard);
                     }
                     adapter.updateCardList(cardList);
                 }
             }
         });
+    }
 
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+
+    /**
+     * Setups the {@link CalendarView}
+     */
+    public void setupCalendar() {
+        //Try to set initially selected date
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendarView.setDate(calendar);
+        } catch (OutOfDateRangeException e) {
+            e.printStackTrace();
+        }
+
+        calendarView.setOnDayClickListener((event) -> {
+            Calendar currentMonth = calendarView.getCurrentPageDate();
+            Calendar clickedDay = event.getCalendar();
+
+            //If the clicked day is in the currently viewed month
+            if (currentMonth.get(Calendar.MONTH) == clickedDay.get(Calendar.MONTH)) {
+                Date date = clickedDay.getTime();
+                viewModel.updateDate(Helper.dateToString(date));
+            }
+        });
+    }
+
+    /**
+     * Setups the fragments recyclerView
+     */
+    public void setupRecyclerView() {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -156,40 +185,12 @@ public class MonthlyLogFragment extends Fragment implements FragmentInterface {
                     }
                 })
         );
-
-
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentInterface = null;
-    }
-
-    @Override
-    public void onCardClicked(DayCard card) {
-        fragmentInterface.onCardClicked(card);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    public void addCard(Date date) {
-        cardRepo.getDayCard(Helper.dateToString(date))
-                .observe(this, (dayCard -> {
-                    if (dayCard != null) {
-                        //Render card
-                        Log.i("test", dayCard.toString());
-                    } else {
-                        //Render empty card
-                    }
-                }));
-
-    }
-
+    /**
+     * Styles this fragments {@link CalendarView}
+     * @param fragmentView the fragments root view where the calendar is
+     */
     public void styleCalendar(View fragmentView) {
         //Customize calendar
         ConstraintLayout parent = fragmentView.findViewById(R.id.calendarHeader);

@@ -1,8 +1,5 @@
 package fi.konstal.bullet_your_life.edit_recycler_view;
 
-/**
- * Created by e4klehti on 1.4.2018.
- */
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,32 +12,56 @@ import java.util.List;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 
-
+/**
+ * A Class that calculates and returns the differences between two CardItem lists
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 public class CardItemListDiffCallback extends DiffUtil.Callback {
     private List<CardItem> mOldList;
     private List<CardItem> mNewList;
 
+    /**
+     * The Constuctor
+     *
+     * @param oldList the old list
+     * @param newList the new List
+     */
     public CardItemListDiffCallback(List<CardItem> oldList, List<CardItem> newList) {
         this.mOldList = oldList;
         this.mNewList = newList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getOldListSize() {
         return mOldList != null ? mOldList.size() : 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNewListSize() {
         return mNewList != null ? mNewList.size() : 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
         Log.i("CardItemListDiff", "Are items the same" + mNewList.get(newItemPosition).getId().equals(mOldList.get(oldItemPosition).getId()));
         return mNewList.get(newItemPosition).getId().equals(mOldList.get(oldItemPosition).getId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         Log.i("CardItemListDiff", "Are content the same");
@@ -54,6 +75,9 @@ public class CardItemListDiffCallback extends DiffUtil.Callback {
         return oldCard.getText().equals(newCard.getText());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {

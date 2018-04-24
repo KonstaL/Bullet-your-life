@@ -5,24 +5,25 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.TypeConverters;
-import android.content.Context;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import fi.konstal.bullet_your_life.data.converter.DateConverter;
 import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.util.Helper;
 
 
 /**
- * Created by konka on 14.3.2018.
+ * Holds all DayCard related date together
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
  */
-
-
 @Entity(tableName = "DayCard", inheritSuperIndices = true, indices = {@Index(value = {"dateString"})})
 public class DayCard extends NoteCard implements Serializable {
-
 
     @TypeConverters(DateConverter.class)
     private Date date;
@@ -30,7 +31,13 @@ public class DayCard extends NoteCard implements Serializable {
     @ColumnInfo(name = "dateString")
     private String dateString;
 
-
+    /**
+     * The constructor
+     *
+     * @param title     Card title
+     * @param date      Card Date
+     * @param cardItems Card Items
+     */
     @Ignore
     public DayCard(String title, Date date, CardItem... cardItems) {
         super(title, cardItems);
@@ -39,43 +46,66 @@ public class DayCard extends NoteCard implements Serializable {
         this.dateString = formater.format(date);
     }
 
+    /**
+     * The constructor
+     *
+     * @param date the date by which to make the whole card
+     */
     @Ignore
-    public DayCard(String title, String dateString, CardItem... cardItems) {
-        super(title, cardItems);
-        this.dateString = dateString;
-    }
-
-    @Ignore
-    public DayCard(Context context, Date date) {
+    public DayCard(Date date) {
         super();
         this.date = date;
         this.dateString = Helper.dateToString(date);
-        setTitle(Helper.weekdayString(context, date));
+        setTitle(Helper.weekdayString(date));
     }
 
-    // Empty constructor for database actions
+    /**
+     * Empty constructor for DateBase related action
+     */
     public DayCard() {
         super();
     }
 
 
+    /**
+     * Gets the cards date
+     *
+     * @return the date
+     */
     public Date getDate() {
         return date;
     }
 
+    /**
+     * Sets the current date
+     *
+     * @param date the date
+     */
     public void setDate(Date date) {
         this.date = date;
     }
 
-
+    /**
+     * Gets the date as a string
+     *
+     * @return
+     */
     public String getDateString() {
         return dateString;
     }
 
+    /**
+     * Sets the dateString
+     *
+     * @param dateString the dateString
+     */
     public void setDateString(String dateString) {
         this.dateString = dateString;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DayCard replicate() {
 

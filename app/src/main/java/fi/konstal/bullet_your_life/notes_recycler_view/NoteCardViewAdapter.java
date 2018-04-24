@@ -22,15 +22,18 @@ import fi.konstal.bullet_your_life.daycard_recycler_view.CustomLinearLayout;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerViewClickListener;
 import fi.konstal.bullet_your_life.task.CardItem;
 
-
 /**
- * Created by konka on 14.3.2018.
+ * This adapter provides a
+ *
+ * @author Konsta Lehtinen
+ * @author KonstaL
+ * @version 1.0
+ * @since 1.0
  */
-
 public class NoteCardViewAdapter extends RecyclerView.Adapter<NoteCardViewAdapter.MyViewHolder> {
     private List<NoteCard> cardsList;
     private Context context;
-    //private RecyclerViewClickListener rvClickListener;
+
 
 
     //public CardViewAdapter(Context context, RecyclerViewClickListener rvl) {
@@ -88,6 +91,8 @@ public class NoteCardViewAdapter extends RecyclerView.Adapter<NoteCardViewAdapte
 
     public void updateCardList(List<NoteCard> newList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new NoteCardListDiffCallback(cardsList, newList));
+        cardsList.clear();
+        cardsList.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
     }
 

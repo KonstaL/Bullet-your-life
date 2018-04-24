@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -34,7 +35,6 @@ import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
-import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.data.NoteCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.notes_recycler_view.NoteCardViewAdapter;
@@ -42,20 +42,26 @@ import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.NotesViewModel;
 
 
-public class NotesFragment extends Fragment implements FragmentInterface {
+/**
+ * Fragment that displays all applications NoteCards
+ *
+ * @author Konsta Lehtinen
+ * @author KontaL
+ * @version 1.0
+ * @since 1.0
+ */
+public class NotesFragment extends Fragment {
     private static final String TAG = "NotesFragment";
+    @Inject
+    CardRepository cardRepository;
+    @BindView(R.id.notecards_recycler_view)
+    RecyclerView recyclerView;
     private Unbinder unbinder; //ButterKnife lifecycle stuff
-    private FragmentInterface fragmentInterface;
     private NoteCardViewAdapter adapter;
     private NotesViewModel viewModel;
 
-    @Inject
-    CardRepository cardRepository;
-
-    @BindView(R.id.notecards_recycler_view)
-    RecyclerView recyclerView;
-
-    public NotesFragment() {}
+    public NotesFragment() {
+    }
 
     // TODO: Rename and change types and number of parameters
     public static NotesFragment newInstance(String param1, String param2) {
@@ -66,6 +72,9 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         return fragment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +83,9 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,24 +94,9 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         return v;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof FragmentInterface) {
-            fragmentInterface = (FragmentInterface) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentInterface = null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
@@ -109,8 +106,6 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         viewModel.getNoteCards().observe(this, cardList -> {
 
             if (cardList != null) {
-                Log.i(TAG, "OBSERVER DATA RECEIVED");
-
                 if (recyclerView.getAdapter() == null) {
                     adapter = new NoteCardViewAdapter(getContext());
                     recyclerView.setAdapter(adapter);
@@ -137,11 +132,8 @@ public class NotesFragment extends Fragment implements FragmentInterface {
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-                        /*PopupMenu popupMenu = new PopupMenu(getContext(), view, Gravity.CENTER);*/
-
-
                         View v = getActivity().getLayoutInflater().inflate(R.layout.popup_window_notecards, null, false);
-                        v.findViewById(R.id.popup_icon_delete).setOnClickListener((e)-> {
+                        v.findViewById(R.id.popup_icon_delete).setOnClickListener((e) -> {
                             viewModel.deleteCard(position);
                         });
 
@@ -152,6 +144,9 @@ public class NotesFragment extends Fragment implements FragmentInterface {
 
                         pw.showAsDropDown(view, 400, -70);
 
+
+                        Vibrator vi = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                        vi.vibrate(50);
                     }
                 })
         );
@@ -169,48 +164,16 @@ public class NotesFragment extends Fragment implements FragmentInterface {
             builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     TextView tv = dialogView.findViewById(R.id.NoteCard_new_title);
-                    cardRepository.addNoteCards(new NoteCard(tv.getText().toString()));
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User cancelled the dialog
+                    cardRepository.insertNoteCards(new NoteCard(tv.getText().toString()));
                 }
             });
 
             AlertDialog dialog = builder.create();
             dialog.show();
-
-         /*   Snackbar s = Snackbar.make(getView(), "hello", Snackbar.LENGTH_SHORT);
-            ImageView v = getActivity().findViewById(R.id.imageView);
-            ViewCompat.setTranslationZ(v, -1);
-            s.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                @Override
-                public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
-
-                    //regardless of the dismiss event, put imageview back to top
-                    ViewCompat.setTranslationZ(v, 10);
-                    Calendar c = Calendar.getInstance();
-                    Date date = new Date();
-                    c.setTime(date);
-                    Log.d("test", date.toString());
-                }
-
-                @Override
-                public void onShown(Snackbar transientBottomBar) {
-                    super.onShown(transientBottomBar);
-                }
-            });
-            s.show();*/
         });
 
-
-        /*
-            INIT TOOLBAR
-            This is almost exactly the same code as in futureLogsFragment, only ID's are changed
-
-         */
+        /*  INIT TOOLBAR
+            This is almost exactly the same code as in futureLogsFragment, only ID's are changed*/
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar1);
         toolbar.inflateMenu(R.menu.collapsing_toolbar_items1);
         View popupOpener = getActivity().findViewById(R.id.popup_open1);
@@ -247,16 +210,12 @@ public class NotesFragment extends Fragment implements FragmentInterface {
         });
     }
 
-
-
-    @Override public void onDestroyView() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
-
-    @Override
-    public void onCardClicked(DayCard card) {
-        fragmentInterface.onCardClicked(card);
-    }
-
 }

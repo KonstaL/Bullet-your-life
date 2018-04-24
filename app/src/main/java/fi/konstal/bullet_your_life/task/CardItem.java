@@ -2,9 +2,7 @@ package fi.konstal.bullet_your_life.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.drive.DriveId;
 
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -27,9 +26,13 @@ import fi.konstal.bullet_your_life.util.Helper;
 
 
 /**
- * Created by e4klehti on 29.3.2018.
+ * Holds CardItem data for Cards
+ *
+ * @author Konsta Lehtinen
+ * @author Konstal
+ * @version 1.0
+ * @since 1.0
  */
-
 public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, DriveUploadListener {
 
     public static final int CARD_TASK = 1;
@@ -55,9 +58,14 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     private transient Bitmap image;
     private transient ImageView imageView;
 
-    //Card task
-    public CardItem(String text, int taskIconRef) {
 
+    /**
+     * Constuctor for {@link CardItem#CARD_TASK} type of card item
+     *
+     * @param text        The task text
+     * @param taskIconRef A reference to the tasks icon
+     */
+    public CardItem(String text, int taskIconRef) {
         this.type = CARD_TASK;
         this.text = text;
         this.crossed = false;
@@ -65,46 +73,80 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
         this.id = UUID.randomUUID().toString();
     }
 
-    //Card image
+    /**
+     * Constuctor for {@link CardItem#CARD_IMAGE} type of card item
+     *
+     * @param driveId The DriveId from where to download the image
+     */
     public CardItem(DriveId driveId) {
         this.type = CARD_IMAGE;
         this.driveId = driveId.encodeToString();
         this.id = UUID.randomUUID().toString();
     }
 
-    //Card image
+    /**
+     * Constuctor for {@link CardItem#CARD_IMAGE} type of card item
+     *
+     * @param imageUri The URI from where to get the image
+     */
     public CardItem(Uri imageUri) {
-
         this.type = CARD_IMAGE;
         setImageUri(imageUri);
         this.id = UUID.randomUUID().toString();
     }
 
-
-    /*   protected CardItem() {
-           id = idCounter++;
-       }
-   */
+    /**
+     * Returns the CardItems text. Only for {@link CardItem#CARD_TASK}
+     *
+     * @return the text
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Sets the CardItems text. Only for {@link CardItem#CARD_TASK}
+     *
+     * @param text the text to set
+     */
     public void setText(String text) {
         this.text = text;
     }
 
-    public boolean isDone() {
+    /**
+     * Returns a boolean whether this card items text has been crossed.
+     * Only for {@link CardItem#CARD_TASK}
+     *
+     * @return is CardItem text crossed
+     */
+    public boolean isCrossed() {
         return crossed;
     }
 
-    public void setDone(boolean done) {
-        this.crossed = done;
+
+    /**
+     * Sets whether the CardItems text is crossed. Only for {@link CardItem#CARD_TASK}
+     *
+     * @param crossed whether the text is crossed
+     */
+    public void setCrossed(boolean crossed) {
+        this.crossed = crossed;
     }
 
+    /**
+     * Returns the CardItems icon reference. Only for {@link CardItem#CARD_TASK}
+     *
+     * @return the icon reference
+     */
     public int getTaskIconRef() {
         return taskIconRef;
     }
 
+    /**
+     * Returns the CardItems text. Only for {@link CardItem#CARD_TASK}
+     *
+     * @return the text
+     */
     public void setTaskIconRef(int taskIconRef) {
         this.taskIconRef = taskIconRef;
     }
@@ -119,11 +161,11 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
     }
 
 
-    public fi.konstal.bullet_your_life.task.CardItem replicate() {
-        return null;
-        //return new CardItemGeneric(getDriveId());
-    }
-
+    /**
+     * Sets the image for this CardItem. Only for {@link CardItem#CARD_IMAGE}
+     *
+     * @param image The image to set
+     */
     public void setImage(Bitmap image) {
         this.image = image;
 
@@ -159,6 +201,14 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
         return type;
     }
 
+
+    /**
+     * Builds the Card item into the parents view.
+     *
+     * @param context         context for image loading from URI´s
+     * @param parent          The parent view for in which to build the view
+     * @param onClickListener An onClick listener to this CardItem
+     */
     public void buildView(Context context, ViewGroup parent, View.OnClickListener onClickListener) {
 
         if (type == CARD_TASK) {
@@ -173,6 +223,10 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
 
             parent.addView(view);
         } else {
+            View v = LayoutInflater.from(context).inflate(R.layout.partial_card_item_image, null);
+            imageView = v.findViewById(R.id.card_item_image);
+            parent.addView(v);
+
             if (image == null) {
                 //if null, start downloading the image
                 if (getImageUri() == null) {
@@ -181,66 +235,52 @@ public class CardItem implements Serializable, DriveDownloadListener<Bitmap>, Dr
                     baseActivity.downloadDriveImage(getDriveId(), this);
                 } else {
                     //Load image from URI
-                    Runnable r = (() -> {
-                        try {
-                            Bitmap img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(getImageUri()));
-                            new ResizeImageTask(imageView).execute(img);
-                        } catch (FileNotFoundException e) {
-                            //URI is invalid, remove it
-                            setImageUri(null);
-                            e.printStackTrace();
-                        }
-                    });
-                    new Thread(r).start();
+                    Glide.with(context)
+                            .load(getImageUri())
+                            .into(imageView);
                 }
-
+            } else {
+                imageView.setImageBitmap(image);
             }
-
-            View v = LayoutInflater.from(context).inflate(R.layout.partial_card_item_image, null);
-            imageView = v.findViewById(R.id.card_item_image);
-            imageView.setImageBitmap(image);
-            parent.addView(v);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onDownloadSuccess(Bitmap data) {
+        Log.i(TAG, "File loaded from Drive");
         image = Helper.getResizedBitmap(data, Helper.SCALE_BY_HEIGHT, 300);
+
+        String filename = "systemFile";
+        FileOutputStream outputStream;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onDownloadError(Exception exception) {
         Log.e(TAG, exception.toString());
         exception.printStackTrace();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onUploadSuccess(DriveId driveId) {
         setDriveId(driveId);
-        Log.i(TAG, "Drive ID: " + this.driveId + " has been successfully saved");
+        Log.i(TAG, "Image with Drive ID: " + this.driveId + " has been successfully uploaded!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onUploadFailure(Exception e) {
         e.printStackTrace();
-    }
-
-
-    private class ResizeImageTask extends AsyncTask<Bitmap, Void, Bitmap> {
-        private ImageView imageView;
-
-        public ResizeImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        protected Bitmap doInBackground(Bitmap... bitmaps) {
-            Bitmap scaledImg = Helper.getResizedBitmap(bitmaps[0], Helper.SCALE_BY_HEIGHT, 300);
-            return scaledImg;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
     }
 }
 

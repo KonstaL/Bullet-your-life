@@ -7,19 +7,33 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by e4klehti on 8.4.2018.
- */
 
+/**
+ * Module for providing Application related Objects for Dagger
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 @Module
 public class AppModule {
 
     Application mApplication;
 
+    /**
+     * Constuctor
+     *
+     * @param application the Application
+     */
     public AppModule(Application application) {
         mApplication = application;
     }
 
+    /**
+     * Gives Dagger access to Application Object
+     *
+     * @return the Application
+     */
     @Provides
     @Singleton
     Application providesApplication() {
