@@ -18,10 +18,14 @@ import java.io.OutputStream;
 import fi.konstal.bullet_your_life.task.CardItem;
 import fi.konstal.bullet_your_life.view_models.EditCardViewModel;
 
-/**
- * Created by e4klehti on 30.3.2018.
- */
 
+/**
+ * Class that handles Google Drive uploading asynchronously
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 public class AsyncDriveUpload {
     private static final String TAG = "AsyncDriveUpload";
 
@@ -31,6 +35,15 @@ public class AsyncDriveUpload {
     private Context context;
     private DriveResourceClient driveResourceClient;
 
+    /**
+     * The constructor
+     *
+     * @param context             for getting inputstreams from Uri
+     * @param viewModel           pass the uploaded files ID here, so it updates in the DB
+     * @param cardItem            The card item in which to put the driveID in
+     * @param imgUri              The Uri of the image to upload
+     * @param driveResourceClient Handles Drive relationship
+     */
     public AsyncDriveUpload(Context context, EditCardViewModel viewModel, CardItem cardItem,
                             Uri imgUri, DriveResourceClient driveResourceClient) {
         this.context = context;
@@ -42,6 +55,11 @@ public class AsyncDriveUpload {
 
 
     // TODO CLEAN THIS THREADING AND OPTIMIZE CPU USAGE
+
+    /**
+     * A remnant of previous {@link android.os.AsyncTask} implementation
+     * Executes the upload
+     */
     public void execute() {
 
         final Task<DriveFolder> appFolderTask = driveResourceClient.getAppFolder();
@@ -85,6 +103,12 @@ public class AsyncDriveUpload {
                 });
     }
 
+    /**
+     * Remnant of the previous {@link android.os.AsyncTask} implementation
+     * Called when the upload is done
+     *
+     * @param createdFileTask The Task of the created file
+     */
     public void uploadDone(Task<DriveFile> createdFileTask) {
         Tasks.whenAll(createdFileTask)
                 .continueWith((createdFile) -> {

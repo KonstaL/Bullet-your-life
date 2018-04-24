@@ -66,7 +66,7 @@ public class NoteCardListDiffCallback extends DiffUtil.Callback {
         if (newCard != null &&
                 oldCard == null ||
                 newCard.getCardItems().size() != oldCard.getCardItems().size()) {
-            diffBundle.putSerializable("card_item_list", (Serializable) newCard.getCardItems());
+            diffBundle.putSerializable("card_item_list", newCard.getCardItems());
         }
         if (newCard != null &&
                 oldCard == null ||

@@ -20,16 +20,25 @@ import java.util.concurrent.TimeoutException;
 
 
 /**
- * Created by e4klehti on 30.3.2018.
+ * Class that handles Google Drive downloading asynchronously
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
  */
-
 public class AsyncDriveDownload extends AsyncTask<Void, Void, Bitmap> {
     private DriveId driveId;
     private DriveResourceClient driveResourceClient;
     private DriveDownloadListener<Bitmap> driveDownloadListener;
 
 
-
+    /**
+     * The constructor
+     *
+     * @param driveId               Signifies the ID of the file to download
+     * @param driveResourceClient   The resourceClient that handles the download process
+     * @param driveDownloadListener Called when download is done
+     */
     public AsyncDriveDownload(DriveId driveId, DriveResourceClient driveResourceClient,
                               DriveDownloadListener<Bitmap> driveDownloadListener) {
         this.driveId = driveId;
@@ -37,6 +46,9 @@ public class AsyncDriveDownload extends AsyncTask<Void, Void, Bitmap> {
         this.driveDownloadListener = driveDownloadListener;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Bitmap doInBackground(Void... voids) {
         DriveFile driveFile = driveId.asDriveFile();
@@ -49,9 +61,11 @@ public class AsyncDriveDownload extends AsyncTask<Void, Void, Bitmap> {
             DriveContents driveContent = fileTask.getResult();
 
             //Used for easy stream closing
-            try(InputStream is = driveContent.getInputStream()) {
+            try (InputStream is = driveContent.getInputStream()) {
                 bitmap = BitmapFactory.decodeStream(is);
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
@@ -59,16 +73,20 @@ public class AsyncDriveDownload extends AsyncTask<Void, Void, Bitmap> {
         return bitmap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onPostExecute(Bitmap bitmap) {
         driveDownloadListener.onDownloadSuccess(bitmap);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCancelled() {
         //TODO: Custom exception class
         driveDownloadListener.onDownloadError(new RuntimeException("Imagedownload failed!"));
     }
-
-
 }

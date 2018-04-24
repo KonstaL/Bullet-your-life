@@ -14,9 +14,13 @@ import fi.konstal.bullet_your_life.edit_recycler_view.CardItemHandler;
 import fi.konstal.bullet_your_life.task.CardItem;
 
 /**
- * Created by e4klehti on 14.4.2018.
+ * Handles {@link fi.konstal.bullet_your_life.activities.EditCardActivity} data storing
+ * and mutating
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
  */
-
 public class EditCardViewModel extends ViewModel implements CardItemHandler {
     private static final String TAG = "EditCardViewModel";
 
@@ -24,11 +28,22 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
     private CardRepository cardRepo;
     private int type;
 
-    public EditCardViewModel() {}
+    /**
+     * Default no-args constructor for {@link ViewModel}
+     */
+    public EditCardViewModel() {
+    }
 
+    /**
+     * Initializes the ViewModel
+     *
+     * @param cardRepo The CardRepo from which to get the needed data
+     * @param cardType The type of cards to fetch
+     * @param id       The id of the card
+     */
     public void init(CardRepository cardRepo, int cardType, int id) {
         if (dayCard == null) {
-            if(cardType != Card.CARD_TYPE_DAYCARD && cardType != Card.CARD_TYPE_NOTECARD){
+            if (cardType != Card.CARD_TYPE_DAYCARD && cardType != Card.CARD_TYPE_NOTECARD) {
                 throw new IllegalArgumentException("Illegal card value!");
             }
             this.type = cardType;
@@ -37,12 +52,22 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
         }
     }
 
+    /**
+     * Returns LiveData of the found Card
+     *
+     * @return The found Card
+     */
     public LiveData<Card> getCard() {
         return dayCard;
     }
 
+    /**
+     * Add items to the current card and the the card to DB
+     *
+     * @param cardItems the card items to add
+     */
     public void addCardItems(CardItem... cardItems) {
-        if(dayCard.getValue() instanceof DayCard) {
+        if (dayCard.getValue() instanceof DayCard) {
             DayCard card = (DayCard) dayCard.getValue();
             card.addCardItems(cardItems);
             cardRepo.updateCard(card);
@@ -54,6 +79,11 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
     }
 
 
+    /**
+     * Update the given CardItems in the current card and push the modified card to DB
+     *
+     * @param cardItems the carditems to modify
+     */
     public void updateCardItems(CardItem... cardItems) {
 
         Card card = dayCard.getValue();
@@ -73,7 +103,6 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
                     }
                 }
                 cardRepo.updateCard(card);
-
             }
 
         } else {
@@ -81,6 +110,9 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteItem(CardItem cardItem) {
         Card card = dayCard.getValue();
@@ -93,6 +125,9 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteItem(int i) {
         Card card = dayCard.getValue();
@@ -107,6 +142,9 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addItem(CardItem cardItem) {
         Card card = dayCard.getValue();
@@ -118,6 +156,9 @@ public class EditCardViewModel extends ViewModel implements CardItemHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateItem(CardItem cardItem) {
         Card card = dayCard.getValue();

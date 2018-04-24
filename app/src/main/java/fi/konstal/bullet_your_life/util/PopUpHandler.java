@@ -11,20 +11,36 @@ import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.BaseActivity;
 import fi.konstal.bullet_your_life.activities.LoginActivity;
 
-/**
- * Created by e4klehti on 15.4.2018.
- */
 
+/**
+ * Helper Class to simplify {@link PopupMenu} usage
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 public class PopUpHandler implements View.OnClickListener {
 
     View anchor;
     Context context;
 
+    /**
+     * Constructor
+     *
+     * @param context Used for Login / Logout
+     * @param anchor  Anchor view, from which the popup is showed
+     */
     public PopUpHandler(Context context, View anchor) {
         this.anchor = anchor;
         this.context = context;
     }
 
+    /**
+     * Fired when user the "open menu" button.
+     * Inflates the view and adds clicklisteners to it
+     *
+     * @param view The clicked view
+     */
     @Override
     public void onClick(View view) {
         SharedPreferences preferences = context.getSharedPreferences("bullet_your_life", Context.MODE_PRIVATE);
@@ -59,5 +75,4 @@ public class PopUpHandler implements View.OnClickListener {
             return false;
         }));
     }
-
 }

@@ -9,8 +9,8 @@ import fi.konstal.bullet_your_life.task.CardItem;
  * Interface for all Card Objects
  */
 public interface Card {
-    static final int CARD_TYPE_DAYCARD = 1;
-    static final int CARD_TYPE_NOTECARD = 2;
+    int CARD_TYPE_DAYCARD = 1;
+    int CARD_TYPE_NOTECARD = 2;
 
     /**
      * Returns the cards database generated ID

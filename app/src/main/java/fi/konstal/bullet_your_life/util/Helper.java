@@ -15,20 +15,28 @@ import fi.konstal.bullet_your_life.task.CardItem;
 
 
 /**
- * Created by e4klehti on 22.3.2018.
+ * A static Helper Class for general utility methods
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
  */
-
 public class Helper {
     public static final String TAG = "Helper";
     public static final int SCALE_BY_HEIGHT = 200;
     public static final int SCALE_BY_WIDTH = 300;
-    public static final int DAY_IN_MILLIS = 86400000;
+    private static final int DAY_IN_MILLIS = 86400000;
 
+    /**
+     * Returns a weekday string equivalent to the given date
+     *
+     * @param date the given date
+     * @return String weekday
+     */
     public static String weekdayString(Date date) {
 
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
         switch (dayOfWeek) {
@@ -51,17 +59,36 @@ public class Helper {
         }
     }
 
+    /**
+     * Concerts Date to a equivalent String representation in (dd.MM.yy) format
+     *
+     * @param date The convertable String
+     * @return The converted Date value as String
+     */
     public static String dateToString(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         return dateFormat.format(date);
     }
 
+    /**
+     * Returns a DateString of the current day in (dd.MM.yy) format
+     *
+     * @return String representation of current day
+     */
     public static String currentDateString() {
         Date date = new Date();
         return dateToString(date);
     }
 
 
+    /**
+     * Resizes Bitmaps according to the arguments
+     *
+     * @param image   The resizable image
+     * @param scaleBy Is the image scaled by {@link Helper#SCALE_BY_HEIGHT} or {@link Helper#SCALE_BY_WIDTH}
+     * @param newSize The desired new size in PX
+     * @return the scaled image
+     */
     public static Bitmap getResizedBitmap(Bitmap image, int scaleBy, int newSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -81,6 +108,13 @@ public class Helper {
         return Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
     }
 
+    /**
+     * Seeds the next seven days (from current date) to given Repository
+     *
+     * @param cardRepository the repository to seed
+     * @deprecated Switched to more sophisticated seeding solution
+     */
+    @Deprecated
     public static void seedCardData(CardRepository cardRepository) {
         DayCard[] dayCards = new DayCard[7];
         Date date = new Date();
@@ -109,6 +143,12 @@ public class Helper {
         cardRepository.insertDayCards(dayCards);
     }
 
+    /**
+     * Adds the missing dates for a full week from the cardList argument to CardRepository
+     *
+     * @param cardList Current days
+     * @param cardRepo The card repo in which to insert missing days
+     */
     public static void addMissingDays(List<DayCard> cardList, CardRepository cardRepo) {
 
         Calendar inDb = Calendar.getInstance();

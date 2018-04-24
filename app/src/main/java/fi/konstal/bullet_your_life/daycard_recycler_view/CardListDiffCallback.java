@@ -83,7 +83,7 @@ public class CardListDiffCallback extends DiffUtil.Callback {
         Bundle diffBundle = new Bundle();
 
         if (newCard.getCardItems().size() != oldCard.getCardItems().size()) {
-            diffBundle.putSerializable("card_item_list", (Serializable) newCard.getCardItems());
+            diffBundle.putSerializable("card_item_list", newCard.getCardItems());
         }
         if (!newCard.getTitle().equals(oldCard.getTitle())) {
             diffBundle.putString("card_title", newCard.getTitle());

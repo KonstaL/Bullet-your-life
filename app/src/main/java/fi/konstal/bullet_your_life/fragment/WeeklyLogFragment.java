@@ -1,7 +1,6 @@
 package fi.konstal.bullet_your_life.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -14,7 +13,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +25,19 @@ import fi.konstal.bullet_your_life.App;
 import fi.konstal.bullet_your_life.R;
 import fi.konstal.bullet_your_life.activities.EditCardActivity;
 import fi.konstal.bullet_your_life.data.CardRepository;
-import fi.konstal.bullet_your_life.data.DayCard;
 import fi.konstal.bullet_your_life.daycard_recycler_view.CardViewAdapter;
 import fi.konstal.bullet_your_life.daycard_recycler_view.RecyclerItemClickListener;
 import fi.konstal.bullet_your_life.util.Helper;
 import fi.konstal.bullet_your_life.util.PopUpHandler;
 import fi.konstal.bullet_your_life.view_models.WeeklyLogViewModel;
 
+/**
+ * Fragment that displays a weekly view of the DayCards
+ *
+ * @author Konsta Lehtinen
+ * @version 1.0
+ * @since 1.0
+ */
 public class WeeklyLogFragment extends Fragment {
     private static final String TAG = "WeeklyLogFragment";
 
@@ -46,14 +50,25 @@ public class WeeklyLogFragment extends Fragment {
     private CardViewAdapter cardAdapter;
     private WeeklyLogViewModel viewModel;
 
+    /**
+     * Empty constructor for database
+     */
     public WeeklyLogFragment() {
     }
 
+    /**
+     * Returns a new instance of fragment. Meant for initialization
+     *
+     * @return An instance of WeeklyLogFragment
+     */
     public static WeeklyLogFragment newInstance() {
         WeeklyLogFragment fragment = new WeeklyLogFragment();
         return fragment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +77,9 @@ public class WeeklyLogFragment extends Fragment {
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,10 +89,12 @@ public class WeeklyLogFragment extends Fragment {
         return v;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-
 
         viewModel = ViewModelProviders.of(this).get(WeeklyLogViewModel.class);
         viewModel.init(cardRepository);
@@ -151,10 +171,9 @@ public class WeeklyLogFragment extends Fragment {
         });
     }
 
-    public CardRepository getCardRepository() {
-        return cardRepository;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
