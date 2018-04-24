@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/task_icon"
-        android:hint="Your task text"
+        android:hint="Your cardTask text"
         android:layout_marginRight="20dp"
         android:textSize="14sp" />
 

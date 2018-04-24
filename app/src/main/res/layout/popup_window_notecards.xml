@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:paddingEnd="20dp"
+    android:paddingStart="20dp"
+    android:background="@drawable/bg_rounded_rectangle">
+
+    <ImageView
+        android:id="@+id/popup_icon_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete_black_24dp"
+        android:padding="5dp"/>
+    <ImageView
+        android:id="@+id/popup_icon_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:src="@drawable/ic_mode_edit_black_24dp"/>
+
+
+</LinearLayout>

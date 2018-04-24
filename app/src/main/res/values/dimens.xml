@@ -8,7 +8,7 @@
 
 
     <!-- Overrides default bottom navigation height -->
-    <dimen name="design_bottom_navigation_height" tools:override="true">50dp</dimen>
+  <!--  <dimen name="design_bottom_navigation_height" tools:override="true">50dp</dimen>-->
 
 
 </resources>

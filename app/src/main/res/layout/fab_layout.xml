@@ -6,56 +6,58 @@
     android:elevation="9dp">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addPicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="95dp"
-        android:src="@drawable/ic_camera_white_24dp"
-        android:visibility="invisible"
-        app:backgroundTint="@color/bright_red"
-        app:fabSize="mini"
-        android:onClick="fabClick"/>
-
-    <android.support.design.widget.FloatingActionButton
         android:id="@+id/addTodo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="95dp"
+        android:layout_marginBottom="130dp"
         android:layout_marginRight="15dp"
         android:visibility="invisible"
+        android:onClick="fabClick"
         android:src="@drawable/ic_check_box_white_24dp"
         app:backgroundTint="@color/bright_red"
-        app:fabSize="mini"
-        android:onClick="fabClick"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addEvent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="60dp"
-        android:layout_marginRight="100dp"
-        android:elevation="6dp"
-        android:src="@drawable/ic_event_white_24dp"
-        android:visibility="invisible"
-        app:backgroundTint="@color/bright_red"
-        app:fabSize="mini"
-        android:onClick="fabClick"/>
+        app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="100dp"
-        android:layout_marginRight="65dp"
+        android:layout_marginBottom="125dp"
+        android:layout_marginRight="85dp"
         android:visibility="invisible"
+        android:onClick="fabClick"
         android:src="@drawable/ic_text_white_24dp"
         app:backgroundTint="@color/bright_red"
-        app:fabSize="mini"
-        android:onClick="fabClick"/>
+        app:fabSize="mini" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="75dp"
+        android:layout_marginRight="130dp"
+        android:elevation="6dp"
+        android:onClick="fabClick"
+        android:visibility="invisible"
+        android:src="@drawable/ic_event_white_24dp"
+        app:backgroundTint="@color/bright_red"
+        app:fabSize="mini" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="135dp"
+        android:onClick="fabClick"
+        android:visibility="invisible"
+        android:src="@drawable/ic_camera_white_24dp"
+        app:backgroundTint="@color/bright_red"
+        app:fabSize="mini" />
+
 
 </FrameLayout>

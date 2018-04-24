@@ -35,3 +35,8 @@ output.json
 #NDK
 obj/
 .externalNativeBuild
+
+# to secure signingkeys
+keystore.properties
+
+

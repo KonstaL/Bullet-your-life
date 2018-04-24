@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <!--
+       Empty for now, as "Login" and "Logout" is added programmatically
+       In the future, this menu will hold "Settings" and other options
+        -->
+</menu>

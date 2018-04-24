@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/action_item1"
-        android:icon="@drawable/ic_today_black_24dp"
-        android:title="weekly"/>
+        android:id="@+id/menu_weekly"
+        android:icon="@drawable/ic_calendar_week_black"
+        android:title="@string/menu_bottom_weekly"/>
     <item
-        android:id="@+id/action_item2"
-        android:icon="@drawable/ic_today_black_24dp"
-        android:title="Montly"/>
+        android:id="@+id/menu_monthly"
+        android:icon="@drawable/ic_calendar_month_black"
+        android:title="@string/menu_bottom_monthly"/>
     <item
-        android:id="@+id/action_item3"
-        android:icon="@drawable/ic_today_black_24dp"
-        android:title="future"/>
+        android:id="@+id/menu_notes"
+        android:icon="@drawable/ic_note_black"
+        android:title="@string/menu_bottom_notes"/>
 </menu>
